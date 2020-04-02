@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Inventory Summary
+A compact summary of your inventory
