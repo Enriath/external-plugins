@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Superior Size
+Shows the size of superior slayer monsters
