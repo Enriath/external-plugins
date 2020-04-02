@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Transmogrification
+Wear the armour you want, no matter what you're doing.
