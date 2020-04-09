@@ -109,8 +109,6 @@ public class SuperiorSizePlugin extends Plugin
 		{
 			slayerTask = event.getNewValue();
 		}
-
-
 	}
 
 	@Subscribe

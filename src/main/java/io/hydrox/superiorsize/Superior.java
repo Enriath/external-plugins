@@ -34,15 +34,15 @@ enum Superior
 	SCREAMING_BANSHEE(3, "banshee"),
 	SCREAMING_TWISTED_BANSHEE("banshee", 3, "twisted banshee"),
 	GIANT_ROCKSLUG(3, "rockslug"),
-	COCKATHRICE(3, "cockatrice"),
+	COCKATHRICE("cockatrice", 3, "cockatrice"),
 	FLAMING_PYRELORD(2, "pyrefiend"),
-	INFERNAL_PYRELORD("pyrefiend", 2, "pyrelord"),
+	INFERNAL_PYRELORD("pyrefiends", 2, "pyrelord"),
 	MONSTROUS_BASILISK(3, "basilisk"),
 	MALEVOLENT_MAGE(2, "infernal mage"),
 	INSATIABLE_BLOODVELD(3, "bloodveld"),
-	INSATIABLE_MUTATED_BLOODVELD("bloodveld", 3, "mutated bloodveld"),
-	VITREOUS_JELLY(2, "jelly"),
-	VITREOUS_WARPED_JELLY("jelly", 3, "warped jelly"),
+	INSATIABLE_MUTATED_BLOODVELD("bloodvelds", 3, "mutated bloodveld"),
+	VITREOUS_JELLY("jellies", 2, "jelly"),
+	VITREOUS_WARPED_JELLY("jellies", 3, "warped jelly"),
 	CAVE_ABOMINATION(2, "cave horror"),
 	ABHORRENT_SPECTRE(3, "aberrant spectre"),
 	REPUGNANT_SPECTRE("aberrant spectre", 3, "deviant spectre"),
@@ -72,7 +72,7 @@ enum Superior
 
 	Superior(int size, String... names)
 	{
-		this(names[0], size, names);
+		this(names[0] + "s", size, names);
 	}
 
 	static
