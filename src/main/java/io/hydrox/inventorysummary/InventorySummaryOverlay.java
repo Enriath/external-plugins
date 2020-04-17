@@ -24,40 +24,48 @@
  */
 package io.hydrox.inventorysummary;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import net.runelite.api.Constants;
-import net.runelite.api.Item;
-import net.runelite.api.ItemComposition;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.FontManager;
+import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.ComponentConstants;
 import net.runelite.client.ui.overlay.components.ComponentOrientation;
 import net.runelite.client.ui.overlay.components.ImageComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
-import net.runelite.client.ui.overlay.components.TitleComponent;
 import net.runelite.client.util.ImageUtil;
 
-class InventorySummaryOverlay extends Overlay
+class InventorySummaryOverlay extends OverlayPanel
 {
 	private static final int INVENTORY_SIZE = 28;
 	private static final Point SPRITE_PADDING = new Point(6, 4);
 	private static final int WRAPPER_MINIMUM_WIDTH = Constants.ITEM_SPRITE_WIDTH + SPRITE_PADDING.x * 2;
+	private static final int FREE_SLOTS_HEIGHT = 14;
 
 	private final ItemManager itemManager;
 	private final InventorySummaryConfig config;
 
-	private final PanelComponent wrapperComponent = new PanelComponent();
 	private final PanelComponent inventoryComponent = new PanelComponent();
-	private final TitleComponent freeSlotsComponent = TitleComponent.builder().build();
+
+	private final List<ImageComponent> images = new ArrayList<>();
 
 	private ImageComponent inventoryIconSprite;
+	private ImageComponent freeSlotsDisplay = new ImageComponent(new BufferedImage(Constants.ITEM_SPRITE_WIDTH, FREE_SLOTS_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR));
+
+	private int lastWidth = 0;
+	private String freeText = "Test";
 
 	@Inject
 	private InventorySummaryOverlay(ItemManager itemManager, InventorySummaryConfig config)
@@ -71,14 +79,16 @@ class InventorySummaryOverlay extends Overlay
 			0,
 			0,
 			ComponentConstants.STANDARD_BORDER));
+		inventoryComponent.setPreferredSize(new Dimension(WRAPPER_MINIMUM_WIDTH, 0));
+		inventoryComponent.setWrap(true);
 
-		wrapperComponent.setOrientation(ComponentOrientation.VERTICAL);
-		wrapperComponent.setWrapping(2);
-		wrapperComponent.setBorder(new Rectangle(
+		panelComponent.setOrientation(ComponentOrientation.VERTICAL);
+		panelComponent.setBorder(new Rectangle(
 			ComponentConstants.STANDARD_BORDER,
 			ComponentConstants.STANDARD_BORDER,
 			ComponentConstants.STANDARD_BORDER,
 			ComponentConstants.STANDARD_BORDER));
+		panelComponent.setPreferredSize(new Dimension(WRAPPER_MINIMUM_WIDTH, 0));
 
 		this.itemManager = itemManager;
 		this.config = config;
@@ -89,55 +99,56 @@ class InventorySummaryOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		return wrapperComponent.render(graphics);
+		inventoryComponent.getChildren().clear();
+
+		if (images.size() == 0)
+		{
+			inventoryComponent.getChildren().add(inventoryIconSprite);
+		}
+		else
+		{
+			for (ImageComponent ic : images)
+			{
+				inventoryComponent.getChildren().add(ic);
+			}
+		}
+		panelComponent.getChildren().add(inventoryComponent);
+
+		if (config.showFreeSlots())
+		{
+			int invWidth = Math.max(Constants.ITEM_SPRITE_WIDTH, inventoryComponent.getBounds().width);
+			if (invWidth != lastWidth)
+			{
+				BufferedImage bf = new BufferedImage(invWidth, FREE_SLOTS_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+				Graphics g = bf.getGraphics();
+				FontMetrics fm = g.getFontMetrics();
+				g.setFont(FontManager.getRunescapeFont());
+				g.setColor(Color.BLACK);
+				g.drawString(freeText, ((bf.getWidth() - fm.stringWidth(freeText)) / 2) + 1, fm.getAscent() + 1);
+				g.setColor(Color.WHITE);
+				g.drawString(freeText, (bf.getWidth() - fm.stringWidth(freeText)) / 2, fm.getAscent());
+				freeSlotsDisplay = new ImageComponent(bf);
+				lastWidth = invWidth;
+			}
+			panelComponent.getChildren().add(freeSlotsDisplay);
+		}
+		return super.render(graphics);
 	}
 
 	void rebuild(Map<Integer, Integer> groupedItems, int spacesUsed)
 	{
 		inventoryComponent.getChildren().clear();
-		wrapperComponent.getChildren().clear();
-
-		inventoryComponent.setWrapping(config.wrapCount());
-
-		int wrapperWidth;
+		images.clear();
 
 		for (Map.Entry<Integer, Integer> cursor : groupedItems.entrySet())
 		{
 			final BufferedImage image = itemManager.getImage(cursor.getKey(), cursor.getValue(), true);
 			if (image != null)
 			{
-				inventoryComponent.getChildren().add(new ImageComponent(image));
+				images.add(new ImageComponent(image));
 			}
 		}
-
-		// Add a placeholder if the inventory is empty, so the overlay can still be easily seen
-		if (groupedItems.entrySet().size() == 0)
-		{
-			inventoryComponent.getChildren().add(inventoryIconSprite);
-			wrapperWidth = WRAPPER_MINIMUM_WIDTH;
-		}
-		else
-		{
-			final int wrap = config.wrapCount() == 0 ? Integer.MAX_VALUE : config.wrapCount();
-			final int widthItems = Math.min(wrap, groupedItems.entrySet().size());
-			wrapperWidth = widthItems * Constants.ITEM_SPRITE_WIDTH + (widthItems + 1) * SPRITE_PADDING.x;
-		}
-
-		wrapperComponent.getChildren().add(inventoryComponent);
-
-		if (config.showFreeSlots())
-		{
-			// Set the width of the wrapper so the free slots component will have the correct alignment
-			wrapperComponent.setPreferredSize(new Dimension(Math.max(wrapperWidth, WRAPPER_MINIMUM_WIDTH), 0));
-
-			freeSlotsComponent.setText((INVENTORY_SIZE - spacesUsed) + " free");
-			wrapperComponent.getChildren().add(freeSlotsComponent);
-		}
-	}
-
-	private BufferedImage getImage(Item item)
-	{
-		ItemComposition itemComposition = itemManager.getItemComposition(item.getId());
-		return itemManager.getImage(item.getId(), item.getQuantity(), itemComposition.isStackable());
+		freeText = (INVENTORY_SIZE - spacesUsed) + " free";
+		lastWidth = 0;
 	}
 }

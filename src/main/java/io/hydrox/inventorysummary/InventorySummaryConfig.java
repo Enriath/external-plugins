@@ -40,14 +40,4 @@ public interface InventorySummaryConfig extends Config
 	{
 		return false;
 	}
-
-	@ConfigItem(
-		keyName = "wrapCount",
-		name = "Wrap Count",
-		description = "How many items to show on each row before wrapping"
-	)
-	default int wrapCount()
-	{
-		return 4;
-	}
 }
