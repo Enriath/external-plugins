@@ -30,6 +30,7 @@ import net.runelite.api.WorldType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -45,27 +46,27 @@ public class TransmogrificationConfigManager
 
 	private final Client client;
 	private final ConfigManager configManager;
-	private final TransmogrificationPlugin plugin;
+	private final Provider<TransmogrificationManager> manager;
 
 	@Inject
-	TransmogrificationConfigManager(Client client, ConfigManager configManager, TransmogrificationPlugin plugin)
+	TransmogrificationConfigManager(Client client, ConfigManager configManager, Provider<TransmogrificationManager> manager)
 	{
 		this.client = client;
 		this.configManager = configManager;
-		this.plugin = plugin;
+		this.manager = manager;
 	}
 
-	boolean transmogActive()
+	public boolean transmogActive()
 	{
 		return Optional.of(configManager.getConfiguration(CONFIG_GROUP, "transmogActive", boolean.class)).orElse(false);
 	}
 
-	void transmogActive(boolean value)
+	public void transmogActive(boolean value)
 	{
 		configManager.setConfiguration(CONFIG_GROUP, "transmogActive", value);
 	}
 
-	int currentPreset()
+	public int currentPreset()
 	{
 		return Optional.of(configManager.getConfiguration(CONFIG_GROUP, "currentPreset", int.class)).orElse(1);
 	}
@@ -93,11 +94,11 @@ public class TransmogrificationConfigManager
 		configManager.unsetConfiguration(CONFIG_GROUP, key);
 	}
 
-	void savePresets()
+	public void savePresets()
 	{
 		for (int i = 1; i <= PRESET_COUNT; i++)
 		{
-			savePreset(plugin.getPreset(i), i);
+			savePreset(getManager().getPreset(i), i);
 		}
 	}
 
@@ -121,13 +122,13 @@ public class TransmogrificationConfigManager
 			{
 				continue;
 			}
-			TransmogPreset preset = plugin.getPreset(i);
+			TransmogPreset preset = getManager().getPreset(i);
 			if (preset == null)
 			{
 				preset = new TransmogPreset();
 			}
 			preset.fromConfig(data);
-			plugin.getPresets().set(i - 1, preset);
+			getManager().setPreset(i, preset);
 		}
 	}
 
@@ -137,12 +138,12 @@ public class TransmogrificationConfigManager
 		String data = configManager.getConfiguration(CONFIG_GROUP, key);
 		if (data == null)
 		{
-			plugin.setEmptyState(null);
+			getManager().setEmptyState(null);
 			transmogActive(false);
 		}
 		else
 		{
-			plugin.setEmptyState(Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
+			getManager().setEmptyState(Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
 		}
 	}
 
@@ -165,5 +166,10 @@ public class TransmogrificationConfigManager
 			return "tourny";
 		}
 		return "normal";
+	}
+
+	private TransmogrificationManager getManager()
+	{
+		return manager.get();
 	}
 }

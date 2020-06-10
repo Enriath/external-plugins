@@ -44,7 +44,7 @@ public enum TransmogSlot
 	BOOTS(10, 165, SlotType.ITEM),
 	JAW(11, -1, SlotType.SPECIAL);
 
-	enum SlotType
+	public enum SlotType
 	{
 		ITEM,
 		SPECIAL;

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-class TransmogPreset
+public class TransmogPreset
 {
 	static final int PRESET_COUNT = 4;
 	static final int EMPTY = -1;
@@ -43,24 +43,24 @@ class TransmogPreset
 	private final Map<TransmogSlot, Integer> overrides = new HashMap<>();
 	private final Map<TransmogSlot, String> names = new HashMap<>();
 
-	void setDefaultSlot(TransmogSlot slot)
+	public void setDefaultSlot(TransmogSlot slot)
 	{
 		setSlot(slot, -1, "");
 	}
 
-	void setSlot(TransmogSlot slot, int id, String name)
+	public void setSlot(TransmogSlot slot, int id, String name)
 	{
 		overrides.put(slot, id);
 		names.put(slot, name);
 	}
 
-	void clearSlot(TransmogSlot slot)
+	public void clearSlot(TransmogSlot slot)
 	{
 		overrides.remove(slot);
 		names.remove(slot);
 	}
 
-	Integer getId(TransmogSlot slot, boolean forKit)
+	public Integer getId(TransmogSlot slot, boolean forKit)
 	{
 		final Integer transmog = overrides.get(slot);
 		if (transmog == null)
