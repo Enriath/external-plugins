@@ -26,27 +26,35 @@ package io.hydrox.transmog;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.runelite.client.util.Text;
 import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-enum TransmogKit
+public enum TransmogSlot
 {
-	HEAD(0),
-	CAPE(1),
-	NECK(2),
-	TORSO(4),
-	SHOULDERS(6),
-	LEGS(7),
-	HAIR(8),
-	HANDS(9),
-	BOOTS(10);
+	HEAD(0, 156, SlotType.ITEM),
+	CAPE(1, 157, SlotType.ITEM),
+	NECK(2, 158, SlotType.ITEM),
+	TORSO(4, 161, SlotType.ITEM),
+	SHOULDERS(6, -1, SlotType.SPECIAL),
+	LEGS(7, 163, SlotType.ITEM),
+	HAIR(8, -1, SlotType.SPECIAL),
+	HANDS(9, 164, SlotType.ITEM),
+	BOOTS(10, 165, SlotType.ITEM),
+	JAW(11, -1, SlotType.SPECIAL);
 
-	private static Map<Integer, TransmogKit> INDEXES = new HashMap<>();
+	enum SlotType
+	{
+		ITEM,
+		SPECIAL;
+	}
+
+	private static Map<Integer, TransmogSlot> INDEXES = new HashMap<>();
 
 	static
 	{
-		for (TransmogKit kit : values())
+		for (TransmogSlot kit : values())
 		{
 			INDEXES.put(kit.getKitIndex(), kit);
 		}
@@ -55,8 +63,19 @@ enum TransmogKit
 	@Getter
 	private final int kitIndex;
 
-	static TransmogKit fromIndex(int idx)
+	@Getter
+	private final int spriteID;
+
+	@Getter
+	private final SlotType slotType;
+
+	static TransmogSlot fromIndex(int idx)
 	{
 		return INDEXES.get(idx);
+	}
+
+	public String getName()
+	{
+		return Text.titleCase(this);
 	}
 }

@@ -24,7 +24,7 @@
  */
 package io.hydrox.transmog;
 
-import static io.hydrox.transmog.TransmogrificationPlugin.PRESET_COUNT;
+import static io.hydrox.transmog.TransmogPreset.PRESET_COUNT;
 import net.runelite.api.Client;
 import net.runelite.api.WorldType;
 import net.runelite.client.config.ConfigManager;
@@ -32,6 +32,7 @@ import net.runelite.client.util.Text;
 import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 // Don't you just hate it when the config becomes null when it has only hidden configs?
@@ -56,7 +57,7 @@ public class TransmogrificationConfigManager
 
 	boolean transmogActive()
 	{
-		return configManager.getConfiguration(CONFIG_GROUP, "transmogActive", boolean.class);
+		return Optional.of(configManager.getConfiguration(CONFIG_GROUP, "transmogActive", boolean.class)).orElse(false);
 	}
 
 	void transmogActive(boolean value)
@@ -66,32 +67,37 @@ public class TransmogrificationConfigManager
 
 	int currentPreset()
 	{
-		return configManager.getConfiguration(CONFIG_GROUP, "currentPreset", int.class);
+		return Optional.of(configManager.getConfiguration(CONFIG_GROUP, "currentPreset", int.class)).orElse(1);
 	}
 
 	void currentPreset(int value)
 	{
-		configManager.setConfiguration(CONFIG_GROUP, "currentPreset", value);
+		if (value > 0 && value <= PRESET_COUNT)
+		{
+			configManager.setConfiguration(CONFIG_GROUP, "currentPreset", value);
+		}
 	}
 
 	void savePreset(TransmogPreset preset, int presetID)
 	{
 		String key = CONFIG_OVERRIDE + "." + client.getUsername() +	"." + CONFIG_PRESET + presetID;
-		if (preset == null)
+		if (preset != null)
 		{
-			configManager.unsetConfiguration(CONFIG_GROUP, key);
+			String value = preset.toConfig();
+			if (value != null)
+			{
+				configManager.setConfiguration(CONFIG_GROUP, key, value);
+				return;
+			}
 		}
-		else
-		{
-			configManager.setConfiguration(CONFIG_GROUP, key, preset.toConfig());
-		}
+		configManager.unsetConfiguration(CONFIG_GROUP, key);
 	}
 
 	void savePresets()
 	{
 		for (int i = 1; i <= PRESET_COUNT; i++)
 		{
-			savePreset(plugin.getPresets().get(i - 1), i);
+			savePreset(plugin.getPreset(i), i);
 		}
 	}
 
@@ -115,7 +121,7 @@ public class TransmogrificationConfigManager
 			{
 				continue;
 			}
-			TransmogPreset preset = plugin.getPresets().get(i - 1);
+			TransmogPreset preset = plugin.getPreset(i);
 			if (preset == null)
 			{
 				preset = new TransmogPreset();
@@ -132,6 +138,7 @@ public class TransmogrificationConfigManager
 		if (data == null)
 		{
 			plugin.setEmptyState(null);
+			transmogActive(false);
 		}
 		else
 		{

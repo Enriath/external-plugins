@@ -25,6 +25,7 @@
 package io.hydrox.transmog;
 
 import lombok.NoArgsConstructor;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.Text;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,22 +36,31 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 class TransmogPreset
 {
+	static final int PRESET_COUNT = 4;
 	static final int EMPTY = -1;
 	static final Integer IGNORE = null;
 
-	private final Map<TransmogKit, Integer> overrides = new HashMap<>();
+	private final Map<TransmogSlot, Integer> overrides = new HashMap<>();
+	private final Map<TransmogSlot, String> names = new HashMap<>();
 
-	void setSlot(TransmogKit slot, int id)
+	void setDefaultSlot(TransmogSlot slot)
+	{
+		setSlot(slot, -1, "");
+	}
+
+	void setSlot(TransmogSlot slot, int id, String name)
 	{
 		overrides.put(slot, id);
+		names.put(slot, name);
 	}
 
-	void clearSlot(TransmogKit slot)
+	void clearSlot(TransmogSlot slot)
 	{
 		overrides.remove(slot);
+		names.remove(slot);
 	}
 
-	Integer getId(TransmogKit slot)
+	Integer getId(TransmogSlot slot, boolean forKit)
 	{
 		final Integer transmog = overrides.get(slot);
 		if (transmog == null)
@@ -63,14 +73,23 @@ class TransmogPreset
 		}
 		else
 		{
-			return transmog + 512;
+			return transmog + (forKit ? 512 : 0);
 		}
+	}
+
+	String getName(TransmogSlot slot)
+	{
+		return names.get(slot);
 	}
 
 	String toConfig()
 	{
-		final Map<TransmogKit, Integer> merged = new HashMap<>();
-		Arrays.asList(TransmogKit.values()).forEach(tk -> merged.put(tk, null));
+		if (overrides.isEmpty())
+		{
+			return null;
+		}
+		final Map<TransmogSlot, Integer> merged = new HashMap<>();
+		Arrays.asList(TransmogSlot.values()).forEach(tk -> merged.put(tk, null));
 		merged.putAll(overrides);
 		return merged.entrySet().stream()
 			.sorted(Map.Entry.comparingByKey())
@@ -87,9 +106,22 @@ class TransmogPreset
 			String val = values.get(i);
 			if (!val.equals("null"))
 			{
-				TransmogKit slot = TransmogKit.values()[i];
-				setSlot(slot, Integer.parseInt(val));
+				TransmogSlot slot = TransmogSlot.values()[i];
+				overrides.put(slot, Integer.parseInt(val));
 			}
+		}
+	}
+
+	void loadNames(ItemManager itemManager)
+	{
+		for (Map.Entry<TransmogSlot, Integer> entry : overrides.entrySet())
+		{
+			Integer id = entry.getValue();
+			if (id == null || id == -1)
+			{
+				continue;
+			}
+			names.put(entry.getKey(), itemManager.getItemComposition(id).getName());
 		}
 	}
 }
