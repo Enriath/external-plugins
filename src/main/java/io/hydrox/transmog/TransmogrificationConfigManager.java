@@ -58,24 +58,28 @@ public class TransmogrificationConfigManager
 
 	public boolean transmogActive()
 	{
-		return Optional.of(configManager.getConfiguration(CONFIG_GROUP, "transmogActive", boolean.class)).orElse(false);
+		String key = client.getUsername() + ".transmogActive";
+		return Optional.ofNullable(configManager.getConfiguration(CONFIG_GROUP, key, boolean.class)).orElse(false);
 	}
 
 	public void transmogActive(boolean value)
 	{
-		configManager.setConfiguration(CONFIG_GROUP, "transmogActive", value);
+		String key = client.getUsername() + ".transmogActive";
+		configManager.setConfiguration(CONFIG_GROUP, key, value);
 	}
 
 	public int currentPreset()
 	{
-		return Optional.of(configManager.getConfiguration(CONFIG_GROUP, "currentPreset", int.class)).orElse(1);
+		String key = client.getUsername() + ".currentPreset";
+		return Optional.ofNullable(configManager.getConfiguration(CONFIG_GROUP, key, int.class)).orElse(1);
 	}
 
 	void currentPreset(int value)
 	{
 		if (value > 0 && value <= PRESET_COUNT)
 		{
-			configManager.setConfiguration(CONFIG_GROUP, "currentPreset", value);
+			String key = client.getUsername() + ".currentPreset";
+			configManager.setConfiguration(CONFIG_GROUP, key, value);
 		}
 	}
 

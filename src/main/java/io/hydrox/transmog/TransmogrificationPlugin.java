@@ -24,13 +24,17 @@
  */
 package io.hydrox.transmog;
 
+import com.google.common.primitives.Ints;
+import io.hydrox.transmog.ui.CustomSprites;
 import io.hydrox.transmog.ui.UIManager;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
+import net.runelite.api.Player;
 import net.runelite.api.events.CommandExecuted;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
@@ -40,6 +44,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 
 @PluginDescriptor(
@@ -74,6 +79,8 @@ public class TransmogrificationPlugin extends Plugin
 	@Override
 	public void startUp()
 	{
+		spriteManager.addSpriteOverrides(CustomSprites.values());
+
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
 			lastWorld = client.getWorld();
@@ -81,22 +88,12 @@ public class TransmogrificationPlugin extends Plugin
 			transmogManager.updateTransmog();
 			clientThread.invoke(uiManager::createInitialUI);
 		}
-
-		TransmogPreset test = new TransmogPreset();
-		test.setSlot(TransmogSlot.HEAD, 2643, "Black cavalier");
-		test.setSlot(TransmogSlot.TORSO, 24802, "Vyre noble corset (red)");
-		test.setSlot(TransmogSlot.LEGS, 24804, "Vyre noble skirt (red)");
-		test.setSlot(TransmogSlot.HANDS, 10368, "Zamorak bracers");
-		test.setSlot(TransmogSlot.BOOTS, 24680, "Vyre noble shoes");
-		test.setDefaultSlot(TransmogSlot.CAPE);
-		test.setDefaultSlot(TransmogSlot.NECK);
-		test.setSlot(TransmogSlot.SHOULDERS, 0, "##Empty##");
-		transmogManager.getPresets().set(3, test);
 	}
 
 	@Override
 	public void shutDown()
 	{
+		spriteManager.removeSpriteOverrides(CustomSprites.values());
 		transmogManager.shutDown();
 		uiManager.shutDown();
 		lastWorld = 0;
@@ -113,8 +110,7 @@ public class TransmogrificationPlugin extends Plugin
 				lastWorld = client.getWorld();
 				transmogManager.loadData();
 			}
-		}
-		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
+		} else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
 		{
 			lastWorld = 0;
 			uiManager.setUiCreated(false);
@@ -165,6 +161,8 @@ public class TransmogrificationPlugin extends Plugin
 	}
 
 	// TODO: DEBUG
+	private boolean debug_kits = false;
+	private int debug_kitSlot = -1;
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted e)
 	{
@@ -192,6 +190,40 @@ public class TransmogrificationPlugin extends Plugin
 			case "u":
 				uiManager.createInitialUI();
 				break;
+			case "blocker":
+				uiManager.getBlockerBox().setHidden(false);
+				break;
+			case "kits":
+				debug_kits = !debug_kits;
+				break;
+			case "kit_slot":
+				debug_kitSlot = Ints.constrainToRange(Integer.parseInt(e.getArguments()[0]), -1, 11);
+				break;
+
+		}
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick e)
+	{
+		Player local = client.getLocalPlayer();
+		if (local == null)
+		{
+			return;
+		}
+		if (!debug_kits)
+		{
+			local.setOverheadText(null);
+			return;
+		}
+
+		if (debug_kitSlot == -1)
+		{
+			local.setOverheadText("[" + StringUtils.join(local.getPlayerComposition().getEquipmentIds(), ',') + "]");
+		}
+		else
+		{
+			local.setOverheadText("[" + local.getPlayerComposition().getEquipmentIds()[debug_kitSlot] + "]");
 		}
 	}
 }

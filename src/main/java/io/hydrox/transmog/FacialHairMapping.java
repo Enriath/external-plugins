@@ -24,60 +24,78 @@
  */
 package io.hydrox.transmog;
 
-import io.hydrox.transmog.ui.CustomSprites;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runelite.client.util.Text;
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 @RequiredArgsConstructor
-public enum TransmogSlot
+public enum FacialHairMapping implements Mapping
 {
-	HEAD(0, 156, SlotType.ITEM),
-	CAPE(1, 157, SlotType.ITEM),
-	NECK(2, 158, SlotType.ITEM),
-	TORSO(4, 161, SlotType.ITEM),
-	SLEEVES(6, CustomSprites.SLOT_SLEEVES.getSpriteId(), SlotType.SPECIAL),
-	LEGS(7, 163, SlotType.ITEM),
-	HAIR(8, CustomSprites.SLOT_HAIR.getSpriteId(), SlotType.SPECIAL),
-	HANDS(9, 164, SlotType.ITEM),
-	BOOTS(10, 165, SlotType.ITEM),
-	JAW(11, CustomSprites.SLOT_JAW.getSpriteId(), SlotType.SPECIAL);
+	CLEAN_SHAVEN("Clean-shaven", -1, 270),
+	GOATEE("Goatee", 81, 266),
+	LONG("Long", 82, 267),
+	MEDIUM("Medium", 83, 268),
+	SMALL_MOUSTACHE("Small moustache", 79, 269),
+	SHORT("Short", 80, 271),
+	POINTY("Pointy", 85, 272),
+	SPLIT("Split", 84, 273),
+	HANDLEBAR("Handlebar", 28398, 367),
+	MUTTON("Mutton", 28397, 368),
+	FULL_MUTTON("Full mutton", 28400, 369),
+	BIG_MOUSTACHE("Big moustache", 28393, 370),
+	WAXED_MOUSTACHE("Waxed moustache", 28394, 371),
+	DALI("Dali", 28388, 372),
+	VIZIER("Vizier", 28399, 373);
 
-	public enum SlotType
-	{
-		ITEM,
-		SPECIAL;
-	}
+	private final String name;
+	private final int modelID;
+	private final int kitID;
 
-	private static Map<Integer, TransmogSlot> INDEXES = new HashMap<>();
+	private static final Map<Integer, FacialHairMapping> FROM_KIT = new HashMap<>();
+	private static final Map<Integer, FacialHairMapping> FROM_MODEL = new HashMap<>();
 
 	static
 	{
-		for (TransmogSlot kit : values())
+		for (FacialHairMapping mapping : values())
 		{
-			INDEXES.put(kit.getKitIndex(), kit);
+			FROM_KIT.put(mapping.kitID, mapping);
+			FROM_MODEL.put(mapping.modelID, mapping);
 		}
 	}
 
-	@Getter
-	private final int kitIndex;
-
-	@Getter
-	private final int spriteID;
-
-	@Getter
-	private final SlotType slotType;
-
-	static TransmogSlot fromIndex(int idx)
+	public static FacialHairMapping fromKitID(int kitID)
 	{
-		return INDEXES.get(idx);
+		return FROM_KIT.get(kitID);
 	}
 
-	public String getName()
+	public static FacialHairMapping fromModelID(int modelID)
 	{
-		return Text.titleCase(this);
+		return FROM_MODEL.get(modelID);
+	}
+
+	@Override
+	public String prettyName()
+	{
+		return name;
+	}
+
+	@Override
+	public Gender gender()
+	{
+		return Gender.MALE;
+	}
+
+	@Override
+	public int modelId()
+	{
+		return modelID;
+	}
+
+	@Override
+	public int kitId()
+	{
+		return kitID;
 	}
 }

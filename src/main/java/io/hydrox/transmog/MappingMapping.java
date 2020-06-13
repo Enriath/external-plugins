@@ -24,60 +24,61 @@
  */
 package io.hydrox.transmog;
 
-import io.hydrox.transmog.ui.CustomSprites;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runelite.client.util.Text;
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
+// Yo dawg
+@Getter
 @RequiredArgsConstructor
-public enum TransmogSlot
+public enum MappingMapping
 {
-	HEAD(0, 156, SlotType.ITEM),
-	CAPE(1, 157, SlotType.ITEM),
-	NECK(2, 158, SlotType.ITEM),
-	TORSO(4, 161, SlotType.ITEM),
-	SLEEVES(6, CustomSprites.SLOT_SLEEVES.getSpriteId(), SlotType.SPECIAL),
-	LEGS(7, 163, SlotType.ITEM),
-	HAIR(8, CustomSprites.SLOT_HAIR.getSpriteId(), SlotType.SPECIAL),
-	HANDS(9, 164, SlotType.ITEM),
-	BOOTS(10, 165, SlotType.ITEM),
-	JAW(11, CustomSprites.SLOT_JAW.getSpriteId(), SlotType.SPECIAL);
+	HAIR(
+		TransmogSlot.HAIR,
+		HairMapping.class,
+		HairMapping::fromKitID,
+		HairMapping::fromModelID,
+		2500,
+		0
+	),
+	JAW(
+		TransmogSlot.JAW,
+		FacialHairMapping.class,
+		FacialHairMapping::fromKitID,
+		FacialHairMapping::fromModelID,
+		1500,
+		-12
+	),
+	SLEEVES(
+		TransmogSlot.SLEEVES,
+		SleeveMapping.class,
+		SleeveMapping::fromKitID,
+		SleeveMapping::fromModelID,
+		1200,
+		55
+	);
 
-	public enum SlotType
-	{
-		ITEM,
-		SPECIAL;
-	}
+	private final TransmogSlot slot;
+	private final Class<? extends Mapping> mapping;
+	private final Function<Integer, Mapping> fromKit;
+	private final Function<Integer, Mapping> fromModel;
+	private final int modelZoom;
+	private final int yOffset;
 
-	private static Map<Integer, TransmogSlot> INDEXES = new HashMap<>();
+	private static final Map<TransmogSlot, MappingMapping> MAP = new HashMap<>();
 
 	static
 	{
-		for (TransmogSlot kit : values())
+		for (MappingMapping m : values())
 		{
-			INDEXES.put(kit.getKitIndex(), kit);
+			MAP.put(m.slot, m);
 		}
 	}
 
-	@Getter
-	private final int kitIndex;
-
-	@Getter
-	private final int spriteID;
-
-	@Getter
-	private final SlotType slotType;
-
-	static TransmogSlot fromIndex(int idx)
+	public static MappingMapping fromSlot(TransmogSlot slot)
 	{
-		return INDEXES.get(idx);
-	}
-
-	public String getName()
-	{
-		return Text.titleCase(this);
+		return MAP.get(slot);
 	}
 }

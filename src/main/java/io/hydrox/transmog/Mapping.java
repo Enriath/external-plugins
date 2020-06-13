@@ -24,60 +24,10 @@
  */
 package io.hydrox.transmog;
 
-import io.hydrox.transmog.ui.CustomSprites;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.runelite.client.util.Text;
-import java.awt.Point;
-import java.util.HashMap;
-import java.util.Map;
-
-@RequiredArgsConstructor
-public enum TransmogSlot
+public interface Mapping
 {
-	HEAD(0, 156, SlotType.ITEM),
-	CAPE(1, 157, SlotType.ITEM),
-	NECK(2, 158, SlotType.ITEM),
-	TORSO(4, 161, SlotType.ITEM),
-	SLEEVES(6, CustomSprites.SLOT_SLEEVES.getSpriteId(), SlotType.SPECIAL),
-	LEGS(7, 163, SlotType.ITEM),
-	HAIR(8, CustomSprites.SLOT_HAIR.getSpriteId(), SlotType.SPECIAL),
-	HANDS(9, 164, SlotType.ITEM),
-	BOOTS(10, 165, SlotType.ITEM),
-	JAW(11, CustomSprites.SLOT_JAW.getSpriteId(), SlotType.SPECIAL);
-
-	public enum SlotType
-	{
-		ITEM,
-		SPECIAL;
-	}
-
-	private static Map<Integer, TransmogSlot> INDEXES = new HashMap<>();
-
-	static
-	{
-		for (TransmogSlot kit : values())
-		{
-			INDEXES.put(kit.getKitIndex(), kit);
-		}
-	}
-
-	@Getter
-	private final int kitIndex;
-
-	@Getter
-	private final int spriteID;
-
-	@Getter
-	private final SlotType slotType;
-
-	static TransmogSlot fromIndex(int idx)
-	{
-		return INDEXES.get(idx);
-	}
-
-	public String getName()
-	{
-		return Text.titleCase(this);
-	}
+	String prettyName();
+	Gender gender();
+	int modelId();
+	int kitId();
 }

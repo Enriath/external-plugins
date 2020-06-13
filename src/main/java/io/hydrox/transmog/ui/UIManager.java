@@ -24,8 +24,16 @@
  */
 package io.hydrox.transmog.ui;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import io.hydrox.transmog.FacialHairMapping;
+import io.hydrox.transmog.HairMapping;
+import io.hydrox.transmog.Mapping;
+import io.hydrox.transmog.MappingMapping;
+import io.hydrox.transmog.SleeveMapping;
 import io.hydrox.transmog.TransmogPreset;
 import io.hydrox.transmog.TransmogSlot;
+import io.hydrox.transmog.TransmogSlot.SlotType;
 import io.hydrox.transmog.TransmogrificationConfigManager;
 import io.hydrox.transmog.TransmogrificationManager;
 import static io.hydrox.transmog.ui.MenuOps.CLEAR;
@@ -34,19 +42,46 @@ import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.Client;
+import net.runelite.api.Point;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
+import org.apache.commons.lang3.tuple.Pair;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
 public class UIManager
 {
+	private static final Point BASE_POSITION = new Point(148, 4);
+	private static final ImmutableMap<TransmogSlot, Point> SLOT_POSITIONS = ImmutableMap.<TransmogSlot, Point>builder()
+		.put(TransmogSlot.JAW, new Point(-82, 0))
+		.put(TransmogSlot.HAIR, new Point(-41, 0))
+		.put(TransmogSlot.HEAD, new Point(0, 0))
+		.put(TransmogSlot.CAPE, new Point(-41, 39))
+		.put(TransmogSlot.NECK, new Point(0, 39))
+		.put(TransmogSlot.SLEEVES, new Point(-56, 78))
+		.put(TransmogSlot.TORSO, new Point(0, 78))
+		.put(TransmogSlot.LEGS, new Point(0, 118))
+		.put(TransmogSlot.HANDS, new Point(-56, 158))
+		.put(TransmogSlot.BOOTS, new Point(0, 158))
+		.build();
+
+	private static final List<Pair<Rectangle, Integer>> INTER_SLOT_BRACERS = ImmutableList.<Pair<Rectangle, Integer>>builder()
+		.add(Pair.of(new Rectangle(0, 36, 36, 122), 172))
+		.add(Pair.of(new Rectangle(-56, 114, 36, 44), 172))
+		.add(Pair.of(new Rectangle(-46, 0, 46, 36), 173))
+		.add(Pair.of(new Rectangle(-5, 39, 5, 36), 173))
+		.add(Pair.of(new Rectangle(-20, 78, 20, 36), 173))
+		.build();
+
 	@Inject
 	private ChatboxPanelManager chatboxPanelManager;
 
@@ -58,6 +93,9 @@ public class UIManager
 
 	@Inject
 	private CustomItemSearch itemSearch;
+
+	@Inject
+	private CustomSpriteSearch spriteSearch;
 
 	@Inject
 	private ItemManager itemManager;
@@ -149,18 +187,50 @@ public class UIManager
 		{
 			case SET_ITEM:
 				isSearching = true;
-				itemSearch.tooltipText("Set as " + slot.getName())
-					.prompt("Choose for " + slot.getName() + " slot")
-					.slot(slot)
-					.onItemSelected((id, name) ->
+				if (slot.getSlotType() == SlotType.SPECIAL)
+				{
+					CustomSpriteSearch s = spriteSearch;
+					s.setTooltipText("Set as " + slot.getName());
+					s.setPrompt("Choose for " + slot.getName() + " slot");
+					s.setSlot(slot);
+					s.setOnItemSelected((m) ->
 					{
-						widget.setItem(id, name);
+						widget.setContent(m.modelId(), m.prettyName());
+						isSearching = false;
+						preset.setSlot(slot, m.kitId(), m.prettyName());
+						manager.updateTransmog();
+					});
+
+					switch (slot)
+					{
+						case HAIR:
+							s.setSource(HairMapping.values());
+							break;
+						case JAW:
+							s.setSource(FacialHairMapping.values());
+							break;
+						case SLEEVES:
+							s.setSource(SleeveMapping.values());
+							break;
+					}
+
+					s.build();
+				}
+				else
+				{
+					CustomItemSearch i = itemSearch;
+					i.setTooltipText("Set as " + slot.getName());
+					i.setPrompt("Choose for " + slot.getName() + " slot");
+					i.setSlot(slot);
+					i.setOnItemSelected((id, name) ->
+					{
+						widget.setContent(id, name);
 						isSearching = false;
 						preset.setSlot(slot, id, name);
 						manager.updateTransmog();
-					})
-					.build();
-
+					});
+					i.build();
+				}
 				break;
 			case CLEAR:
 				chatboxPanelManager.close();
@@ -289,15 +359,28 @@ public class UIManager
 		saveDefaultStateButton.addOption(1, "Save as");
 		saveDefaultStateButton.layout(142, 213);
 
+		// Create inter-slot bracers
+		for (Pair<Rectangle, Integer> bracer : INTER_SLOT_BRACERS)
+		{
+			final Rectangle posData = bracer.getLeft();
+			Widget bracerWidget = parent.createChild(-1, WidgetType.GRAPHIC);
+			bracerWidget.setOriginalX(BASE_POSITION.getX() + posData.x);
+			bracerWidget.setOriginalY(BASE_POSITION.getY() + posData.y);
+			bracerWidget.setOriginalWidth(posData.width);
+			bracerWidget.setOriginalHeight(posData.height);
+			bracerWidget.setSpriteId(bracer.getRight());
+			bracerWidget.setSpriteTiling(true);
+			bracerWidget.revalidate();
+		}
 
 		// Create Slots
 		TransmogPreset preset = manager.getCurrentPreset();
-		int x = 0;
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
+			final CustomWidgetTransmogBox box;
 			if (slot.getSlotType() == TransmogSlot.SlotType.ITEM)
 			{
-				CustomWidgetTransmogBox box = new CustomWidgetTransmogBox(parent, slot, this::onTransmogUISlotClicked);
+				box = new CustomWidgetTransmogBox(SlotType.ITEM, parent, slot, this::onTransmogUISlotClicked);
 				box.create();
 				Integer item = preset.getId(slot, false);
 				if (item == null)
@@ -310,13 +393,31 @@ public class UIManager
 				}
 				else
 				{
-					box.setItem(item, itemManager.getItemComposition(item).getName());
+					box.set(item, itemManager.getItemComposition(item).getName());
 				}
-
-				box.layout(40 * (x % 5), 70 + 40 * (x / 5));
-				uiSlots.put(slot, box);
 			}
-			x += 1;
+			else
+			{
+				box = new CustomWidgetTransmogBox(SlotType.SPECIAL, parent, slot, this::onTransmogUISlotClicked);
+				box.create();
+				Integer contents = preset.getId(slot, false);
+				if (contents == null)
+				{
+					box.setEmpty();
+				}
+				else if (contents == -1)
+				{
+					box.setDefault();
+				}
+				else
+				{
+					final Mapping mapping = MappingMapping.fromSlot(slot).getFromModel().apply(contents);
+					box.set(mapping.modelId(), mapping.prettyName());
+				}
+			}
+			final Point pos = SLOT_POSITIONS.get(slot);
+			box.layout(BASE_POSITION.getX() + pos.getX(), BASE_POSITION.getY() + pos.getY());
+			uiSlots.put(slot, box);
 		}
 
 		// Create blocker

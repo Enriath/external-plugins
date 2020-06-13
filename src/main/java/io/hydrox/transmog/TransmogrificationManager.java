@@ -150,7 +150,7 @@ public class TransmogrificationManager
 				// TODO: Temp while the other boxes aren't implemented, remove the if after that's done
 				if (getUIManager().getUiSlots().get(slot) == null){continue;}
 
-				getUIManager().getUiSlots().get(slot).setContents(preset.getId(slot, false), preset.getName(slot));
+				getUIManager().getUiSlots().get(slot).set(preset.getId(slot, false), preset.getName(slot));
 			}
 		}
 	}
@@ -280,5 +280,14 @@ public class TransmogrificationManager
 		config.loadDefault(client.getUsername());
 		config.loadPresets(client.getUsername());
 		clientThread.invoke(() -> presets.stream().filter(Objects::nonNull).forEach(e -> e.loadNames(itemManager)));
+	}
+
+	public Gender getGender()
+	{
+		if (!isDefaultStateSet())
+		{
+			return null;
+		}
+		return HairMapping.fromKitID(emptyState[TransmogSlot.HAIR.getKitIndex()]).getGender();
 	}
 }

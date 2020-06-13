@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -65,6 +66,16 @@ public class TransmogPreset
 		final Integer transmog = overrides.get(slot);
 		if (transmog == null)
 		{
+			// Sleeves are the one outlier. Unlike Hair and Jaw, they don't have an empty option (like Bald or
+			// Clean Shaven), and the Torso slot will either rely on the base look, or provide their own sleeves.
+			// As a result, ignoring sleeves during transmog application will cause inconsistencies when overlaying
+			// armour with arms (most of them) over something that doesn't (eg. chainbodies). Since this is the only
+			// situation like this, a patch like this should be fine. Also, wow 5 lines of comments!
+			if (slot == TransmogSlot.SLEEVES && forKit)
+			{
+				return 0;
+			}
+
 			return IGNORE;
 		}
 		else if (transmog == EMPTY)
@@ -73,7 +84,24 @@ public class TransmogPreset
 		}
 		else
 		{
-			return transmog + (forKit ? 512 : 0);
+			if (slot.getSlotType() == TransmogSlot.SlotType.ITEM)
+			{
+				return transmog + (forKit ? 512 : 0);
+			}
+
+			if (forKit)
+			{
+				return transmog;
+			}
+			else
+			{
+				Function<Integer, Mapping> m = MappingMapping.fromSlot(slot).getFromKit();
+				if (m == null)
+				{
+					return transmog;
+				}
+				return m.apply(transmog).modelId();
+			}
 		}
 	}
 
@@ -121,7 +149,26 @@ public class TransmogPreset
 			{
 				continue;
 			}
-			names.put(entry.getKey(), itemManager.getItemComposition(id).getName());
+			final String name;
+			final TransmogSlot slot = entry.getKey();
+			if (slot.getSlotType() == TransmogSlot.SlotType.SPECIAL)
+			{
+				Mapping mapping = MappingMapping.fromSlot(slot).getFromKit().apply(id);
+				if (mapping != null)
+				{
+					name = mapping.prettyName();
+				}
+				else
+				{
+					name = "Empty";
+				}
+			}
+			else
+			{
+				name = itemManager.getItemComposition(id).getName();
+			}
+
+			names.put(entry.getKey(), name);
 		}
 	}
 }
