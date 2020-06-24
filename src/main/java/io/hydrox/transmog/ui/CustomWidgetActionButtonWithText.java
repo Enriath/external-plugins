@@ -49,7 +49,6 @@ public class CustomWidgetActionButtonWithText extends CustomWidgetActionButton
 		text = createTextWidget(initialText);
 		text.setOriginalWidth(8);
 		text.setOriginalHeight(12);
-		//text.setFontId(819);
 		text.setFontId(764);
 		text.setTextColor(fromRGB(Color.CYAN));
 		text.setXTextAlignment(WidgetTextAlignment.CENTER);

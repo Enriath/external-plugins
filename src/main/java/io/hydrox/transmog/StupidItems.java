@@ -22,27 +22,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.hydrox.transmog.ui;
+package io.hydrox.transmog;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runelite.client.game.SpriteOverride;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
-public enum CustomSprites implements SpriteOverride
+public enum StupidItems
 {
-	TRANSMOG_LOGO(-4365, "transmog.png"),
-	//TRANSMOG_SAVE(-4366, "save.png"),
-	//TRANSMOG_DELETE(-4367, "delete.png"),
-	TUTORIAL_ARROW(-4368, "arrow.png"),
-	SLOT_HAIR(-4369, "hair.png"),
-	SLOT_JAW(-4370, "jaw.png"),
-	SLOT_SLEEVES(-4371, "sleeves.png"),
-	QUESTION_MARK(-4372, "questionmark.png");
+	/**
+	 * You know what's really fun? When certain items exist that are identical to the normal item,
+	 * but they don't actually work as equipment because they're fake? Love it
+	 */
 
-	@Getter
-	private final int spriteId;
+	DRAGON_CHAINBODY(2513, 3140);
 
-	@Getter
-	private final String fileName;
+	private final int badId;
+	private final int goodId;
+
+	private static final Map<Integer, Integer> MAP = new HashMap<>();
+
+	static
+	{
+		for (StupidItems i : values())
+		{
+			MAP.put(i.badId, i.goodId);
+		}
+	}
+
+	public static int convertId(int id)
+	{
+		return MAP.getOrDefault(id, id);
+	}
 }

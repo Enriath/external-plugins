@@ -33,6 +33,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum FacialHairMapping implements Mapping
 {
+	EMPTY("Empty", -1, -1),
+
 	CLEAN_SHAVEN("Clean-shaven", -1, 270),
 	GOATEE("Goatee", 81, 266),
 	LONG("Long", 82, 267),

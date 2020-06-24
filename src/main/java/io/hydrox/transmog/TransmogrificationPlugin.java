@@ -24,28 +24,33 @@
  */
 package io.hydrox.transmog;
 
-import com.google.common.primitives.Ints;
 import io.hydrox.transmog.ui.CustomSprites;
 import io.hydrox.transmog.ui.UIManager;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Player;
-import net.runelite.api.events.CommandExecuted;
+import net.runelite.api.Varbits;
+import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
+import net.runelite.api.events.MenuEntryAdded;
+import net.runelite.api.events.MenuShouldLeftClick;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.VarClientIntChanged;
+import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
+import java.util.Arrays;
 
 @PluginDescriptor(
 	name = "Transmogrification",
@@ -76,6 +81,9 @@ public class TransmogrificationPlugin extends Plugin
 	private int lastWorld = 0;
 	private int old384 = 0;
 
+	@Getter
+	private boolean inPvpSituation;
+
 	@Override
 	public void startUp()
 	{
@@ -86,7 +94,11 @@ public class TransmogrificationPlugin extends Plugin
 			lastWorld = client.getWorld();
 			transmogManager.loadData();
 			transmogManager.updateTransmog();
-			clientThread.invoke(uiManager::createInitialUI);
+			clientThread.invoke(() ->
+				{
+					uiManager.createInitialUI();
+					updatePvpState();
+				});
 		}
 	}
 
@@ -98,6 +110,18 @@ public class TransmogrificationPlugin extends Plugin
 		uiManager.shutDown();
 		lastWorld = 0;
 		old384 = 0;
+	}
+
+	private void updatePvpState()
+	{
+		final boolean newState = client.getVar(Varbits.PVP_SPEC_ORB) == 1;
+
+		if (newState != inPvpSituation)
+		{
+			inPvpSituation = newState;
+			transmogManager.onPvpChanged(newState);
+			uiManager.onPvpChanged(newState);
+		}
 	}
 
 	@Subscribe
@@ -129,6 +153,37 @@ public class TransmogrificationPlugin extends Plugin
 		transmogManager.reapplyTransmog();
 	}
 
+	private boolean forceRightClickFlag;
+
+	@Subscribe
+	public void onMenuEntryAdded(MenuEntryAdded e)
+	{
+		if (e.getTarget().equals("<col=ff981f><col=004356>"))
+		{
+			forceRightClickFlag = true;
+		}
+	}
+
+	@Subscribe
+	public void onMenuShouldLeftClick(MenuShouldLeftClick e)
+	{
+		if (!forceRightClickFlag)
+		{
+			return;
+		}
+
+		forceRightClickFlag = false;
+		MenuEntry[] menuEntries = client.getMenuEntries();
+		for (MenuEntry entry : menuEntries)
+		{
+			if (entry.getTarget().equals("<col=ff981f><col=004356>"))
+			{
+				e.setForceRightClick(true);
+				return;
+			}
+		}
+	}
+
 	@Subscribe
 	public void onResizeableChanged(ResizeableChanged e)
 	{
@@ -146,6 +201,12 @@ public class TransmogrificationPlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onVarbitChanged(VarbitChanged e)
+	{
+		updatePvpState();
+	}
+
+	@Subscribe
 	public void onVarClientIntChanged(VarClientIntChanged e)
 	{
 		// idk what VarCInt 384 is for, but it only changes when the player gets past the splash screen
@@ -160,70 +221,41 @@ public class TransmogrificationPlugin extends Plugin
 		}
 	}
 
-	// TODO: DEBUG
-	private boolean debug_kits = false;
-	private int debug_kitSlot = -1;
-	@Subscribe
-	public void onCommandExecuted(CommandExecuted e)
-	{
-		switch (e.getCommand())
-		{
-			case "t":
-				config.transmogActive(!config.transmogActive());
-				transmogManager.updateTransmog();
-
-				break;
-			case "e":
-				transmogManager.updateDefault();
-				break;
-			case "p":
-				int id = Integer.parseInt(e.getArguments()[0]);
-				if (id > 0 && id <= TransmogPreset.PRESET_COUNT)
-				{
-					config.currentPreset(id);
-					transmogManager.updateTransmog();
-				}
-				break;
-			case "s":
-				config.savePresets();
-				break;
-			case "u":
-				uiManager.createInitialUI();
-				break;
-			case "blocker":
-				uiManager.getBlockerBox().setHidden(false);
-				break;
-			case "kits":
-				debug_kits = !debug_kits;
-				break;
-			case "kit_slot":
-				debug_kitSlot = Ints.constrainToRange(Integer.parseInt(e.getArguments()[0]), -1, 11);
-				break;
-
-		}
-	}
+	private int lastHash;
+	private boolean forceChangedFlag;
 
 	@Subscribe
 	public void onGameTick(GameTick e)
 	{
+		if (!config.transmogActive())
+		{
+			return;
+		}
 		Player local = client.getLocalPlayer();
 		if (local == null)
 		{
 			return;
 		}
-		if (!debug_kits)
+		final int currentHash = Arrays.hashCode(local.getPlayerComposition().getEquipmentIds());
+		if (currentHash != lastHash)
 		{
-			local.setOverheadText(null);
-			return;
+			forceChangedFlag = true;
+			lastHash = currentHash;
+		}
+	}
+
+	@Subscribe
+	public void onClientTick(ClientTick e)
+	{
+		if (forceChangedFlag)
+		{
+			transmogManager.updateTransmog();
+			forceChangedFlag = false;
 		}
 
-		if (debug_kitSlot == -1)
+		if (uiManager.getPlayerPreview() != null)
 		{
-			local.setOverheadText("[" + StringUtils.join(local.getPlayerComposition().getEquipmentIds(), ',') + "]");
-		}
-		else
-		{
-			local.setOverheadText("[" + local.getPlayerComposition().getEquipmentIds()[debug_kitSlot] + "]");
+			uiManager.getPlayerPreview().tickRotation();
 		}
 	}
 }

@@ -25,6 +25,7 @@
 package io.hydrox.transmog.ui;
 
 import com.google.inject.Inject;
+import io.hydrox.transmog.StupidItems;
 import io.hydrox.transmog.TransmogSlot;
 import lombok.Setter;
 import lombok.Value;
@@ -141,6 +142,7 @@ public class CustomItemSearch extends CustomSearch
 
 		Set<ItemIcon> itemIcons = new HashSet<>();
 		for (int i = 0; i < client.getItemCount() && results.size() < MAX_RESULTS; i++)
+		//for (int i = client.getItemCount() - 1; i >= 0 && results.size() < MAX_RESULTS; i--)
 		{
 			ItemComposition itemComposition = itemManager.getItemComposition(itemManager.canonicalize(i));
 			ItemStats itemStats = itemManager.getItemStats(itemComposition.getId(), false);
@@ -153,7 +155,7 @@ public class CustomItemSearch extends CustomSearch
 
 			// The client assigns "null" to item names of items it doesn't know about
 			// and the item might already be in the results from canonicalize
-			if (stats.getSlot() == slot.getKitIndex() && name.contains(search))
+			if (stats.getSlot() == slot.getKitIndex() && name.contains(search) && !results.contains(itemComposition) && !name.equals("null"))
 			//if (!name.equals("null") && name.contains(search) && !results.containsKey(itemComposition.getId()) && stats.getSlot() == slot.getKitIndex())
 			{
 				// Check if the results already contain the same item image
@@ -174,7 +176,7 @@ public class CustomItemSearch extends CustomSearch
 	protected void runCallback(Object o)
 	{
 		ItemComposition ic = (ItemComposition) o;
-		onItemSelected.accept(ic.getId(), ic.getName());
+		onItemSelected.accept(StupidItems.convertId(ic.getId()), ic.getName());
 	}
 
 	@Override

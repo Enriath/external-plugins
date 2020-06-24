@@ -33,9 +33,14 @@ public class CustomWidgetToggleButton extends CustomWidgetWithIcon implements In
 	private int selectedBackgroundSprite;
 	private int backgroundSpriteID;
 
+	private String verbWhenOff;
+	private String verbWhenOn;
+
 	private boolean selected;
 
 	private final WidgetBooleanCallback callback;
+
+	private Widget clickbox;
 
 	public CustomWidgetToggleButton(final Widget parent, final String name, int backgroundSprite, int selectedBackgroundSprite, int iconSprite, final WidgetBooleanCallback callback)
 	{
@@ -45,17 +50,24 @@ public class CustomWidgetToggleButton extends CustomWidgetWithIcon implements In
 		this.callback = callback;
 	}
 
+	public void setVerbs(String off, String on)
+	{
+		verbWhenOff = off;
+		verbWhenOn = on;
+	}
+
 	public void toggle()
 	{
 		selected = !selected;
 		base.setSpriteId(selected ? selectedBackgroundSprite : backgroundSpriteID);
-		icon.setAction(1, selected ? "Close" : "Open");
+		clickbox.setAction(1, selected ? verbWhenOn : verbWhenOff);
 	}
 
 	@Override
 	public void layout(int x, int y)
 	{
 		layoutWidget(base, x, y);
+		layoutWidget(clickbox, x, y);
 
 		super.layout(x, y);
 	}
@@ -68,11 +80,14 @@ public class CustomWidgetToggleButton extends CustomWidgetWithIcon implements In
 
 		icon = createSpriteWidget(iconWidth, iconHeight);
 		icon.setSpriteId(iconSpriteID);
-		icon.setOnOpListener((JavaScriptCallback) this::onButtonClicked);
-		icon.setOnMouseRepeatListener((JavaScriptCallback) e -> e.getSource().setOpacity(120));
-		icon.setOnMouseLeaveListener((JavaScriptCallback) e -> e.getSource().setOpacity(0));
-		icon.setHasListener(true);
-		icon.setAction(1, "Open");
+
+
+		clickbox = createSpriteWidget(width, height);
+		clickbox.setOnOpListener((JavaScriptCallback) this::onButtonClicked);
+		clickbox.setOnMouseRepeatListener((JavaScriptCallback) e -> icon.setOpacity(120));
+		clickbox.setOnMouseLeaveListener((JavaScriptCallback) e -> icon.setOpacity(0));
+		clickbox.setHasListener(true);
+		clickbox.setAction(1, verbWhenOff);
 	}
 
 	@Override

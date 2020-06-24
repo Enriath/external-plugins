@@ -24,17 +24,16 @@
  */
 package io.hydrox.transmog;
 
-import lombok.NoArgsConstructor;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.Text;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor
 public class TransmogPreset
 {
 	static final int PRESET_COUNT = 4;
@@ -43,6 +42,17 @@ public class TransmogPreset
 
 	private final Map<TransmogSlot, Integer> overrides = new HashMap<>();
 	private final Map<TransmogSlot, String> names = new HashMap<>();
+
+	public TransmogPreset()
+	{
+		for (TransmogSlot slot : TransmogSlot.values())
+		{
+			if (slot.getSlotType() == TransmogSlot.SlotType.SPECIAL)
+			{
+				setDefaultSlot(slot);
+			}
+		}
+	}
 
 	public void setDefaultSlot(TransmogSlot slot)
 	{
@@ -71,7 +81,7 @@ public class TransmogPreset
 			// As a result, ignoring sleeves during transmog application will cause inconsistencies when overlaying
 			// armour with arms (most of them) over something that doesn't (eg. chainbodies). Since this is the only
 			// situation like this, a patch like this should be fine. Also, wow 5 lines of comments!
-			if (slot == TransmogSlot.SLEEVES && forKit)
+			if (slot.getSlotType() == TransmogSlot.SlotType.SPECIAL && forKit)
 			{
 				return 0;
 			}
@@ -100,7 +110,7 @@ public class TransmogPreset
 				{
 					return transmog;
 				}
-				return m.apply(transmog).modelId();
+				return Optional.ofNullable(m.apply(transmog)).map(Mapping::modelId).orElse(-1);
 			}
 		}
 	}
@@ -131,10 +141,14 @@ public class TransmogPreset
 		List<String> values = Text.fromCSV(configStr);
 		for (int i = 0; i < values.size(); i++)
 		{
+			TransmogSlot slot = TransmogSlot.values()[i];
 			String val = values.get(i);
-			if (!val.equals("null"))
+			if (val.equals("null"))
 			{
-				TransmogSlot slot = TransmogSlot.values()[i];
+				overrides.remove(slot);
+			}
+			else
+			{
 				overrides.put(slot, Integer.parseInt(val));
 			}
 		}

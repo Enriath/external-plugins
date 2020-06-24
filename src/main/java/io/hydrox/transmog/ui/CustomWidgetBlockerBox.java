@@ -105,7 +105,7 @@ public class CustomWidgetBlockerBox extends CustomWidget
 		// RL does not have the stuff required to rotate sprites exported (if there is such a thing),
 		// so a custom needs be used instead
 		arrow = createSpriteWidget(48, 48);
-		arrow.setSpriteId(CustomSprites.TRANSMOG_TUTORIAL_ARROW.getSpriteId());
+		arrow.setSpriteId(CustomSprites.TUTORIAL_ARROW.getSpriteId());
 	}
 
 	private Widget createRectangleWidget(int width, int height)

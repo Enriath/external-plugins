@@ -33,6 +33,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum HairMapping implements Mapping
 {
+	EMPTY("Empty", null, -1, -1),
+
 	BALD("Bald", Gender.FEMALE, 120, 301),
 	BUN("Bun", Gender.FEMALE, 103, 302),
 	DREADLOCKS("Dreadlocks", Gender.FEMALE, 110, 303),

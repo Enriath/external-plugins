@@ -33,7 +33,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum SleeveMapping implements Mapping
 {
-	EMPTY("Empty", null, 0, 0),
+	EMPTY("Empty", null, -1, -1),
 
 	SHORT_SLEEVES("Short sleeves", Gender.FEMALE, 332, 317),
 	BARE_ARMS("Bare arms", Gender.FEMALE, 351, 318),

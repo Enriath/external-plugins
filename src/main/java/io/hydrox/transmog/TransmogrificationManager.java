@@ -68,6 +68,9 @@ public class TransmogrificationManager
 	private ChatMessageManager chatMessageManager;
 
 	@Inject
+	private TransmogrificationPlugin plugin;
+
+	@Inject
 	private TransmogrificationConfigManager config;
 
 	@Inject
@@ -92,6 +95,18 @@ public class TransmogrificationManager
 		currentActualState = null;
 		emptyState = null;
 		presets = initialisePresetStorage();
+	}
+
+	public void onPvpChanged(boolean newValue)
+	{
+		if (newValue)
+		{
+			removeTransmog();
+		}
+		else
+		{
+			updateTransmog();
+		}
 	}
 
 	/**
@@ -147,9 +162,6 @@ public class TransmogrificationManager
 			TransmogPreset preset = getCurrentPreset();
 			for (TransmogSlot slot : TransmogSlot.values())
 			{
-				// TODO: Temp while the other boxes aren't implemented, remove the if after that's done
-				if (getUIManager().getUiSlots().get(slot) == null){continue;}
-
 				getUIManager().getUiSlots().get(slot).set(preset.getId(slot, false), preset.getName(slot));
 			}
 		}
@@ -169,7 +181,7 @@ public class TransmogrificationManager
 
 	void applyTransmog()
 	{
-		if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null)
+		if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null || plugin.isInPvpSituation())
 		{
 			return;
 		}

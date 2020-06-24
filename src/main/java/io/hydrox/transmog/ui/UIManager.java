@@ -36,6 +36,7 @@ import io.hydrox.transmog.TransmogSlot;
 import io.hydrox.transmog.TransmogSlot.SlotType;
 import io.hydrox.transmog.TransmogrificationConfigManager;
 import io.hydrox.transmog.TransmogrificationManager;
+import io.hydrox.transmog.TransmogrificationPlugin;
 import static io.hydrox.transmog.ui.MenuOps.CLEAR;
 import static io.hydrox.transmog.ui.MenuOps.FORCE_DEFAULT;
 import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
@@ -43,6 +44,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
+import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetType;
@@ -52,6 +54,7 @@ import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import org.apache.commons.lang3.tuple.Pair;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.List;
@@ -104,9 +107,16 @@ public class UIManager
 	private TransmogrificationConfigManager config;
 
 	@Inject
+	private TransmogrificationPlugin plugin;
+
+	@Inject
 	private TransmogrificationManager manager;
 
-	private CustomWidgetCheckbox stateBox;
+	private CustomWidgetToggleButton stateToggle;
+	private Widget helpText;
+	private Widget pvpBlocker;
+	@Getter
+	private CustomWidgetPlayerPreview playerPreview;
 	@Getter
 	private CustomWidgetActionButton savePresetButton;
 	@Getter
@@ -134,6 +144,14 @@ public class UIManager
 		{
 			chatboxPanelManager.close();
 			isSearching = false;
+		}
+	}
+
+	public void onPvpChanged(boolean newValue)
+	{
+		if (pvpBlocker != null)
+		{
+			pvpBlocker.setHidden(!newValue);
 		}
 	}
 
@@ -172,11 +190,52 @@ public class UIManager
 					createInitialUI();
 				}
 			});
+		showUI.setVerbs("Edit", "Exit");
 		showUI.setSize(25, 25);
 		showUI.setIconSize(32, 32);
 		showUI.create();
 
 		showUI.layout(3, 3);
+
+		stateToggle = new CustomWidgetToggleButton(
+			parent,
+			"Transmogrification",
+			195,
+			196,
+			CustomSprites.TRANSMOG_LOGO.getSpriteId(),
+			state ->
+			{
+				if ((!manager.isDefaultStateSet() && !state) || plugin.isInPvpSituation())
+				{
+					stateToggle.toggle();
+					return;
+				}
+				config.transmogActive(state);
+				manager.updateTransmog();
+			}
+		);
+		stateToggle.setVerbs("Enable", "Disable");
+		stateToggle.setSize(25, 25);
+		stateToggle.setIconSize(16, 13);
+		stateToggle.create();
+		if (config.transmogActive() && manager.isDefaultStateSet())
+		{
+			stateToggle.toggle();
+		}
+		stateToggle.layout(30, 3);
+
+		pvpBlocker = parent.createChild(-1, WidgetType.GRAPHIC);
+		//pvpBlocker.setSpriteId(524); // Red Skull
+		pvpBlocker.setSpriteId(1047); // Block icon
+		pvpBlocker.setOriginalWidth(25);
+		pvpBlocker.setOriginalHeight(25);
+		pvpBlocker.setHasListener(true);
+		pvpBlocker.setNoClickThrough(true);
+		pvpBlocker.setOnOpListener((JavaScriptCallback) e -> {});
+		pvpBlocker.setOriginalX(30);
+		pvpBlocker.setOriginalY(3);
+		pvpBlocker.setHidden(!plugin.isInPvpSituation());
+		pvpBlocker.setAction(0, "Transmog is disabled in PvP situations");
 	}
 
 	public void onTransmogUISlotClicked(int op, TransmogSlot slot)
@@ -256,34 +315,46 @@ public class UIManager
 			child.revalidate();
 		}
 
-		stateBox = new CustomWidgetCheckbox(
+		helpText = parent.createChild(-1, WidgetType.TEXT);
+		helpText.setTextColor(CustomWidget.fromRGB(Color.YELLOW));
+		helpText.setTextShadowed(true);
+		helpText.setFontId(494);
+		helpText.setOriginalWidth(90);
+		helpText.setOriginalHeight(150);
+		helpText.setOriginalX(3);
+		helpText.setOriginalY(60);
+		helpText.setText("Choose the items you want to see yourself wearing. If you're having glitchy collision, remove your hair/sleeves/beard. Removing hair requires toggling the transmog. Please report broken items to the support link.");
+		helpText.setHidden(true);
+		helpText.revalidate();
+
+		playerPreview = new CustomWidgetPlayerPreview(parent, "Preview");
+		playerPreview.create();
+		playerPreview.layout(3, 60);
+
+
+		CustomWidgetToggleButton guideButton = new CustomWidgetToggleButton(
 			parent,
-			"Transmog State",
-			config.transmogActive() && manager.isDefaultStateSet(),
-			1212,
-			1213,
-			state ->
+			"Help",
+			195,
+			196,
+			CustomSprites.QUESTION_MARK.getSpriteId(),
+			selected ->
 			{
-				if (!manager.isDefaultStateSet())
-				{
-					stateBox.toggle();
-					return;
-				}
-				config.transmogActive(state);
-				manager.updateTransmog();
+				helpText.setHidden(!selected);
+				playerPreview.setHidden(selected);
 			});
+		guideButton.setVerbs("Show", "Hide");
+		guideButton.setSize(25, 25);
+		guideButton.setIconSize(8, 17);
+		guideButton.create();
 
-		stateBox.setSize(15, 15);
-		stateBox.create();
-
-		stateBox.layout(3, 30);
-
+		guideButton.layout(3, 30);
 
 		// Create bottom buttons
 
 		CustomWidgetActionButtonWithText selectPresetButton = new CustomWidgetActionButtonWithText(
 			parent,
-			"",
+			"<col=004356>",
 			909,
 			config.currentPreset() + "",
 			manager::selectTransmog
@@ -299,7 +370,7 @@ public class UIManager
 
 		savePresetButton = new CustomWidgetActionButton(
 			parent,
-			"",
+			"<col=004356>",
 			1194,
 			op ->
 			{
@@ -323,7 +394,7 @@ public class UIManager
 
 		deletePresetButton = new CustomWidgetActionButton(
 			parent,
-			"",
+			"<col=004356>",
 			1235,
 			op ->
 			{
@@ -334,7 +405,17 @@ public class UIManager
 				manager.setPreset(op, null);
 				manager.updateTransmog();
 				config.savePresets();
-				uiSlots.values().forEach(CustomWidgetTransmogBox::setEmpty);
+				uiSlots.forEach((slot, widget) ->
+				{
+					if (slot.getSlotType() == SlotType.SPECIAL)
+					{
+						widget.setDefault();
+					}
+					else
+					{
+						widget.setEmpty();
+					}
+				});
 			}
 		);
 		deletePresetButton.setSize(40, 40);
@@ -432,14 +513,7 @@ public class UIManager
 
 		parent.revalidate();
 
-		// Sprite 170 for the backgrounds
-
-		/*
-		 *	For custom sprites in widgets:
-		 * 		Add the desired sprites into the client using `spriteManager.addSpriteOverrides`
-		 * 		Those sprites should use a negative index that's pretty far out (Wiki used -300)
-		 * 		Assigning them as the sprite ID will work
-		 */
+		manager.selectTransmog(config.currentPreset());
 	}
 
 	public void removeUI()
@@ -451,6 +525,7 @@ public class UIManager
 			child.setHidden(false);
 			child.revalidate();
 		}
+		playerPreview = null;
 		parent.revalidate();
 		if (isSearching)
 		{
