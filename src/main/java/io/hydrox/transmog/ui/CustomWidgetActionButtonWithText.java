@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog.ui;
 
+import net.runelite.api.FontID;
 import net.runelite.api.ScriptEvent;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetTextAlignment;
@@ -49,7 +50,7 @@ public class CustomWidgetActionButtonWithText extends CustomWidgetActionButton
 		text = createTextWidget(initialText);
 		text.setOriginalWidth(8);
 		text.setOriginalHeight(12);
-		text.setFontId(764);
+		text.setFontId(FontID.BARBARIAN);
 		text.setTextColor(fromRGB(Color.CYAN));
 		text.setXTextAlignment(WidgetTextAlignment.CENTER);
 		text.setYTextAlignment(WidgetTextAlignment.BOTTOM);

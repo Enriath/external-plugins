@@ -26,6 +26,7 @@ package io.hydrox.transmog.ui;
 
 import com.google.common.primitives.Ints;
 import net.runelite.api.Client;
+import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetPositionMode;
@@ -110,11 +111,11 @@ public abstract class CustomSearch extends ChatboxTextInput
 		exit.setOriginalY(0);
 		exit.setOriginalWidth(20);
 		exit.setOriginalHeight(20);
-		exit.setSpriteId(1126);
+		exit.setSpriteId(SpriteID.GE_CANCEL_OFFER_BUTTON);
 		exit.setAction(0, "Close");
 		exit.setOnOpListener((JavaScriptCallback) e -> chatboxPanelManager.close());
-		exit.setOnMouseRepeatListener((JavaScriptCallback) e -> exit.setSpriteId(1127));
-		exit.setOnMouseLeaveListener((JavaScriptCallback) e -> exit.setSpriteId(1126));
+		exit.setOnMouseRepeatListener((JavaScriptCallback) e -> exit.setSpriteId(SpriteID.GE_CANCEL_OFFER_BUTTON_HOVERED));
+		exit.setOnMouseLeaveListener((JavaScriptCallback) e -> exit.setSpriteId(SpriteID.GE_CANCEL_OFFER_BUTTON));
 		exit.setHasListener(true);
 		exit.revalidate();
 

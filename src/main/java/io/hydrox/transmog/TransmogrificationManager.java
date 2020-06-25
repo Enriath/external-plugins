@@ -229,7 +229,6 @@ public class TransmogrificationManager
 		{
 			return;
 		}
-		log.info("Default: {}", currentActualState);
 		PlayerComposition comp = client.getLocalPlayer().getPlayerComposition();
 		int[] kits = comp.getEquipmentIds();
 		System.arraycopy(currentActualState, 0, kits, 0, kits.length);

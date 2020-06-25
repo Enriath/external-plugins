@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog.ui;
 
+import net.runelite.api.FontID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetTextAlignment;
@@ -100,7 +101,7 @@ public class CustomWidgetBlockerBox extends CustomWidget
 		text.setOriginalWidth(width - 20);
 		text.setOriginalHeight(height);
 		text.setTextColor(fromRGB(Color.YELLOW));
-		text.setFontId(495);
+		text.setFontId(FontID.PLAIN_12);
 
 		// RL does not have the stuff required to rotate sprites exported (if there is such a thing),
 		// so a custom needs be used instead

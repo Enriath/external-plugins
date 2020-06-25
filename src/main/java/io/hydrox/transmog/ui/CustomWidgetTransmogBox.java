@@ -31,6 +31,7 @@ import static io.hydrox.transmog.ui.MenuOps.CLEAR;
 import static io.hydrox.transmog.ui.MenuOps.FORCE_DEFAULT;
 import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
 import net.runelite.api.ScriptEvent;
+import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 
@@ -136,7 +137,7 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 		slotWidget.setSpriteId(slot.getSpriteID());
 
 		slotDefaultWidget = createSpriteWidget(32, 32);
-		slotDefaultWidget.setSpriteId(1193);
+		slotDefaultWidget.setSpriteId(SpriteID.OPTIONS_DISABLED_OPTION_OVERLAY);
 
 		if (type == SlotType.ITEM)
 		{

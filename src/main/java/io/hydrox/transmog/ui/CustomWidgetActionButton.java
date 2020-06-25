@@ -25,6 +25,7 @@
 package io.hydrox.transmog.ui;
 
 import net.runelite.api.ScriptEvent;
+import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 
@@ -56,23 +57,16 @@ public class CustomWidgetActionButton extends CustomWidgetWithIcon implements In
 	public void create()
 	{
 		topLeftBrace = createSpriteWidget(9, 9);
-		topLeftBrace.setSpriteId(913);
 		topRightBrace = createSpriteWidget(9, 9);
-		topRightBrace.setSpriteId(914);
 		bottomLeftBrace = createSpriteWidget(9, 9);
-		bottomLeftBrace.setSpriteId(915);
 		bottomRightBrace = createSpriteWidget(9, 9);
-		bottomRightBrace.setSpriteId(916);
 
 		leftSide = createSpriteWidget(9, height - 9 * 2);
-		leftSide.setSpriteId(917);
 		topSide = createSpriteWidget(width - 9 * 2, 9);
-		topSide.setSpriteId(918);
 		rightSide = createSpriteWidget(9, height - 9 * 2);
-		rightSide.setSpriteId(919);
 		bottomSide = createSpriteWidget(width - 9 * 2, 9);
-		bottomSide.setSpriteId(920);
 
+		onLeave();
 
 		icon = createSpriteWidget(iconWidth, iconHeight);
 		icon.setSpriteId(iconSpriteID);
@@ -96,26 +90,26 @@ public class CustomWidgetActionButton extends CustomWidgetWithIcon implements In
 
 	private void onHover()
 	{
-		topLeftBrace.setSpriteId(921);
-		topRightBrace.setSpriteId(922);
-		bottomLeftBrace.setSpriteId(923);
-		bottomRightBrace.setSpriteId(924);
-		leftSide.setSpriteId(925);
-		topSide.setSpriteId(926);
-		rightSide.setSpriteId(927);
-		bottomSide.setSpriteId(928);
+		topLeftBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_TOP_LEFT_HOVERED);
+		topRightBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_TOP_RIGHT_HOVERED);
+		bottomLeftBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_BOTTOM_LEFT_HOVERED);
+		bottomRightBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_BOTTOM_RIGHT_HOVERED);
+		leftSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_LEFT_HOVERED);
+		topSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_TOP_HOVERED);
+		rightSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_RIGHT_HOVERED);
+		bottomSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_BOTTOM_HOVERED);
 	}
 
 	private void onLeave()
 	{
-		topLeftBrace.setSpriteId(913);
-		topRightBrace.setSpriteId(914);
-		bottomLeftBrace.setSpriteId(915);
-		bottomRightBrace.setSpriteId(916);
-		leftSide.setSpriteId(917);
-		topSide.setSpriteId(918);
-		rightSide.setSpriteId(919);
-		bottomSide.setSpriteId(920);
+		topLeftBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_TOP_LEFT);
+		topRightBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_TOP_RIGHT);
+		bottomLeftBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_BOTTOM_LEFT);
+		bottomRightBrace.setSpriteId(SpriteID.EQUIPMENT_BUTTON_METAL_CORNER_BOTTOM_RIGHT);
+		leftSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_LEFT);
+		topSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_TOP);
+		rightSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_RIGHT);
+		bottomSide.setSpriteId(SpriteID.EQUIPMENT_BUTTON_EDGE_BOTTOM);
 	}
 
 	@Override

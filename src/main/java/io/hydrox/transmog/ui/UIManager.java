@@ -43,7 +43,9 @@ import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.Client;
+import net.runelite.api.FontID;
 import net.runelite.api.Point;
+import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -78,11 +80,11 @@ public class UIManager
 		.build();
 
 	private static final List<Pair<Rectangle, Integer>> INTER_SLOT_BRACERS = ImmutableList.<Pair<Rectangle, Integer>>builder()
-		.add(Pair.of(new Rectangle(0, 36, 36, 122), 172))
-		.add(Pair.of(new Rectangle(-56, 114, 36, 44), 172))
-		.add(Pair.of(new Rectangle(-46, 0, 46, 36), 173))
-		.add(Pair.of(new Rectangle(-5, 39, 5, 36), 173))
-		.add(Pair.of(new Rectangle(-20, 78, 20, 36), 173))
+		.add(Pair.of(new Rectangle(0, 36, 36, 122), SpriteID.IRON_RIVETS_VERTICAL))
+		.add(Pair.of(new Rectangle(-56, 114, 36, 44), SpriteID.IRON_RIVETS_VERTICAL))
+		.add(Pair.of(new Rectangle(-46, 0, 46, 36), SpriteID.IRON_RIVETS_HORIZONTAL))
+		.add(Pair.of(new Rectangle(-5, 39, 5, 36), SpriteID.IRON_RIVETS_HORIZONTAL))
+		.add(Pair.of(new Rectangle(-20, 78, 20, 36), SpriteID.IRON_RIVETS_HORIZONTAL))
 		.build();
 
 	@Inject
@@ -175,9 +177,9 @@ public class UIManager
 		CustomWidgetToggleButton showUI = new CustomWidgetToggleButton(
 			parent,
 			"Transmogrification",
-			195,
-			196,
-			1654,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL_SELECTED,
+			1654, // Unmapped
 			selected ->
 			{
 				if (selected)
@@ -200,8 +202,8 @@ public class UIManager
 		stateToggle = new CustomWidgetToggleButton(
 			parent,
 			"Transmogrification",
-			195,
-			196,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL_SELECTED,
 			CustomSprites.TRANSMOG_LOGO.getSpriteId(),
 			state ->
 			{
@@ -225,8 +227,7 @@ public class UIManager
 		stateToggle.layout(30, 3);
 
 		pvpBlocker = parent.createChild(-1, WidgetType.GRAPHIC);
-		//pvpBlocker.setSpriteId(524); // Red Skull
-		pvpBlocker.setSpriteId(1047); // Block icon
+		pvpBlocker.setSpriteId(SpriteID.PLAYER_KILLING_DISABLED_OVERLAY); // Block icon
 		pvpBlocker.setOriginalWidth(25);
 		pvpBlocker.setOriginalHeight(25);
 		pvpBlocker.setHasListener(true);
@@ -318,7 +319,7 @@ public class UIManager
 		helpText = parent.createChild(-1, WidgetType.TEXT);
 		helpText.setTextColor(CustomWidget.fromRGB(Color.YELLOW));
 		helpText.setTextShadowed(true);
-		helpText.setFontId(494);
+		helpText.setFontId(FontID.PLAIN_11);
 		helpText.setOriginalWidth(90);
 		helpText.setOriginalHeight(150);
 		helpText.setOriginalX(3);
@@ -335,8 +336,8 @@ public class UIManager
 		CustomWidgetToggleButton guideButton = new CustomWidgetToggleButton(
 			parent,
 			"Help",
-			195,
-			196,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL_SELECTED,
 			CustomSprites.QUESTION_MARK.getSpriteId(),
 			selected ->
 			{
@@ -355,7 +356,7 @@ public class UIManager
 		CustomWidgetActionButtonWithText selectPresetButton = new CustomWidgetActionButtonWithText(
 			parent,
 			"<col=004356>",
-			909,
+			SpriteID.TAB_EMOTES,
 			config.currentPreset() + "",
 			manager::selectTransmog
 		);
@@ -371,7 +372,7 @@ public class UIManager
 		savePresetButton = new CustomWidgetActionButton(
 			parent,
 			"<col=004356>",
-			1194,
+			SpriteID.DUEL_ARENA_SAVE_PRESET,
 			op ->
 			{
 				if (op == 0)
@@ -395,7 +396,7 @@ public class UIManager
 		deletePresetButton = new CustomWidgetActionButton(
 			parent,
 			"<col=004356>",
-			1235,
+			SpriteID.BANK_RAID_SEND_TO_TRASH,
 			op ->
 			{
 				if (op == 0)
@@ -430,13 +431,13 @@ public class UIManager
 		saveDefaultStateButton = new CustomWidgetActionButton(
 			parent,
 			"Default State",
-			115,
+			SpriteID.PRAYER_THICK_SKIN,
 			op -> manager.updateDefault()
 		);
 		saveDefaultStateButton.setSize(40, 40);
 		saveDefaultStateButton.setIconSize(30, 30);
 		saveDefaultStateButton.create();
-		saveDefaultStateButton.setIconSprite(manager.isDefaultStateSet() ? 115 : 118);
+		saveDefaultStateButton.setIconSprite(manager.isDefaultStateSet() ? SpriteID.PRAYER_THICK_SKIN : SpriteID.PRAYER_ROCK_SKIN);
 		saveDefaultStateButton.addOption(1, "Save as");
 		saveDefaultStateButton.layout(142, 213);
 

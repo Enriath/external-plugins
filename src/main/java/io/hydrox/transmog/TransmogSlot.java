@@ -27,23 +27,23 @@ package io.hydrox.transmog;
 import io.hydrox.transmog.ui.CustomSprites;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.runelite.api.SpriteID;
 import net.runelite.client.util.Text;
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
 public enum TransmogSlot
 {
-	HEAD(0, 156, SlotType.ITEM),
-	CAPE(1, 157, SlotType.ITEM),
-	NECK(2, 158, SlotType.ITEM),
-	TORSO(4, 161, SlotType.ITEM),
+	HEAD(0, SpriteID.EQUIPMENT_SLOT_HEAD, SlotType.ITEM),
+	CAPE(1, SpriteID.EQUIPMENT_SLOT_CAPE, SlotType.ITEM),
+	NECK(2, SpriteID.EQUIPMENT_SLOT_NECK, SlotType.ITEM),
+	TORSO(4, SpriteID.EQUIPMENT_SLOT_TORSO, SlotType.ITEM),
 	SLEEVES(6, CustomSprites.SLOT_SLEEVES.getSpriteId(), SlotType.SPECIAL),
-	LEGS(7, 163, SlotType.ITEM),
+	LEGS(7, SpriteID.EQUIPMENT_SLOT_LEGS, SlotType.ITEM),
 	HAIR(8, CustomSprites.SLOT_HAIR.getSpriteId(), SlotType.SPECIAL),
-	HANDS(9, 164, SlotType.ITEM),
-	BOOTS(10, 165, SlotType.ITEM),
+	HANDS(9, SpriteID.EQUIPMENT_SLOT_HANDS, SlotType.ITEM),
+	BOOTS(10, SpriteID.EQUIPMENT_SLOT_FEET, SlotType.ITEM),
 	JAW(11, CustomSprites.SLOT_JAW.getSpriteId(), SlotType.SPECIAL);
 
 	public enum SlotType
