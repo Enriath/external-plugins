@@ -29,12 +29,15 @@ import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.Point;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
+import net.runelite.client.util.ImageUtil;
+
 import javax.inject.Inject;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -56,6 +59,11 @@ public class ContextualCursorOverlay extends Overlay
 	private final ClientUI clientUI;
 	private final SpriteManager spriteManager;
 
+
+	@Inject
+	private ConfigManager configManager;
+
+
 	@Inject
 	ContextualCursorOverlay(Client client, ClientUI clientUI, SpriteManager spriteManager)
 	{
@@ -74,8 +82,7 @@ public class ContextualCursorOverlay extends Overlay
 
 		if (client.isMenuOpen())
 		{
-			// TODO: Handle the minimenu
-			clientUI.resetCursor();
+			drawCursor("pointer");
 			return null;
 		}
 
@@ -89,17 +96,16 @@ public class ContextualCursorOverlay extends Overlay
 
 		final MenuEntry menuEntry = menuEntries[last];
 
+
 		if (menuEntry.getType() == MenuAction.WALK.getId()
-			|| menuEntry.getType() == MenuAction.CC_OP.getId()
-			|| menuEntry.getType() == MenuAction.CANCEL.getId()
-			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_2.getId()
-			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_6.getId())
+				|| menuEntry.getType() == MenuAction.CC_OP.getId()
+				|| menuEntry.getType() == MenuAction.CANCEL.getId())
 		{
-			clientUI.resetCursor();
+			drawCursor("pointer");
 			return null;
 		}
-
 		processEntry(graphics,  menuEntry.getOption(),  menuEntry.getTarget());
+
 		return null;
 	}
 
@@ -131,11 +137,13 @@ public class ContextualCursorOverlay extends Overlay
 
 		if (cursor == null)
 		{
-			clientUI.resetCursor();
+            clientUI.resetCursor();
 			return;
 		}
+
 		if (cursor.getSpriteID() != null)
 		{
+
 			final BufferedImage sprite;
 			if (client.getSpriteOverrides().containsKey(cursor.getSpriteID()))
 			{
@@ -153,18 +161,27 @@ public class ContextualCursorOverlay extends Overlay
 		}
 		else
 		{
-			final Point mousePos = client.getMouseCanvasPosition();
-			clientUI.setCursor(BLANK_MOUSE, "blank");
-			graphics.drawImage(cursor.getCursor(), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
+            drawCursor(cursor.getCursor());
 		}
 	}
+
+    private void drawCursor(String key)
+    {
+
+		BufferedImage image = ImageUtil.getResourceStreamFromClass(ContextualCursorPlugin.class, String.format(String.format("cursors/" + configManager.getConfiguration("contextualcursor", "cursorstyle", ContextualSkin.class).name() + "/%s.png", key)));
+		clientUI.setCursor(image, "blank");
+    }
 
 	private void drawCursorWithSprite(Graphics2D graphics, BufferedImage sprite)
 	{
 		clientUI.setCursor(BLANK_MOUSE, "blank");
 		final Point mousePos = client.getMouseCanvasPosition();
 		final ContextualCursor blank = ContextualCursor.BLANK;
-		graphics.drawImage(blank.getCursor(), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
+
+
+		BufferedImage image = ImageUtil.getResourceStreamFromClass(ContextualCursorPlugin.class, String.format(String.format("cursors/" + configManager.getConfiguration("contextualcursor", "cursorstyle", ContextualSkin.class).name() + "/%s.png", blank.getCursor())));
+
+		graphics.drawImage(image, mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
 		final int spriteX = POINTER_OFFSET.getX() + CENTRAL_POINT.getX() - sprite.getWidth() / 2;
 		final int spriteY = POINTER_OFFSET.getY() + CENTRAL_POINT.getY() - sprite.getHeight() / 2;
 		graphics.drawImage(sprite, mousePos.getX() + spriteX, mousePos.getY() + spriteY, null);

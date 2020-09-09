@@ -24,6 +24,7 @@
  */
 package io.hydrox.contextualcursor;
 
+import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -37,6 +38,7 @@ import javax.swing.JOptionPane;
 @PluginDescriptor(
 	name = "Contextual Cursor"
 )
+
 @Slf4j
 public class ContextualCursorPlugin extends Plugin
 {
@@ -50,6 +52,16 @@ public class ContextualCursorPlugin extends Plugin
 
 	@Inject
 	private ConfigManager configManager;
+
+	@Inject
+	private ContextualCursorConfig config;
+
+	@Provides
+	ContextualCursorConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(ContextualCursorConfig.class);
+	}
+
 
 	protected void startUp()
 	{

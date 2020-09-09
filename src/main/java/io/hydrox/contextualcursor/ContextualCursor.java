@@ -26,9 +26,6 @@ package io.hydrox.contextualcursor;
 
 import lombok.Getter;
 import net.runelite.api.SpriteID;
-import net.runelite.client.util.ImageUtil;
-
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,25 +34,35 @@ public enum ContextualCursor
 {
 	BLANK("blank"),
 	TALK("talk", "talk", "talk-to", "talk to"),
-	USE("use", "use"),
 	LADDER("ladder", "climb"),
-	LADDER_DOWN("ladder_down", "climb-down"),
-	LADDER_UP("ladder_up", "climb-up"),
-	EQUIP("equip", "wield", "wear"),
+	LADDER_DOWN("climbdown", "climb-down"),
+	LADDER_UP("climbup", "climb-up"),
+	EQUIP("wear", "wield", "wear"),
 	EAT("eat", "eat"),
 	DRINK("drink", "drink"),
 	ENTER("enter", "climb-into", "enter", "exit", "yanille", "varrock", "seers' village", "camelot", "grand exchange", "watchtower", "go-through"),
-	PICK_UP("pick_up", "take", "deposit" ,"fill"),
+	PICK_UP("take", "take","withdraw","deposit"),
 	UNTIE("untie"),
-	GENERIC("generic"), //Cursor inside background
+	GENERIC("generic"), // Cursor inside background
 	PLANK("plank", "buy-plank"),
 	BANG(SpriteID.SKILL_STRENGTH, "bang"), //Strength icon
 	SEARCH("search", "search"),
 	OPEN("open", "open"),
-	READ("read", "read", "story"),
-	IMPOSSIBLE("impossible"),
-	TRADE("trade", "trade", "exchange"),
-	//Skill
+	READ("read", "read"),
+	SLASH("slash", "slash"),
+	PULL("pull","pull","close"),
+	LOGOUT("logout","logout"),
+	BACK("back","back"),
+	DIG("dig","dig"),
+	INSPECT("use","inspect","toggle","show"),
+	MAP("map","world map"),
+	SETTINGS("settings","settings","audio"),
+	ACCEEPT("accept","accept"),
+	DECLINE("decline","decline"),
+	LINK("link","link","choose"),
+	TRADE("trade","trade"),
+
+	// Skills
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
 	AGILITY(SpriteID.SKILL_AGILITY, "balance", "balance-across", "climb-across", "climb-on", "climb-over",
 		"cross", "grab", "grapple", "hurdle", "jump", "jump-up", "jump-to", "jump-off", "jump-in", "jump-on", "kick",
@@ -68,22 +75,22 @@ public enum ContextualCursor
 	FIREMAKING(SpriteID.SKILL_FIREMAKING, "light", "feed"),
 	FISHING(SpriteID.SKILL_FISHING, "net", "bait", "lure", "small net", "harpoon", "cage", "big net", "use-rod", "fish"),
 	HERBLORE(SpriteID.SKILL_HERBLORE, "clean"),
-	HUNTER(SpriteID.SKILL_HUNTER),
-	MAGIC(SpriteID.SKILL_MAGIC, "spellbook"), // `venerate` interferes with the Dark Altar's RC use
+	HUNTER(SpriteID.SKILL_HUNTER,"catch"),
+	MAGIC(SpriteID.SKILL_MAGIC, "spellbook","break"), // `venerate` interferes with the Dark Altar's RC use
 	MINING(SpriteID.SKILL_MINING, "mine"),
 	PRAYER(SpriteID.SKILL_PRAYER, "pray", "bury", "pray-at"),
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune"),
-	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith", "hammer"),
+	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith"),
 	THIEVING(SpriteID.SKILL_THIEVING, "steal-from", "pickpocket", "search for traps", "pick-lock"),
 	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop");
 
-	private BufferedImage cursor;
+	private String cursor;
 	private Integer spriteID;
 	private String[] actions;
 
 	ContextualCursor(String cursor_path, String ... actions)
 	{
-		this.cursor = ImageUtil.getResourceStreamFromClass(ContextualCursorPlugin.class, String.format("cursors/%s.png", cursor_path));
+		this.cursor = cursor_path;
 		this.actions = actions;
 	}
 
