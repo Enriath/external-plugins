@@ -46,7 +46,7 @@ public enum ContextualCursor
 	GENERIC("generic"), // Cursor inside background
 	PLANK("plank", "buy-plank"),
 	BANG(SpriteID.SKILL_STRENGTH, "bang"), //Strength icon
-	SEARCH("search", "search"),
+	SEARCH("search", "search","look"),
 	OPEN("open", "open"),
 	READ("read", "read"),
 	SLASH("slash", "slash"),
@@ -60,7 +60,7 @@ public enum ContextualCursor
 	ACCEEPT("accept","accept"),
 	DECLINE("decline","decline"),
 	LINK("link","link","choose"),
-	TRADE("trade","trade"),
+	TRADE("trade","trade","exchange"),
 
 	// Skills
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
