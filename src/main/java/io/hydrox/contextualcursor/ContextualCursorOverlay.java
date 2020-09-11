@@ -127,7 +127,16 @@ public class ContextualCursorOverlay extends Overlay
 			return;
 		}
 
-		final ContextualCursor cursor = ContextualCursor.get(option);
+		final ContextualCursor cursor;
+		// Custom handling for RL Wiki lookup's spell-like nature
+		if (option.equals("Lookup") && target.startsWith("Wiki<"))
+		{
+			cursor = ContextualCursor.WIKI;
+		}
+		else
+		{
+			cursor = ContextualCursor.get(option);
+		}
 
 		if (cursor == null)
 		{
