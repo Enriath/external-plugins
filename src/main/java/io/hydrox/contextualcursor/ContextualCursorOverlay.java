@@ -134,9 +134,10 @@ public class ContextualCursorOverlay extends Overlay
 			clientUI.resetCursor();
 			return;
 		}
+
+		BufferedImage sprite = cursor.getCursor();
 		if (cursor.getSpriteID() != null)
 		{
-			final BufferedImage sprite;
 			if (client.getSpriteOverrides().containsKey(cursor.getSpriteID()))
 			{
 				sprite = client.getSpriteOverrides().get(cursor.getSpriteID()).toBufferedImage();
@@ -149,13 +150,10 @@ public class ContextualCursorOverlay extends Overlay
 			{
 				return;
 			}
-			drawCursorWithSprite(graphics, sprite);
 		}
-		else
+		if (sprite != null)
 		{
-			final Point mousePos = client.getMouseCanvasPosition();
-			clientUI.setCursor(BLANK_MOUSE, "blank");
-			graphics.drawImage(cursor.getCursor(), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
+			drawCursorWithSprite(graphics, sprite);
 		}
 	}
 
