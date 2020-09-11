@@ -51,10 +51,16 @@ public class ContextualCursorOverlay extends Overlay
 	private static final Point POINTER_OFFSET = new Point(-5, 0);
 	//The centre of the circle (biased bottom right since it's an even size), for use with sprites
 	private static final Point CENTRAL_POINT = new Point(16, 18);
+	private static final int MENU_OPTION_HEIGHT = 15;
+	private static final int MENU_EXTRA_TOP = 4;
+	private static final int MENU_EXTRA_BOTTOM = 3;
+	private static final int MENU_BORDERS_TOTAL = MENU_EXTRA_TOP + MENU_OPTION_HEIGHT + MENU_EXTRA_BOTTOM;
 
 	private final Client client;
 	private final ClientUI clientUI;
 	private final SpriteManager spriteManager;
+
+	private Point menuOpenPoint;
 
 	@Inject
 	ContextualCursorOverlay(Client client, ClientUI clientUI, SpriteManager spriteManager)
@@ -72,22 +78,31 @@ public class ContextualCursorOverlay extends Overlay
 	{
 		// TODO: Stop tooltips from overlapping the cursor
 
+		final MenuEntry menuEntry;
+
 		if (client.isMenuOpen())
 		{
-			// TODO: Handle the minimenu
+			menuEntry = processMenu();
+		}
+		else
+		{
+			menuOpenPoint = client.getMouseCanvasPosition();
+			final MenuEntry[] menuEntries = client.getMenuEntries();
+			int last = menuEntries.length - 1;
+
+			if (last < 0)
+			{
+				return null;
+			}
+
+			menuEntry = menuEntries[last];
+		}
+
+		if (menuEntry == null)
+		{
 			clientUI.resetCursor();
 			return null;
 		}
-
-		final MenuEntry[] menuEntries = client.getMenuEntries();
-		int last = menuEntries.length - 1;
-
-		if (last < 0)
-		{
-			return null;
-		}
-
-		final MenuEntry menuEntry = menuEntries[last];
 
 		if (menuEntry.getType() == MenuAction.WALK.getId()
 			|| menuEntry.getType() == MenuAction.CC_OP.getId()
@@ -101,6 +116,33 @@ public class ContextualCursorOverlay extends Overlay
 
 		processEntry(graphics,  menuEntry.getOption(),  menuEntry.getTarget());
 		return null;
+	}
+
+	private MenuEntry processMenu()
+	{
+		final MenuEntry[] menuEntries = client.getMenuEntries();
+
+		final int menuTop;
+		final int menuHeight = (menuEntries.length * MENU_OPTION_HEIGHT) + MENU_BORDERS_TOTAL;
+		if (menuHeight + menuOpenPoint.getY() > client.getCanvasHeight())
+		{
+			menuTop = client.getCanvasHeight() - menuHeight;
+		}
+		else
+		{
+			menuTop = menuOpenPoint.getY();
+		}
+
+		final int fromTop = (client.getMouseCanvasPosition().getY() - MENU_EXTRA_TOP) - menuTop;
+
+		final int index = menuEntries.length - (fromTop / MENU_OPTION_HEIGHT);
+
+		if (index >= menuEntries.length || index < 0)
+		{
+			return null;
+		}
+
+		return menuEntries[index];
 	}
 
 	private void processEntry(Graphics2D graphics, String option, String target)

@@ -55,8 +55,8 @@ public enum ContextualCursor
 	READ("read", "read", "story"),
 	IMPOSSIBLE("impossible"),
 	TRADE("trade", "trade", "exchange"),
-	WIKI("wiki", "lookup", "lookup-entity"),
-	//Skill
+	WIKI("wiki", "lookup-entity"),
+	// Skills
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
 	AGILITY(SpriteID.SKILL_AGILITY, "balance", "balance-across", "climb-across", "climb-on", "climb-over",
 		"cross", "grab", "grapple", "hurdle", "jump", "jump-up", "jump-to", "jump-off", "jump-in", "jump-on", "kick",
