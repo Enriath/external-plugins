@@ -50,11 +50,11 @@ public enum ContextualCursor
 	GENERIC("generic"), //Cursor inside background
 	PLANK("plank", "buy-plank"),
 	BANG(SpriteID.SKILL_STRENGTH, "bang"), //Strength icon
-	SEARCH("search", "search"),
+	SEARCH("search", "search", "lookup", "examine"),
 	OPEN("open", "open"),
 	READ("read", "read", "story"),
-	IMPOSSIBLE("impossible"),
-	TRADE("trade", "trade", "exchange"),
+	IMPOSSIBLE("impossible", "destroy"),
+	TRADE("trade", "trade", "exchange", "trade with"),
 	WIKI("wiki", "lookup-entity"),
 	// Skills
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
