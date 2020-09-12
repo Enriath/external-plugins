@@ -43,4 +43,14 @@ public interface ContextualCursorConfig extends Config
 		return ContextualSkin.OSRS;
 	}
 
+    @ConfigItem(
+            keyName = "recorddata",
+            name = "Log missing cursors",
+            description = "Note the missing cursors while playing to send to us"
+    )
+    default boolean note()
+    {
+        return true;
+    }
+
 }

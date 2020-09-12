@@ -25,11 +25,13 @@
  */
 package io.hydrox.contextualcursor;
 
+import com.sun.jna.platform.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.Point;
+import net.runelite.client.RuneLite;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.ClientUI;
@@ -42,6 +44,13 @@ import net.runelite.client.util.ImageUtil;
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -56,6 +65,8 @@ public class ContextualCursorOverlay extends Overlay
 	private static final Point POINTER_OFFSET = new Point(-5, 0);
 	//The centre of the circle (biased bottom right since it's an even size), for use with sprites
 	private static final Point CENTRAL_POINT = new Point(16, 18);
+	//Missing cursors file location
+	public static final Path MISSING_DIR = new File(RuneLite.RUNELITE_DIR + File.separator,"missing_cursors.txt").toPath();
 
 	private final Client client;
 	private final ClientUI clientUI;
@@ -66,6 +77,7 @@ public class ContextualCursorOverlay extends Overlay
 
 	public static HashMap<String, ContextualCursor> cursorMap = new HashMap();
 	public HashMap<ContextualCursor, BufferedImage> cursorMapImages = new HashMap();
+	public ArrayList<String> missingCursors = new ArrayList<>();
 
 	public Integer[] blocked = new Integer[] {
 			MenuAction.WALK.getId(),
@@ -142,6 +154,9 @@ public class ContextualCursorOverlay extends Overlay
 
 		if (cursor == null)
 		{
+			if(!missingCursors.contains(option)) {
+				addData(option);
+			}
 			drawCursor(cursorMapImages.get(ContextualCursor.POINTER));
 			return;
 		}
@@ -187,7 +202,6 @@ public class ContextualCursorOverlay extends Overlay
 		graphics.drawImage(sprite, mousePos.getX() + spriteX, mousePos.getY() + spriteY, null);
 	}
 
-
 	public void setCursors()
 	{
 		for (ContextualCursor cursor : ContextualCursor.values())
@@ -197,6 +211,28 @@ public class ContextualCursorOverlay extends Overlay
 				BufferedImage image = ImageUtil.getResourceStreamFromClass(ContextualCursorPlugin.class, String.format(String.format("cursors/" + configManager.getConfiguration("contextualcursor", "cursorstyle", ContextualSkin.class).name() + "/%s.png", cursor.getPath())));
 				cursorMapImages.put(cursor, image);
 			}
+		}
+	}
+
+	private void addData(String data)
+	{
+
+		if(!configManager.getConfiguration("contextualcursor", "recorddata", Boolean.class)) {
+			return;
+		}
+
+		try
+		{
+			Path pathParent = MISSING_DIR.getParent();
+			if (!Files.exists(pathParent)) {
+				Files.createDirectories(pathParent);
+			}
+			missingCursors.add(data);
+			Files.write(MISSING_DIR, Arrays.asList(data), StandardCharsets.UTF_8, Files.exists(MISSING_DIR) ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+		}
+		catch (final IOException ioe)
+		{
+			ioe.printStackTrace();
 		}
 	}
 

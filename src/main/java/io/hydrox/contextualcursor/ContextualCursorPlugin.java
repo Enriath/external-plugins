@@ -24,6 +24,7 @@
  */
 package io.hydrox.contextualcursor;
 
+import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -34,6 +35,10 @@ import net.runelite.client.ui.overlay.OverlayManager;
 
 import javax.inject.Inject;
 import javax.swing.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 @PluginDescriptor(
 	name = "Contextual Cursor"
@@ -52,12 +57,33 @@ public class ContextualCursorPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
+	@Inject
+	private ContextualCursorConfig config;
+
+	@Provides
+	ContextualCursorConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(ContextualCursorConfig.class);
+	}
 
 	protected void startUp()
 	{
+
 		warnAboutCustomCursor(false);
 		overlayManager.add(contextualCursorOverlay);
 		contextualCursorOverlay.setCursors();
+
+		if(contextualCursorOverlay.MISSING_DIR.toFile().exists()) {
+			try
+			{
+				List<String> list = Files.readAllLines(contextualCursorOverlay.MISSING_DIR);
+				contextualCursorOverlay.missingCursors = new ArrayList(list);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	@Override
