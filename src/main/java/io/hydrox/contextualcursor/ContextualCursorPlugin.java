@@ -31,8 +31,9 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+
 import javax.inject.Inject;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 @PluginDescriptor(
 	name = "Contextual Cursor"
@@ -51,10 +52,12 @@ public class ContextualCursorPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
+
 	protected void startUp()
 	{
 		warnAboutCustomCursor(false);
 		overlayManager.add(contextualCursorOverlay);
+		contextualCursorOverlay.setCursors();
 	}
 
 	@Override
@@ -69,6 +72,10 @@ public class ContextualCursorPlugin extends Plugin
 		if (event.getGroup().equals("runelite") && event.getKey().equals("customcursorplugin"))
 		{
 			warnAboutCustomCursor(true);
+		} else if(event.getGroup().equals("contextualcursor") && event.getKey().equals("cursorstyle"))
+		{
+			contextualCursorOverlay.cursorMapImages.clear();
+			contextualCursorOverlay.setCursors();
 		}
 	}
 
@@ -87,4 +94,6 @@ public class ContextualCursorPlugin extends Plugin
 				null, new String[]{"Ok"}, "Ok");
 		}
 	}
+
+
 }

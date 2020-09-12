@@ -26,26 +26,22 @@ package io.hydrox.contextualcursor;
 
 import lombok.Getter;
 import net.runelite.api.SpriteID;
-import net.runelite.client.util.ImageUtil;
-
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 
 @Getter
 public enum ContextualCursor
 {
 	BLANK("blank"),
+	POINTER("pointer","pointer"),
 	TALK("talk", "talk", "talk-to", "talk to"),
 	USE("use", "use"),
 	LADDER("ladder", "climb"),
-	LADDER_DOWN("ladder_down", "climb-down"),
-	LADDER_UP("ladder_up", "climb-up"),
-	EQUIP("equip", "wield", "wear"),
+	LADDER_DOWN("climbup", "climb-down"),
+	LADDER_UP("climbdown", "climb-up"),
+	EQUIP("wear", "wield", "wear"),
 	EAT("eat", "eat"),
 	DRINK("drink", "drink"),
 	ENTER("enter", "climb-into", "enter", "exit", "yanille", "varrock", "seers' village", "camelot", "grand exchange", "watchtower", "go-through"),
-	PICK_UP("pick_up", "take", "deposit" ,"fill"),
+	PICK_UP("take", "take", "deposit" ,"fill"),
 	UNTIE("untie"),
 	GENERIC("generic"), //Cursor inside background
 	PLANK("plank", "buy-plank"),
@@ -53,14 +49,13 @@ public enum ContextualCursor
 	SEARCH("search", "search"),
 	OPEN("open", "open"),
 	READ("read", "read", "story"),
-	IMPOSSIBLE("impossible"),
 	TRADE("trade", "trade", "exchange"),
 	//Skill
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
 	AGILITY(SpriteID.SKILL_AGILITY, "balance", "balance-across", "climb-across", "climb-on", "climb-over",
-		"cross", "grab", "grapple", "hurdle", "jump", "jump-up", "jump-to", "jump-off", "jump-in", "jump-on", "kick",
-		"leap", "shoot", "squeeze-past", "squeeze-through", "swing", "swing across", "swing-across", "swing-on", "tap",
-		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across"),
+			"cross", "grab", "grapple", "hurdle", "jump", "jump-up", "jump-to", "jump-off", "jump-in", "jump-on", "kick",
+			"leap", "shoot", "squeeze-past", "squeeze-through", "swing", "swing across", "swing-across", "swing-on", "tap",
+			"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across"),
 	COOKING(SpriteID.SKILL_COOKING, "cook"),
 	CRAFTING(SpriteID.SKILL_CRAFTING, "spin"),
 	CONSTRUCTION(SpriteID.SKILL_CONSTRUCTION, "build", "remove"),
@@ -77,13 +72,13 @@ public enum ContextualCursor
 	THIEVING(SpriteID.SKILL_THIEVING, "steal-from", "pickpocket", "search for traps", "pick-lock"),
 	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop");
 
-	private BufferedImage cursor;
+	private String path;
 	private Integer spriteID;
 	private String[] actions;
 
-	ContextualCursor(String cursor_path, String ... actions)
+	ContextualCursor(String cursor_path,String ... actions)
 	{
-		this.cursor = ImageUtil.getResourceStreamFromClass(ContextualCursorPlugin.class, String.format("cursors/%s.png", cursor_path));
+		this.path = cursor_path;
 		this.actions = actions;
 	}
 
@@ -93,22 +88,15 @@ public enum ContextualCursor
 		this.actions = actions;
 	}
 
-	private static final Map<String, ContextualCursor> cursorMap = new HashMap<>();
-
 	static
 	{
 		for (ContextualCursor cursor : values())
 		{
 			for (String action : cursor.actions)
 			{
-				cursorMap.put(action, cursor);
+				ContextualCursorOverlay.cursorMap.put(action, cursor);
 			}
 		}
 	}
 
-	static ContextualCursor get(String action)
-	{
-		//return cursorMap.get(action.toLowerCase());
-		return cursorMap.getOrDefault(action.toLowerCase(), GENERIC);
-	}
 }

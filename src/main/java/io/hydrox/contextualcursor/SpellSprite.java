@@ -26,6 +26,7 @@ package io.hydrox.contextualcursor;
 
 import lombok.AllArgsConstructor;
 import net.runelite.api.SpriteID;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,7 +145,7 @@ public enum SpellSprite
 	String name;
 	int spriteID;
 
-	private static final Map<String, SpellSprite> map = new HashMap<>();
+	private static Map<String, SpellSprite> map = new HashMap<>();
 
 	static
 	{
