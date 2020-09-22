@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Colourblind Chat
+*Take a colour channel and push it somwhere else!*
