@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public class ContextualCursorOverlay extends Overlay
 {
 	private static final BufferedImage BLANK_MOUSE = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-	private static final Pattern SPELL_FINDER = Pattern.compile(">(.*?)</col>");
+	private static final Pattern SPELL_FINDER = Pattern.compile(">(.*?)(?:</col>| -> )");
 	//The pointer sticks out to the left slightly, so this makes sure it's point to the correct spot
 	private static final Point POINTER_OFFSET = new Point(-5, 0);
 	//The centre of the circle (biased bottom right since it's an even size), for use with sprites
