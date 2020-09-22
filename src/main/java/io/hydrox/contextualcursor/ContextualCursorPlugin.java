@@ -25,11 +25,14 @@
 package io.hydrox.contextualcursor;
 
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.GameState;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 import javax.swing.JOptionPane;
@@ -51,6 +54,9 @@ public class ContextualCursorPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
+	@Inject
+	private ClientUI clientUI;
+
 	protected void startUp()
 	{
 		warnAboutCustomCursor(false);
@@ -69,6 +75,15 @@ public class ContextualCursorPlugin extends Plugin
 		if (event.getGroup().equals("runelite") && event.getKey().equals("customcursorplugin"))
 		{
 			warnAboutCustomCursor(true);
+		}
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() != GameState.LOGGED_IN && event.getGameState() != GameState.LOADING)
+		{
+			clientUI.resetCursor();
 		}
 	}
 
