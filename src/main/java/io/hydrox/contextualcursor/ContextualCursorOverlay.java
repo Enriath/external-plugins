@@ -35,6 +35,7 @@ import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
+import net.runelite.client.util.Text;
 import javax.inject.Inject;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -177,7 +178,7 @@ public class ContextualCursorOverlay extends Overlay
 		}
 		else
 		{
-			cursor = ContextualCursor.get(option);
+			cursor = ContextualCursor.get(Text.removeTags(option));
 		}
 
 		if (cursor == null)
