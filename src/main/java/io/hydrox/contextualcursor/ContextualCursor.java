@@ -76,7 +76,7 @@ public enum ContextualCursor
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune"),
 	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith", "hammer"),
 	THIEVING(SpriteID.SKILL_THIEVING, "steal-from", "pickpocket", "search for traps", "pick-lock"),
-	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop");
+	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop", "cut");
 
 	private BufferedImage cursor;
 	private Integer spriteID;
