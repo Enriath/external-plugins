@@ -45,7 +45,8 @@ public enum ContextualCursor
 	EAT("eat", "eat"),
 	DRINK("drink", "drink"),
 	ENTER("enter", "climb-into", "enter", "exit", "yanille", "varrock", "seers' village", "camelot", "grand exchange", "watchtower", "go-through"),
-	PICK_UP("pick_up", "take", "deposit" ,"fill"),
+	PICK_UP("pick_up", "take", "withdraw" ,"fill"),
+	DROP("drop", "drop", "empty", "deposit"),
 	UNTIE("untie"),
 	GENERIC("generic"), //Cursor inside background
 	PLANK("plank", "buy-plank"),
@@ -53,6 +54,7 @@ public enum ContextualCursor
 	SEARCH("search", "search", "lookup", "examine"),
 	OPEN("open", "open"),
 	READ("read", "read", "story"),
+	CONFIGURE(1654, "configure"), // Wrench sprite
 	IMPOSSIBLE("impossible", "destroy"),
 	TRADE("trade", "trade", "exchange", "trade with"),
 	WIKI("wiki", "lookup-entity"),
@@ -70,7 +72,7 @@ public enum ContextualCursor
 	FISHING(SpriteID.SKILL_FISHING, "net", "bait", "lure", "small net", "harpoon", "cage", "big net", "use-rod", "fish"),
 	HERBLORE(SpriteID.SKILL_HERBLORE, "clean"),
 	HUNTER(SpriteID.SKILL_HUNTER),
-	MAGIC(SpriteID.SKILL_MAGIC, "spellbook"), // `venerate` interferes with the Dark Altar's RC use
+	MAGIC(SpriteID.SKILL_MAGIC, "spellbook", "teleport", "teleport menu"), // `venerate` interferes with the Dark Altar's RC use
 	MINING(SpriteID.SKILL_MINING, "mine"),
 	PRAYER(SpriteID.SKILL_PRAYER, "pray", "bury", "pray-at"),
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune"),
