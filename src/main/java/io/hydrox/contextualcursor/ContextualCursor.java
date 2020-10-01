@@ -51,10 +51,10 @@ public enum ContextualCursor
 	GENERIC("generic"), //Cursor inside background
 	PLANK("plank", "buy-plank"),
 	BANG(SpriteID.SKILL_STRENGTH, "bang"), //Strength icon
-	SEARCH("search", "search", "lookup", "examine"),
+	SEARCH("search", "search", "lookup", "examine", "view"),
 	OPEN("open", "open"),
 	READ("read", "read", "story"),
-	CONFIGURE(1654, "configure"), // Wrench sprite
+	CONFIGURE(1654, "configure", "configuration"), // Wrench sprite
 	IMPOSSIBLE("impossible", "destroy"),
 	TRADE("trade", "trade", "exchange", "trade with"),
 	WIKI("wiki", "lookup-entity"),
