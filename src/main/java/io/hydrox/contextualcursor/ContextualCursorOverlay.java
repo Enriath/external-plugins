@@ -37,9 +37,12 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
+import javax.swing.JPanel;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +67,7 @@ public class ContextualCursorOverlay extends Overlay
 	private Point menuOpenPoint;
 
 	private boolean cursorOverriden;
+	private Cursor originalCursor;
 
 	@Inject
 	ContextualCursorOverlay(Client client, ClientUI clientUI, SpriteManager spriteManager)
@@ -76,12 +80,38 @@ public class ContextualCursorOverlay extends Overlay
 		this.spriteManager = spriteManager;
 	}
 
+	private void storeOriginalCursor()
+	{
+		if (cursorOverriden)
+		{
+			return;
+		}
+		try
+		{
+			// All this because clientUI doesn't have a `getCursor` function.
+			Field f = clientUI.getClass().getDeclaredField("container");
+			f.setAccessible(true);
+			JPanel container = (JPanel) f.get(clientUI);
+			originalCursor = container.getCursor();
+		}
+		catch (NoSuchFieldException | IllegalAccessException ignored)
+		{
+		}
+	}
+
 	void resetCursor()
 	{
 		if (cursorOverriden)
 		{
 			cursorOverriden = false;
-			clientUI.resetCursor();
+			if (originalCursor != null)
+			{
+				clientUI.setCursor(originalCursor);
+			}
+			else
+			{
+				clientUI.resetCursor();
+			}
 		}
 	}
 
@@ -222,6 +252,7 @@ public class ContextualCursorOverlay extends Overlay
 
 	private void drawCursorWithSprite(Graphics2D graphics, BufferedImage sprite)
 	{
+		storeOriginalCursor();
 		clientUI.setCursor(BLANK_MOUSE, "blank");
 		cursorOverriden = true;
 		final Point mousePos = client.getMouseCanvasPosition();

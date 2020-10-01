@@ -29,13 +29,11 @@ import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
-import javax.swing.JOptionPane;
 
 @PluginDescriptor(
 	name = "Contextual Cursor"
@@ -43,8 +41,6 @@ import javax.swing.JOptionPane;
 @Slf4j
 public class ContextualCursorPlugin extends Plugin
 {
-	private static final String CONFIG_GROUP = "contextualcursor";
-
 	@Inject
 	private ContextualCursorOverlay contextualCursorOverlay;
 
@@ -59,7 +55,6 @@ public class ContextualCursorPlugin extends Plugin
 
 	protected void startUp()
 	{
-		warnAboutCustomCursor(false);
 		overlayManager.add(contextualCursorOverlay);
 	}
 
@@ -70,36 +65,11 @@ public class ContextualCursorPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onConfigChanged(ConfigChanged event)
-	{
-		if (event.getGroup().equals("runelite") && event.getKey().equals("customcursorplugin"))
-		{
-			warnAboutCustomCursor(true);
-		}
-	}
-
-	@Subscribe
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() != GameState.LOGGED_IN && event.getGameState() != GameState.LOADING)
 		{
 			contextualCursorOverlay.resetCursor();
-		}
-	}
-
-	private void warnAboutCustomCursor(boolean swap)
-	{
-		Boolean customCursor = configManager.getConfiguration("runelite", "customcursorplugin", Boolean.class);
-		if (customCursor != null && customCursor)
-		{
-			String sb = "Contextual Cursors do not work with Custom Cursors, due to them both modifying the cursor.\nPlease disable " +
-				(swap ? "Contextual" : "Custom") +
-				" Cursor before turning on " +
-				(swap ? "Custom" : "Contextual") +
-				" Cursor.";
-			JOptionPane.showOptionDialog(null, sb,
-				"Alert!", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-				null, new String[]{"Ok"}, "Ok");
 		}
 	}
 }
