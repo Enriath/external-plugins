@@ -53,6 +53,7 @@ public enum ContextualCursor
 	BANG(SpriteID.SKILL_STRENGTH, "bang"), //Strength icon
 	SEARCH("search", "search", "lookup", "examine", "view"),
 	OPEN("open", "open"),
+	CLOSE("close", "close"),
 	READ("read", "read", "story"),
 	CONFIGURE(1654, "configure", "configuration"), // Wrench sprite
 	IMPOSSIBLE("impossible", "destroy"),
