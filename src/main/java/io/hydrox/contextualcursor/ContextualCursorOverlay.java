@@ -63,6 +63,8 @@ public class ContextualCursorOverlay extends Overlay
 
 	private Point menuOpenPoint;
 
+	private boolean cursorOverriden;
+
 	@Inject
 	ContextualCursorOverlay(Client client, ClientUI clientUI, SpriteManager spriteManager)
 	{
@@ -72,6 +74,15 @@ public class ContextualCursorOverlay extends Overlay
 		this.client = client;
 		this.clientUI = clientUI;
 		this.spriteManager = spriteManager;
+	}
+
+	void resetCursor()
+	{
+		if (cursorOverriden)
+		{
+			cursorOverriden = false;
+			clientUI.resetCursor();
+		}
 	}
 
 	@Override
@@ -101,7 +112,7 @@ public class ContextualCursorOverlay extends Overlay
 
 		if (menuEntry == null)
 		{
-			clientUI.resetCursor();
+			resetCursor();
 			return null;
 		}
 
@@ -111,7 +122,7 @@ public class ContextualCursorOverlay extends Overlay
 			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_2.getId()
 			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_6.getId())
 		{
-			clientUI.resetCursor();
+			resetCursor();
 			return null;
 		}
 
@@ -183,7 +194,7 @@ public class ContextualCursorOverlay extends Overlay
 
 		if (cursor == null)
 		{
-			clientUI.resetCursor();
+			resetCursor();
 			return;
 		}
 
@@ -212,6 +223,7 @@ public class ContextualCursorOverlay extends Overlay
 	private void drawCursorWithSprite(Graphics2D graphics, BufferedImage sprite)
 	{
 		clientUI.setCursor(BLANK_MOUSE, "blank");
+		cursorOverriden = true;
 		final Point mousePos = client.getMouseCanvasPosition();
 		final ContextualCursor blank = ContextualCursor.BLANK;
 		graphics.drawImage(blank.getCursor(), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);

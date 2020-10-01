@@ -83,7 +83,7 @@ public class ContextualCursorPlugin extends Plugin
 	{
 		if (event.getGameState() != GameState.LOGGED_IN && event.getGameState() != GameState.LOADING)
 		{
-			clientUI.resetCursor();
+			contextualCursorOverlay.resetCursor();
 		}
 	}
 
