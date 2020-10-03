@@ -78,6 +78,7 @@ public enum ContextualCursor
 	PRAYER(SpriteID.SKILL_PRAYER, "pray", "bury", "pray-at"),
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune"),
 	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith", "hammer"),
+	SLAYER(SpriteID.SKILL_SLAYER, "assignment"),
 	THIEVING(SpriteID.SKILL_THIEVING, "steal-from", "pickpocket", "search for traps", "pick-lock"),
 	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop", "cut");
 
