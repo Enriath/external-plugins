@@ -41,7 +41,7 @@ public enum ContextualCursor
 	LADDER("ladder", "climb"),
 	LADDER_DOWN("ladder_down", "climb-down"),
 	LADDER_UP("ladder_up", "climb-up"),
-	EQUIP("equip", "wield", "wear"),
+	EQUIP("equip", "wield", "wear", "equip"),
 	EAT("eat", "eat"),
 	DRINK("drink", "drink"),
 	ENTER("enter", "climb-into", "enter", "exit", "yanille", "varrock", "seers' village", "camelot", "grand exchange", "watchtower", "go-through"),
