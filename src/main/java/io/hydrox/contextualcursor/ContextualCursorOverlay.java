@@ -221,8 +221,8 @@ public class ContextualCursorOverlay extends Overlay
 		}
 
 		final ContextualCursor cursor;
-		// Custom handling for RL Wiki lookup's spell-like nature
-		if (option.equals("Lookup") && target.startsWith("Wiki<"))
+		// Custom handling for RL & Vanilla Wiki lookup's spell-like nature
+		if (option.equals("Lookup") && Text.removeTags(target).startsWith("Wiki ->"))
 		{
 			cursor = ContextualCursor.WIKI;
 		}
