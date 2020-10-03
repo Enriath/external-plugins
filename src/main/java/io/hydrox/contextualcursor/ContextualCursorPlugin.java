@@ -62,6 +62,7 @@ public class ContextualCursorPlugin extends Plugin
 	protected void shutDown()
 	{
 		overlayManager.remove(contextualCursorOverlay);
+		contextualCursorOverlay.resetCursor();
 	}
 
 	@Subscribe

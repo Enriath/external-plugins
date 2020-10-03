@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.regex.Matcher;
@@ -49,7 +50,11 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ContextualCursorOverlay extends Overlay
 {
-	private static final BufferedImage BLANK_MOUSE = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+	private static final Cursor BLANK_MOUSE = Toolkit.getDefaultToolkit().createCustomCursor(
+		new BufferedImage(32, 32,BufferedImage.TYPE_INT_ARGB),
+		new java.awt.Point(0, 0),
+		"blank"
+	);
 	private static final Pattern SPELL_FINDER = Pattern.compile(">(.*?)(?:</col>| -> )");
 	//The pointer sticks out to the left slightly, so this makes sure it's point to the correct spot
 	private static final Point POINTER_OFFSET = new Point(-5, 0);
@@ -92,7 +97,11 @@ public class ContextualCursorOverlay extends Overlay
 			Field f = clientUI.getClass().getDeclaredField("container");
 			f.setAccessible(true);
 			JPanel container = (JPanel) f.get(clientUI);
-			originalCursor = container.getCursor();
+			final Cursor currentCursor = container.getCursor();
+			if (!currentCursor.getName().equals("blank"))
+			{
+				originalCursor = container.getCursor();
+			}
 		}
 		catch (NoSuchFieldException | IllegalAccessException ignored)
 		{
@@ -253,7 +262,7 @@ public class ContextualCursorOverlay extends Overlay
 	private void drawCursorWithSprite(Graphics2D graphics, BufferedImage sprite)
 	{
 		storeOriginalCursor();
-		clientUI.setCursor(BLANK_MOUSE, "blank");
+		clientUI.setCursor(BLANK_MOUSE);
 		cursorOverriden = true;
 		final Point mousePos = client.getMouseCanvasPosition();
 		final ContextualCursor blank = ContextualCursor.BLANK;
