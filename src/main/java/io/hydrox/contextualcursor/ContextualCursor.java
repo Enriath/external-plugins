@@ -43,6 +43,7 @@ public enum ContextualCursor
 	LADDER_UP("ladder_up", "climb-up"),
 	EQUIP("equip", "wield", "wear", "equip"),
 	EAT("eat", "eat"),
+	EXCHANGE(SpriteID.GE_GUIDE_PRICE, "exchange", "trade", "trade with"),
 	DRINK("drink", "drink"),
 	ENTER("enter", "climb-into", "enter", "exit", "yanille", "varrock", "seers' village", "camelot", "grand exchange", "watchtower", "go-through"),
 	PICK_UP("pick_up", "take", "withdraw" ,"fill"),
@@ -56,7 +57,7 @@ public enum ContextualCursor
 	READ("read", "read", "story"),
 	CONFIGURE(1654, "configure", "configuration"), // Wrench sprite
 	IMPOSSIBLE("impossible", "destroy"),
-	TRADE("trade", "trade", "exchange", "trade with"),
+	BANK("bank", "bank"),
 	WIKI("wiki", "lookup-entity"),
 	// Skills
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
