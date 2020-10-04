@@ -50,7 +50,6 @@ public enum ContextualCursor
 	UNTIE("untie"),
 	GENERIC("generic"), //Cursor inside background
 	PLANK("plank", "buy-plank"),
-	BANG(SpriteID.SKILL_STRENGTH, "bang"), //Strength icon
 	SEARCH("search", "search", "lookup", "examine", "view"),
 	OPEN("open", "open"),
 	CLOSE("close", "close"),
@@ -64,7 +63,7 @@ public enum ContextualCursor
 	AGILITY(SpriteID.SKILL_AGILITY, "balance", "balance-across", "climb-across", "climb-on", "climb-over",
 		"cross", "grab", "grapple", "hurdle", "jump", "jump-up", "jump-to", "jump-off", "jump-in", "jump-on", "kick",
 		"leap", "shoot", "squeeze-past", "squeeze-through", "swing", "swing across", "swing-across", "swing-on", "tap",
-		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across"),
+		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across", "crawl-through"),
 	COOKING(SpriteID.SKILL_COOKING, "cook"),
 	CRAFTING(SpriteID.SKILL_CRAFTING, "spin"),
 	CONSTRUCTION(SpriteID.SKILL_CONSTRUCTION, "build", "remove"),
@@ -79,6 +78,7 @@ public enum ContextualCursor
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune"),
 	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith", "hammer"),
 	SLAYER(SpriteID.SKILL_SLAYER, "assignment"),
+	STRENGTH(SpriteID.SKILL_STRENGTH, "bang", "move"),
 	THIEVING(SpriteID.SKILL_THIEVING, "steal-from", "pickpocket", "search for traps", "pick-lock"),
 	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop", "cut");
 
