@@ -92,15 +92,13 @@ public class TrailblazerCluesOverlay extends Overlay
 		{
 			Point topLeft = new Point(textWidget.getCanvasLocation().getX() + textWidget.getOriginalWidth() - 26,
 				textWidget.getCanvasLocation().getY());
-			drawOutlinedString(graphics, "REQUIREMENTS:", topLeft.x, topLeft.y + 14, Color.WHITE, Color.BLACK);
-			//topLeft.translate(0, TEXT_HEIGHT / 2);
+			drawOutlinedString(graphics, "REQUIREMENTS:", topLeft.x, topLeft.y, Color.WHITE, Color.BLACK);
 			parseAndDrawReq(graphics, topLeft, reqs);
 		}
 
 		FontMetrics fm = graphics.getFontMetrics();
 		if (reqs == null || !reqs.isValid(plugin.getUnlockedRegions()))
 		{
-			// TODO: Draw something to say impossible
 			drawOutlinedString(graphics, IMPOSSIBLE,
 				textWidget.getCanvasLocation().getX() + (textWidget.getWidth() / 2) - (fm.stringWidth(IMPOSSIBLE) / 2),
 				textWidget.getCanvasLocation().getY(),
@@ -108,7 +106,6 @@ public class TrailblazerCluesOverlay extends Overlay
 		}
 		else
 		{
-			// TODO: Draw something to say possible
 			drawOutlinedString(graphics, POSSIBLE,
 				textWidget.getCanvasLocation().getX() + (textWidget.getWidth() / 2) - (fm.stringWidth(POSSIBLE) / 2),
 				textWidget.getCanvasLocation().getY(),
@@ -131,8 +128,12 @@ public class TrailblazerCluesOverlay extends Overlay
 			if (prepend != null)
 			{
 				drawOutlinedString(g, prepend, topLeft.x, topLeft.y + TEXT_HEIGHT, Color.WHITE, Color.BLACK);
+				drawRegion(g, sreq.getRequiredRegion(), topLeft.x, topLeft.y + TEXT_OFFSET);
 			}
-			drawRegion(g, sreq.getRequiredRegion(), topLeft.x, topLeft.y + TEXT_OFFSET);
+			else
+			{
+				drawRegion(g, sreq.getRequiredRegion(), topLeft.x, topLeft.y);
+			}
 		}
 		else if (req instanceof ANDRegionRequirement)
 		{
