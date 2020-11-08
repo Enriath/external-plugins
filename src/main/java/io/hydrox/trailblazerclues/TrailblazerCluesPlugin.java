@@ -178,7 +178,7 @@ public class TrailblazerCluesPlugin extends Plugin
 		{
 			final ItemComposition itemComposition = itemManager.getItemComposition(event.getId());
 
-			if (itemComposition.getName().startsWith("Clue scroll"))
+			if (itemComposition != null && itemComposition.getName().startsWith("Clue scroll"))
 			{
 				currentClueHash = itemComposition.getId();
 				currentReqs = Clue.fromMap(currentClueHash);

@@ -34,6 +34,7 @@ import io.hydrox.trailblazerclues.requirements.SingleRegionRequirement;
 import net.runelite.api.ItemID;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.widgets.WidgetID;
+import java.util.HashMap;
 import java.util.Map;
 
 class Clue
@@ -84,7 +85,7 @@ class Clue
 	}
 
 	// I'm so, so very sorry.
-	private static final Map<String, RegionRequirement> CLUES = ImmutableMap.<String, RegionRequirement>builder().build();
+	private static final Map<String, RegionRequirement> CLUES = new HashMap<>();
 	
 	static
 	{
