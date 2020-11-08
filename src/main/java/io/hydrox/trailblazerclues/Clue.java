@@ -128,7 +128,7 @@ class Clue
 		.put("gulag run", a(Region.KANDARIN))
 		.put("goblets odd toes", a(Region.KANDARIN))
 		.put("halt us", a(Region.KARAMJA))
-		.put("he do pose. it is cultrrl, mk?", and(Region.FREMENNIK, Region.KANDARIN)) // Requires Legends, which is unable to be started without the auto-unlock.
+		.put("he do pose. it is cultrrl, mk?", a(Region.FREMENNIK))
 		.put("heoric", a(Region.ASGARNIA))
 		.put("icy fe", a(Region.KANDARIN))
 		.put("i doom icon inn", a(Region.KANDARIN))
@@ -147,7 +147,7 @@ class Clue
 		.put("me if", a(Region.KANDARIN))
 		.put("mold la ran", a(Region.MORYTANIA))
 		.put("motherboard", a(Region.KANDARIN))
-		.put("mus kil reader", a(Region.KANDARIN))
+		.put("mus kil reader", and(Region.KANDARIN, Region.FREMENNIK)) // Requires Legends, which is unable to be started without the auto-unlock.
 		.put("no owner", a(Region.TIRANNWN))
 		.put("nod med", a(Region.KANDARIN))
 		.put("o birdz a zany en pc", a(Region.KARAMJA))
@@ -742,37 +742,37 @@ class Clue
 		.build();
 
 	private static final Map<Integer, RegionRequirement> MAP_CLUES = ImmutableMap.<Integer, RegionRequirement>builder()
-		.put(ItemID.CLUE_SCROLL_EASY_12179, a(Region.DESERT)) // "Al Kharid mine"),
+		.put(ItemID.CLUE_SCROLL_EASY_12179, a(Region.DESERT))
 		.put(ItemID.CLUE_SCROLL_EASY_2713, a(Region.MISTHALIN))
 		.put(ItemID.CLUE_SCROLL_EASY_2716, a(Region.MISTHALIN))
 		.put(ItemID.CLUE_SCROLL_EASY_2719, a(Region.ASGARNIA))
-		.put(ItemID.CLUE_SCROLL_EASY_3516, a(Region.KANDARIN)) // "Brother Galahad's house, West of McGrubor's Wood."),
+		.put(ItemID.CLUE_SCROLL_EASY_3516, a(Region.KANDARIN))
 		.put(ItemID.CLUE_SCROLL_EASY_3518, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_EASY_7236, a(Region.ASGARNIA)) // "North of Falador."),
+		.put(ItemID.CLUE_SCROLL_EASY_7236, a(Region.ASGARNIA))
 		.put(ItemID.CLUE_SCROLL_MEDIUM_2827, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3596, a(Region.ASGARNIA)) // "West of the Crafting Guild"),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3598, a(Region.KANDARIN)) // "The crate in McGrubor's Wood. Fairy ring ALS"),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3599, a(Region.KANDARIN)) // "North of the Tower of Life. Fairy ring DJP"),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3601, a(Region.KANDARIN)) // "The crate west of the Clocktower."),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3602, a(Region.ASGARNIA)) // "Behind the Chemist's house in Rimmington."),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7286, a(Region.FREMENNIK)) // "Miscellania. Fairy ring CIP"),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7288, a(Region.MORYTANIA)) // "Mort Myre Swamp, west of Mort'ton. Fairy ring BIP"),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7290, a(Region.KANDARIN)) // "At the entrance to the Ourania Cave."),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7292, a(Region.FREMENNIK)) // "South-east of the Lighthouse. Fairy ring ALP"),
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7294, a(Region.KANDARIN)) // "Between Seers' Village and Rellekka. South-west of Fairy ring CJR"),
-		.put(ItemID.CLUE_SCROLL_HARD, a(Region.MISTHALIN)) // "A crate in the Lumber Yard, north-east of Varrock."),
-		.put(ItemID.CLUE_SCROLL_HARD_2729, a(Region.WILDERNESS)) // "Behind the Magic axe hut in level 56 Wilderness."),
-		.put(ItemID.CLUE_SCROLL_HARD_3520, a(Region.KANDARIN)) // "Yanille anvils, south of the bank."),
-		.put(ItemID.CLUE_SCROLL_HARD_3522, a(Region.KANDARIN)) // "In the western section of West Ardougne."),
-		.put(ItemID.CLUE_SCROLL_HARD_3524, a(Region.KANDARIN)) // "In a crate by the stairs to the Observatory Dungeon."),
-		.put(ItemID.CLUE_SCROLL_HARD_3525, a(Region.WILDERNESS)) // "In a crate at the Dark Warriors' Fortress in level 14 Wilderness."),
-		.put(ItemID.CLUE_SCROLL_HARD_7239, a(Region.WILDERNESS)) // "South-east of the Wilderness Agility Course in level 50 Wilderness."),
-		.put(ItemID.CLUE_SCROLL_HARD_7241, a(Region.KANDARIN)) // "South of the Legends' Guild. Fairy ring BLR"),
-		.put(ItemID.CLUE_SCROLL_ELITE_12130, a(Region.KANDARIN)) // "South-west of Tree Gnome Village."),
-		.put(ItemID.CLUE_SCROLL_ELITE_19782, a(Region.KANDARIN)) // "In the Mogre Camp, near Port Khazard. You require a Diving Apparatus and a Fishbowl Helmet"),
-		.put(ItemID.CLUE_SCROLL_ELITE_19783, a(Region.TIRANNWN)) // "Zul-Andra. Fairy ring BJS"),
-		.put(ItemID.CLUE_SCROLL_ELITE_19785, a(Region.MORYTANIA)) // "East of Burgh de Rott."),
-		.put(ItemID.CLUE_SCROLL_ELITE_19786, a(Region.KANDARIN)) // "The crate in south-western Ape Atoll")`
+		.put(ItemID.CLUE_SCROLL_MEDIUM_3596, a(Region.ASGARNIA))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_3598, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_3599, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_3601, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_3602, a(Region.ASGARNIA))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_7286, a(Region.FREMENNIK))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_7288, a(Region.MORYTANIA))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_7290, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_7292, a(Region.FREMENNIK))
+		.put(ItemID.CLUE_SCROLL_MEDIUM_7294, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_HARD, a(Region.MISTHALIN))
+		.put(ItemID.CLUE_SCROLL_HARD_2729, a(Region.WILDERNESS))
+		.put(ItemID.CLUE_SCROLL_HARD_3520, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_HARD_3522, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_HARD_3524, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_HARD_3525, a(Region.WILDERNESS))
+		.put(ItemID.CLUE_SCROLL_HARD_7239, a(Region.WILDERNESS))
+		.put(ItemID.CLUE_SCROLL_HARD_7241, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_ELITE_12130, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_ELITE_19782, a(Region.KANDARIN))
+		.put(ItemID.CLUE_SCROLL_ELITE_19783, a(Region.TIRANNWN))
+		.put(ItemID.CLUE_SCROLL_ELITE_19785, a(Region.MORYTANIA))
+		.put(ItemID.CLUE_SCROLL_ELITE_19786, a(Region.KANDARIN))
 		.build();
 
 	private static final Map<Integer, RegionRequirement> BEGINNER_MAP_CLUES = ImmutableMap.<Integer, RegionRequirement>builder()
