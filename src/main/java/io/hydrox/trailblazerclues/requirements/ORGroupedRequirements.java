@@ -25,11 +25,11 @@
 package io.hydrox.trailblazerclues.requirements;
 
 import io.hydrox.trailblazerclues.Region;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import java.util.Set;
 
-@Value
+@Getter
 @RequiredArgsConstructor
 public class ORGroupedRequirements implements RegionRequirement
 {
