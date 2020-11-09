@@ -177,7 +177,7 @@ class Clue
 		CLUES.put("thickno", a(Region.KANDARIN));
 		CLUES.put("unleash night mist", a(Region.FREMENNIK));
 		CLUES.put("veste", or(Region.KANDARIN, Region.ASGARNIA));
-		CLUES.put("veil veda", a(Region.MISTHALIN));
+		CLUES.put("veil veda", and(Region.MISTHALIN, Region.DESERT));
 		CLUES.put("woo an egg kiwi", a(Region.KANDARIN));
 		CLUES.put("yawns gy", a(Region.TIRANNWN));
 		CLUES.put("majors lava bads air", a(Region.MISTHALIN));
