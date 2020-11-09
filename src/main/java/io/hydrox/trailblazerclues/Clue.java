@@ -529,7 +529,6 @@ class Clue
 		CLUES.put("jump for joy in yanille bank. dance a jig before you talk to me. equip a brown apron, adamantite medium helmet and snakeskin chaps.", and(a(Region.KANDARIN), or(Region.KARAMJA, Region.MORYTANIA, Region.MISTHALIN, Region.TIRANNWN)));
 		CLUES.put("jump for joy in the tzhaar sword shop. shrug before you talk to me. equip a steel longsword, blue d'hide body and blue mystic gloves.", and(a(Region.KARAMJA), or(Region.KANDARIN, Region.FREMENNIK)));
 		CLUES.put("jump for joy in the ancient cavern. equip a granite shield, splitbark body and any rune heraldic helm.", and(a(Region.KANDARIN), or(Region.FREMENNIK, Region.ASGARNIA), or(Region.MORYTANIA, Region.WILDERNESS)));
-		CLUES.put("jump for joy at the neitiznot rune rock. equip rune boots, a proselyte hauberk and a dragonstone ring.", and(Region.FREMENNIK, Region.ASGARNIA, Region.MORYTANIA));
 		CLUES.put("jump for joy in the centre of zul-andra. beware of double agents! equip a dragon 2h sword, bandos boots and an obsidian cape.", and(a(Region.TIRANNWN), or(Region.WILDERNESS, Region.DESERT), a(Region.ASGARNIA), a(Region.KARAMJA)));
 		CLUES.put("laugh by the fountain of heroes. equip splitbark legs, dragon boots and a rune longsword.", and(a(Region.ASGARNIA), or(Region.WILDERNESS, Region.MORYTANIA)));
 		CLUES.put("laugh in jokul's tent in the mountain camp. beware of double agents! equip a rune full helmet, blue dragonhide chaps and a fire battlestaff.", and(a(Region.FREMENNIK), or(Region.KANDARIN, Region.KARAMJA)));
