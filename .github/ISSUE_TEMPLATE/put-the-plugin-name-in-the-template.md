@@ -2,7 +2,7 @@
 name: Put the plugin name in the template
 about: If not, or if you delete the template, I will close the issue without reading
   it.
-title: "[plugin name goes here]"
+title: "[plugin name goes here] sum up your issue in a single line here"
 labels: ''
 assignees: ''
 
