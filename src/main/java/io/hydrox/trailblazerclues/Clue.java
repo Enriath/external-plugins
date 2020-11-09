@@ -469,8 +469,6 @@ class Clue
 		CLUES.put("a general who sets a 'shining' example.", a(Region.TIRANNWN));
 		CLUES.put("has no one told you it is rude to ask a lady her age?", a(Region.TIRANNWN));
 		CLUES.put("elvish onions.", a(Region.TIRANNWN));
-		CLUES.put("show this to sherlock.", a(Region.KANDARIN));
-		CLUES.put("falo the bard wants to see you.", a(Region.KANDARIN));
 		// Emotes
 		CLUES.put("beckon on the east coast of the kharazi jungle. beware of double agents! equip any vestment stole and a heraldic rune shield.", and(Region.KARAMJA, Region.FREMENNIK));
 		CLUES.put("cheer in the barbarian agility arena. headbang before you talk to me. equip a steel platebody, maple shortbow and a wilderness cape.", and(Region.KANDARIN, Region.WILDERNESS));
