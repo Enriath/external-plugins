@@ -467,6 +467,8 @@ class Clue
 		CLUES.put("a general who sets a 'shining' example.", a(Region.TIRANNWN));
 		CLUES.put("has no one told you it is rude to ask a lady her age?", a(Region.TIRANNWN));
 		CLUES.put("elvish onions.", a(Region.TIRANNWN));
+		CLUES.put("show this to sherlock.", a(Region.KANDARIN));
+		CLUES.put("falo the bard wants to see you.", a(Region.KANDARIN));
 		// Emotes
 		CLUES.put("beckon on the east coast of the kharazi jungle. beware of double agents! equip any vestment stole and a heraldic rune shield.", and(Region.KARAMJA, Region.FREMENNIK));
 		CLUES.put("cheer in the barbarian agility arena. headbang before you talk to me. equip a steel platebody, maple shortbow and a wilderness cape.", and(Region.KANDARIN, Region.WILDERNESS));
@@ -593,6 +595,66 @@ class Clue
 		CLUES.put("i need to smith charlie one iron dagger.", a(Region.MISTHALIN));
 		CLUES.put("i need to craft charlie a leather body.", and(a(Region.MISTHALIN), or(Region.DESERT, Region.ASGARNIA, Region.KANDARIN, Region.MORYTANIA, Region.FREMENNIK)));
 		CLUES.put("i need to craft charlie some leather chaps.", and(a(Region.MISTHALIN), or(Region.DESERT, Region.ASGARNIA, Region.KANDARIN, Region.MORYTANIA, Region.FREMENNIK)));
+		// Sherlock
+		CLUES.put("equip a dragon scimitar.", a(Region.KANDARIN));
+		CLUES.put("enchant a piece of dragonstone jewellery.", a(Region.KANDARIN));
+		CLUES.put("craft a nature rune.", a(Region.KARAMJA));
+		CLUES.put("score a goal in skullball.", a(Region.MORYTANIA));
+		CLUES.put("complete a lap of ape atoll agility course.", a(Region.MORYTANIA));
+		CLUES.put("create a super defence potion.", a(Region.KANDARIN));
+		CLUES.put("steal from a chest in ardougne castle.", a(Region.KANDARIN));
+		CLUES.put("craft a green dragonhide body.", a(Region.KANDARIN));
+		CLUES.put("string a yew longbow.", a(Region.KANDARIN));
+		CLUES.put("slay a dust devil.", a(Region.DESERT));
+		CLUES.put("catch a black warlock.", a(Region.KANDARIN));
+		CLUES.put("catch a red chinchompa.", a(Region.KANDARIN));
+		CLUES.put("mine a mithril ore.", a(Region.KANDARIN));
+		CLUES.put("smith a mithril 2h sword.", a(Region.KANDARIN));
+		CLUES.put("catch a raw shark.", a(Region.KANDARIN));
+		CLUES.put("cut a yew log.", a(Region.KANDARIN));
+		CLUES.put("fix a magical lamp in dorgesh-kaan.", a(Region.MISTHALIN));
+		CLUES.put("burn a yew log.", a(Region.KANDARIN));
+		CLUES.put("cook a swordfish", a(Region.KANDARIN));
+		CLUES.put("craft multiple cosmic runes from a single essence.", a(Region.MISTHALIN));
+		CLUES.put("plant a watermelon seed.", a(Region.KANDARIN));
+		CLUES.put("activate the chivalry prayer.", a(Region.KANDARIN));
+		CLUES.put("equip an abyssal whip in front of the abyssal demons of the slayer tower.", a(Region.MORYTANIA));
+		CLUES.put("smith a runite med helm.", a(Region.KANDARIN));
+		CLUES.put("teleport to a spirit tree you planted yourself.", or(Region.FREMENNIK, Region.ASGARNIA, Region.KARAMJA));
+		CLUES.put("slay a nechryael in the slayer tower.", a(Region.MORYTANIA));
+		CLUES.put("kill the spiritual, magic and godly whilst representing their own god.", or(Region.ASGARNIA, Region.WILDERNESS));
+		CLUES.put("create an unstrung dragonstone amulet at a furnace.", a(Region.KANDARIN));
+		CLUES.put("burn a magic log.", a(Region.KANDARIN));
+		CLUES.put("complete a lap of the rellekka rooftop agility course whilst sporting the finest amount of grace.", and(Region.FREMENNIK, Region.ASGARNIA));
+		CLUES.put("mix an anti-venom potion.", a(Region.TIRANNWN));
+		CLUES.put("mine a piece of runite ore whilst sporting the finest mining gear.", a(Region.ASGARNIA));
+		CLUES.put("steal a gem from the ardougne market.", a(Region.KANDARIN));
+		CLUES.put("pickpocket an elf.", a(Region.TIRANNWN));
+		CLUES.put("mix a ranging mix potion.", a(Region.KANDARIN));
+		CLUES.put("fletch a rune dart.", a(Region.KANDARIN));
+		CLUES.put("cremate a set of fiyr remains.", a(Region.MORYTANIA));
+		CLUES.put("dissect a sacred eel.", a(Region.TIRANNWN));
+		CLUES.put("craft a light orb in the dorgesh-kaan bank.", a(Region.MISTHALIN));
+		CLUES.put("kill a fiyr shade inside mort'tons shade catacombs.", a(Region.MORYTANIA));
+		// Falo
+		CLUES.put("a blood red weapon, a strong curved sword, found on the island of primate lords.", a(Region.KANDARIN));
+		CLUES.put("a book that preaches of some great figure, lending strength, might and vigour.", a(Region.FREMENNIK));
+		CLUES.put("a bow of elven craft was made, it shimmers bright, but will soon fade.", a(Region.TIRANNWN));
+		CLUES.put("a fiery axe of great inferno, when you use it, you'll wonder where the logs go.", and(Region.FREMENNIK, Region.KANDARIN));
+		CLUES.put("a mark used to increase one's grace, found atop a seer's place.", a(Region.KANDARIN));
+		CLUES.put("a molten beast with fiery breath, you acquire these with its death.", a(Region.WILDERNESS));
+		CLUES.put("a shiny helmet of flight, to obtain this with melee, struggle you might.", a(Region.ASGARNIA));
+		CLUES.put("a sword held in the other hand, red its colour, cyclops strength you must withstand.", a(Region.ASGARNIA));
+		CLUES.put("a token used to kill mythical beasts, in hopes of a blade or just for an xp feast.", a(Region.ASGARNIA));
+		CLUES.put("green is my favourite, mature ale i do love, this takes your herblore above.", or(Region.FREMENNIK, Region.MORYTANIA));
+		CLUES.put("it can hold down a boat or crush a goat, this object, you see, is quite heavy.", a(Region.MORYTANIA));
+		CLUES.put("it comes from the ground, underneath the snowy plain. trolls aplenty, with what looks like a mane.", and(Region.FREMENNIK, Region.ASGARNIA, Region.KANDARIN));
+		CLUES.put("no attack to wield, only strength is required, made of obsidian, but with no room for a shield.", a(Region.KARAMJA));
+		CLUES.put("penance healers runners and more, obtaining this body often gives much deplore.", a(Region.KANDARIN));
+		CLUES.put("these gloves of white won't help you fight, but aid in cooking, they just might.", and(Region.FREMENNIK, Region.KANDARIN));
+		CLUES.put("they come from some time ago, from a land unto the east. fossilised they have become, this small and gentle beast.", a(Region.MISTHALIN));
+		CLUES.put("to slay a dragon you must first do, before this chest piece can be put on you.", a(Region.MISTHALIN));
+		CLUES.put("vampyres are agile opponents, damaged best with a weapon of many components.", a(Region.MORYTANIA));
 	}
 
 	private static final Map<WorldPoint, RegionRequirement> COORD_CLUES = ImmutableMap.<WorldPoint, RegionRequirement>builder()
