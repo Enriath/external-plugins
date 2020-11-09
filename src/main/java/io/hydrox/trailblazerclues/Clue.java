@@ -523,7 +523,7 @@ class Clue
 		CLUES.put("headbang at the exam centre. beware of double agents! equip a mystic fire staff, a diamond bracelet and rune boots.", and(and(Region.MISTHALIN, Region.MORYTANIA), or(Region.WILDERNESS, Region.KANDARIN, Region.MISTHALIN)));
 		CLUES.put("headbang at the top of slayer tower. equip a seercull, a combat bracelet and helm of neitiznot.", and(Region.FREMENNIK, Region.MORYTANIA));
 		CLUES.put("dance a jig by the entrance to the fishing guild. equip an emerald ring, a sapphire amulet, and a bronze chain body.", a(Region.KANDARIN));
-		CLUES.put("dance a jig under shantay's awning. bow before you talk to me. equip a pointed blue snail helmet, an air staff and a bronze square shield.", and(Region.MORYTANIA, Region.KANDARIN));
+		CLUES.put("dance a jig under shantay's awning. bow before you talk to me. equip a pointed blue snail helmet, an air staff and a bronze square shield.", and(Region.MORYTANIA, Region.DESERT));
 		CLUES.put("do a jig in varrock's rune store. equip an air tiara and a staff of water.", and(Region.MISTHALIN, Region.ASGARNIA));
 		CLUES.put("jump for joy at the beehives. equip a desert shirt, green gnome robe bottoms and a steel axe.", and(Region.KANDARIN, Region.DESERT));
 		CLUES.put("jump for joy in yanille bank. dance a jig before you talk to me. equip a brown apron, adamantite medium helmet and snakeskin chaps.", and(a(Region.KANDARIN), or(Region.KARAMJA, Region.MORYTANIA, Region.MISTHALIN, Region.TIRANNWN)));
