@@ -24,7 +24,6 @@
  */
 package io.hydrox.trailblazerclues;
 
-import com.google.common.collect.ImmutableMap;
 import io.hydrox.trailblazerclues.requirements.ANDGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ANDRegionRequirement;
 import io.hydrox.trailblazerclues.requirements.ORGroupedRequirements;
@@ -86,6 +85,9 @@ class Clue
 
 	// I'm so, so very sorry.
 	private static final Map<String, RegionRequirement> CLUES = new HashMap<>();
+	private static final Map<WorldPoint, RegionRequirement> COORD_CLUES = new HashMap<>();
+	private static final Map<Integer, RegionRequirement> MAP_CLUES = new HashMap<>();
+	private static final Map<Integer, RegionRequirement> BEGINNER_MAP_CLUES = new HashMap<>();
 	
 	static
 	{
@@ -654,197 +656,194 @@ class Clue
 		CLUES.put("they come from some time ago, from a land unto the east. fossilised they have become, this small and gentle beast.", a(Region.MISTHALIN));
 		CLUES.put("to slay a dragon you must first do, before this chest piece can be put on you.", a(Region.MISTHALIN));
 		CLUES.put("vampyres are agile opponents, damaged best with a weapon of many components.", a(Region.MORYTANIA));
-	}
-
-	private static final Map<WorldPoint, RegionRequirement> COORD_CLUES = ImmutableMap.<WorldPoint, RegionRequirement>builder()
-		.put(new WorldPoint(2479, 3158, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2887, 3154, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2743, 3151, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(3184, 3150, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3217, 3177, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3007, 3144, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(2896, 3119, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2697, 3207, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2679, 3110, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3510, 3074, 0), a(Region.DESERT))
-		.put(new WorldPoint(3160, 3251, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(2643, 3252, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2322, 3061, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2875, 3046, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2849, 3033, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2848, 3296, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2583, 2990, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3179, 3344, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(2383, 3370, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3312, 3375, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3121, 3384, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3430, 3388, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2920, 3403, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(2594, 2899, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2387, 3435, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2512, 3467, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2381, 3468, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3005, 3475, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(2585, 3505, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3443, 3515, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2416, 3516, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3429, 3523, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2363, 3531, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2919, 3535, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(3548, 3560, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2735, 3638, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2681, 3653, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2537, 3881, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2828, 3234, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(1247, 3726, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3770, 3898, 0), a(Region.MISTHALIN))
+		
+		// Coord Clues
+		COORD_CLUES.put(new WorldPoint(2479, 3158, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2887, 3154, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2743, 3151, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(3184, 3150, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3217, 3177, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3007, 3144, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(2896, 3119, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2697, 3207, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2679, 3110, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3510, 3074, 0), a(Region.DESERT));
+		COORD_CLUES.put(new WorldPoint(3160, 3251, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(2643, 3252, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2322, 3061, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2875, 3046, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2849, 3033, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2848, 3296, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2583, 2990, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3179, 3344, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(2383, 3370, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3312, 3375, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3121, 3384, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3430, 3388, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2920, 3403, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(2594, 2899, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2387, 3435, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2512, 3467, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2381, 3468, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3005, 3475, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(2585, 3505, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3443, 3515, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2416, 3516, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3429, 3523, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2363, 3531, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2919, 3535, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(3548, 3560, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2735, 3638, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2681, 3653, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2537, 3881, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2828, 3234, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(1247, 3726, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3770, 3898, 0), a(Region.MISTHALIN));
 		// Hard
-		.put(new WorldPoint(2209, 3161, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(2181, 3206, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(3081, 3209, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3399, 3246, 0), a(Region.DESERT))
-		.put(new WorldPoint(2699, 3251, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3546, 3251, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(3544, 3256, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2841, 3267, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(3168, 3041, 0), a(Region.DESERT))
-		.put(new WorldPoint(2542, 3031, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2581, 3030, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2961, 3024, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2339, 3311, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(3440, 3341, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2763, 2974, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(3138, 2969, 0), a(Region.DESERT))
-		.put(new WorldPoint(2924, 2963, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2838, 2914, 0), and(Region.KARAMJA, Region.FREMENNIK))
-		.put(new WorldPoint(3441, 3419, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2950, 2902, 0), and(Region.KARAMJA, Region.FREMENNIK))
-		.put(new WorldPoint(2775, 2891, 0), and(Region.KARAMJA, Region.FREMENNIK))
-		.put(new WorldPoint(3113, 3602, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2892, 3675, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(3168, 3677, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2853, 3690, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(3305, 3692, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3055, 3696, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3302, 3696, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2712, 3732, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2970, 3749, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3094, 3764, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3311, 3769, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3244, 3792, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3140, 3804, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2946, 3819, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3771, 3825, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(3013, 3846, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3058, 3884, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3290, 3889, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3770, 3897, 0), a(Region.MISTHALIN))
-		.put(new WorldPoint(2505, 3899, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(3285, 3942, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3159, 3959, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3039, 3960, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2987, 3963, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3189, 3963, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2341, 3697, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3143, 3774, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2992, 3941, 0), a(Region.WILDERNESS))
+		COORD_CLUES.put(new WorldPoint(2209, 3161, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(2181, 3206, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(3081, 3209, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3399, 3246, 0), a(Region.DESERT));
+		COORD_CLUES.put(new WorldPoint(2699, 3251, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3546, 3251, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(3544, 3256, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2841, 3267, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(3168, 3041, 0), a(Region.DESERT));
+		COORD_CLUES.put(new WorldPoint(2542, 3031, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2581, 3030, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2961, 3024, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2339, 3311, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(3440, 3341, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2763, 2974, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(3138, 2969, 0), a(Region.DESERT));
+		COORD_CLUES.put(new WorldPoint(2924, 2963, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2838, 2914, 0), and(Region.KARAMJA, Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3441, 3419, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2950, 2902, 0), and(Region.KARAMJA, Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2775, 2891, 0), and(Region.KARAMJA, Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3113, 3602, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2892, 3675, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(3168, 3677, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2853, 3690, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(3305, 3692, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3055, 3696, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3302, 3696, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2712, 3732, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2970, 3749, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3094, 3764, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3311, 3769, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3244, 3792, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3140, 3804, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2946, 3819, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3771, 3825, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(3013, 3846, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3058, 3884, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3290, 3889, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3770, 3897, 0), a(Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(2505, 3899, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3285, 3942, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3159, 3959, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3039, 3960, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2987, 3963, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3189, 3963, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2341, 3697, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3143, 3774, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2992, 3941, 0), a(Region.WILDERNESS));
 		// Elite
-		.put(new WorldPoint(2357, 3151, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(3587, 3180, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2820, 3078, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(3811, 3060, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2180, 3282, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(2870, 2997, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(3302, 2988, 0), a(Region.DESERT))
-		.put(new WorldPoint(2511, 2980, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2732, 3372, 0), and(Region.KARAMJA, Region.FREMENNIK))
-		.put(new WorldPoint(3573, 3425, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(3828, 2848, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(3225, 2838, 0), a(Region.DESERT))
-		.put(new WorldPoint(3822, 3562, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(3603, 3564, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2936, 2721, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2697, 2705, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2778, 3678, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2827, 3740, 0), a(Region.ASGARNIA))
-		.put(new WorldPoint(2359, 3799, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2194, 3807, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2700, 3808, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(3215, 3835, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3369, 3894, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2065, 3923, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(3188, 3933, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2997, 3953, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3380, 3963, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3051, 3736, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2316, 3814, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2872, 3937, 0), and(Region.FREMENNIK, Region.ASGARNIA, Region.KANDARIN))
-		.put(new WorldPoint(2484, 4016, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2222, 3331, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(3560, 3987, 0), and(Region.FREMENNIK, Region.MISTHALIN)) // TODO: Lithkren. Not entirely sure, since the area is DS2 specific
+		COORD_CLUES.put(new WorldPoint(2357, 3151, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(3587, 3180, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2820, 3078, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(3811, 3060, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2180, 3282, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(2870, 2997, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(3302, 2988, 0), a(Region.DESERT));
+		COORD_CLUES.put(new WorldPoint(2511, 2980, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2732, 3372, 0), and(Region.KARAMJA, Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3573, 3425, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(3828, 2848, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(3225, 2838, 0), a(Region.DESERT));
+		COORD_CLUES.put(new WorldPoint(3822, 3562, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(3603, 3564, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2936, 2721, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2697, 2705, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2778, 3678, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2827, 3740, 0), a(Region.ASGARNIA));
+		COORD_CLUES.put(new WorldPoint(2359, 3799, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2194, 3807, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2700, 3808, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3215, 3835, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3369, 3894, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2065, 3923, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3188, 3933, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2997, 3953, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3380, 3963, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3051, 3736, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2316, 3814, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2872, 3937, 0), and(Region.FREMENNIK, Region.ASGARNIA, Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2484, 4016, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2222, 3331, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(3560, 3987, 0), and(Region.FREMENNIK, Region.MISTHALIN)); // TODO: Lithkren. Not entirely sure, since the area is DS2 specific
 		// Master
-		.put(new WorldPoint(2178, 3209, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(2155, 3100, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(2217, 3092, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(3830, 3060, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2834, 3271, 0), a(Region.KARAMJA))
-		.put(new WorldPoint(2732, 3284, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(3622, 3320, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2303, 3328, 0), a(Region.TIRANNWN))
-		.put(new WorldPoint(3570, 3405, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(2840, 3423, 0), a(Region.ASGARNIA)) // TODO: Water Obelisk. Could also need Kandarin
-		.put(new WorldPoint(3604, 3564, 0), a(Region.MORYTANIA))
-		.put(new WorldPoint(3085, 3569, 0), and(Region.WILDERNESS, Region.MISTHALIN))
-		.put(new WorldPoint(2934, 2727, 0), a(Region.KANDARIN))
-		.put(new WorldPoint(2538, 3739, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2951, 3820, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2202, 3825, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(2090, 3863, 0), a(Region.FREMENNIK))
-		.put(new WorldPoint(3380, 3929, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3188, 3939, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(3304, 3941, 0), a(Region.WILDERNESS))
-		.put(new WorldPoint(2994, 3961, 0), a(Region.WILDERNESS))
-		.build();
+		COORD_CLUES.put(new WorldPoint(2178, 3209, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(2155, 3100, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(2217, 3092, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(3830, 3060, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2834, 3271, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2732, 3284, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(3622, 3320, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2303, 3328, 0), a(Region.TIRANNWN));
+		COORD_CLUES.put(new WorldPoint(3570, 3405, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(2840, 3423, 0), a(Region.ASGARNIA)); // TODO: Water Obelisk. Could also need Kandarin
+		COORD_CLUES.put(new WorldPoint(3604, 3564, 0), a(Region.MORYTANIA));
+		COORD_CLUES.put(new WorldPoint(3085, 3569, 0), and(Region.WILDERNESS, Region.MISTHALIN));
+		COORD_CLUES.put(new WorldPoint(2934, 2727, 0), a(Region.KANDARIN));
+		COORD_CLUES.put(new WorldPoint(2538, 3739, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2951, 3820, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2202, 3825, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(2090, 3863, 0), a(Region.FREMENNIK));
+		COORD_CLUES.put(new WorldPoint(3380, 3929, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3188, 3939, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(3304, 3941, 0), a(Region.WILDERNESS));
+		COORD_CLUES.put(new WorldPoint(2994, 3961, 0), a(Region.WILDERNESS));
 
-	private static final Map<Integer, RegionRequirement> MAP_CLUES = ImmutableMap.<Integer, RegionRequirement>builder()
-		.put(ItemID.CLUE_SCROLL_EASY_12179, a(Region.DESERT))
-		.put(ItemID.CLUE_SCROLL_EASY_2713, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_EASY_2716, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_EASY_2719, a(Region.ASGARNIA))
-		.put(ItemID.CLUE_SCROLL_EASY_3516, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_EASY_3518, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_EASY_7236, a(Region.ASGARNIA))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_2827, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3596, a(Region.ASGARNIA))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3598, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3599, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3601, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_3602, a(Region.ASGARNIA))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7286, a(Region.FREMENNIK))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7288, a(Region.MORYTANIA))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7290, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7292, a(Region.FREMENNIK))
-		.put(ItemID.CLUE_SCROLL_MEDIUM_7294, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_HARD, a(Region.MISTHALIN))
-		.put(ItemID.CLUE_SCROLL_HARD_2729, a(Region.WILDERNESS))
-		.put(ItemID.CLUE_SCROLL_HARD_3520, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_HARD_3522, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_HARD_3524, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_HARD_3525, a(Region.WILDERNESS))
-		.put(ItemID.CLUE_SCROLL_HARD_7239, a(Region.WILDERNESS))
-		.put(ItemID.CLUE_SCROLL_HARD_7241, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_ELITE_12130, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_ELITE_19782, a(Region.KANDARIN))
-		.put(ItemID.CLUE_SCROLL_ELITE_19783, a(Region.TIRANNWN))
-		.put(ItemID.CLUE_SCROLL_ELITE_19785, a(Region.MORYTANIA))
-		.put(ItemID.CLUE_SCROLL_ELITE_19786, a(Region.KANDARIN))
-		.build();
+		// Regular Map Clues
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_12179, a(Region.DESERT));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_2713, a(Region.MISTHALIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_2716, a(Region.MISTHALIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_2719, a(Region.ASGARNIA));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_3516, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_3518, a(Region.MISTHALIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_EASY_7236, a(Region.ASGARNIA));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_2827, a(Region.MISTHALIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_3596, a(Region.ASGARNIA));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_3598, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_3599, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_3601, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_3602, a(Region.ASGARNIA));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_7286, a(Region.FREMENNIK));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_7288, a(Region.MORYTANIA));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_7290, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_7292, a(Region.FREMENNIK));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_MEDIUM_7294, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD, a(Region.MISTHALIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_2729, a(Region.WILDERNESS));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_3520, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_3522, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_3524, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_3525, a(Region.WILDERNESS));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_7239, a(Region.WILDERNESS));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_HARD_7241, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_ELITE_12130, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_ELITE_19782, a(Region.KANDARIN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_ELITE_19783, a(Region.TIRANNWN));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_ELITE_19785, a(Region.MORYTANIA));
+		MAP_CLUES.put(ItemID.CLUE_SCROLL_ELITE_19786, a(Region.KANDARIN));
 
-	private static final Map<Integer, RegionRequirement> BEGINNER_MAP_CLUES = ImmutableMap.<Integer, RegionRequirement>builder()
-		.put(WidgetID.BEGINNER_CLUE_MAP_CHAMPIONS_GUILD, a(Region.MISTHALIN))
-		.put(WidgetID.BEGINNER_CLUE_MAP_VARROCK_EAST_MINE, a(Region.MISTHALIN))
-		.put(WidgetID.BEGINNER_CLUE_MAP_DRAYNOR, a(Region.MISTHALIN))
-		.put(WidgetID.BEGINNER_CLUE_MAP_NORTH_OF_FALADOR, a(Region.ASGARNIA))
-		.put(WidgetID.BEGINNER_CLUE_MAP_WIZARDS_TOWER, a(Region.MISTHALIN))
-		.build();
+		// Beginner Map Clues
+		BEGINNER_MAP_CLUES.put(WidgetID.BEGINNER_CLUE_MAP_CHAMPIONS_GUILD, a(Region.MISTHALIN));
+		BEGINNER_MAP_CLUES.put(WidgetID.BEGINNER_CLUE_MAP_VARROCK_EAST_MINE, a(Region.MISTHALIN));
+		BEGINNER_MAP_CLUES.put(WidgetID.BEGINNER_CLUE_MAP_DRAYNOR, a(Region.MISTHALIN));
+		BEGINNER_MAP_CLUES.put(WidgetID.BEGINNER_CLUE_MAP_NORTH_OF_FALADOR, a(Region.ASGARNIA));
+		BEGINNER_MAP_CLUES.put(WidgetID.BEGINNER_CLUE_MAP_WIZARDS_TOWER, a(Region.MISTHALIN));
+	}
 }
