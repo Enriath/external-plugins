@@ -104,7 +104,7 @@ class Clue
 		CLUES.put("a bas", a(Region.ASGARNIA));
 		CLUES.put("area chef trek", a(Region.MISTHALIN));
 		CLUES.put("bail trims", a(Region.KANDARIN));
-		CLUES.put("baker climb", a(Region.ASGARNIA)); // TODO: Trollweiss. Unsure about this one, could be just Asgarnia and Kandarin
+		CLUES.put("baker climb", a(Region.ASGARNIA));
 		CLUES.put("blue grim guided", a(Region.MISTHALIN));
 		CLUES.put("by look", a(Region.KANDARIN));
 		CLUES.put("calamari made mud", a(Region.KANDARIN));
@@ -291,7 +291,7 @@ class Clue
 		CLUES.put("'small shoe.' often found with rod on mushroom.", a(Region.KANDARIN));
 		CLUES.put("i live in a deserted crack collecting soles.", a(Region.DESERT));
 		CLUES.put("46 is my number. my body is the colour of burnt orange and crawls among those with eight. three mouths i have, yet i cannot eat. my blinking blue eye hides my grave.", a(Region.WILDERNESS));
-		CLUES.put("green is the colour of my death as the winter-guise, i swoop towards the ground.", a(Region.ASGARNIA)); // TODO: Trollweiss. Not sure about this one
+		CLUES.put("green is the colour of my death as the winter-guise, i swoop towards the ground.", and(Region.ASGARNIA, Region.KANDARIN));
 		CLUES.put("talk to a party-goer in falador.", a(Region.ASGARNIA));
 		CLUES.put("he knows just how easy it is to lose track of time.", a(Region.KANDARIN));
 		CLUES.put("a great view - watch the rapidly drying hides get splashed. check the box you are sitting on.", a(Region.KANDARIN));
@@ -540,7 +540,7 @@ class Clue
 		CLUES.put("panic on the wilderness volcano bridge. beware of double agents! equip any headband and crozier.", a(Region.WILDERNESS));
 		CLUES.put("panic by the pilot on white wolf mountain. beware of double agents! equip mithril platelegs, a ring of life and a rune axe.", a(Region.ASGARNIA));
 		CLUES.put("panic by the big egg where no one dare goes and the ground is burnt. beware of double agents! equip a dragon med helm, a toktz-ket-xil, a brine sabre, rune platebody and an uncharged amulet of glory.", and(Region.KARAMJA, Region.FREMENNIK));
-		CLUES.put("panic at the area flowers meet snow. equip blue d'hide vambraces, a dragon spear and a rune plateskirt.", and(Region.ASGARNIA, Region.KANDARIN)); // TODO: Trollweiss again
+		CLUES.put("panic at the area flowers meet snow. equip blue d'hide vambraces, a dragon spear and a rune plateskirt.", and(Region.ASGARNIA, Region.KANDARIN));
 		CLUES.put("do a push up at the bank of the warrior's guild. beware of double agents! equip a dragon battleaxe, a dragon defender and a slayer helm of any kind.", and(Region.ASGARNIA, Region.MORYTANIA));
 		CLUES.put("blow a raspberry in the bank of the warriors' guild. beware of double agents! equip a dragon battleaxe, a slayer helm of any kind and a dragon defender or avernic defender.", and(Region.ASGARNIA, Region.MORYTANIA));
 		CLUES.put("blow a raspberry at the monkey cage in ardougne zoo. equip a studded leather body, bronze platelegs and a normal staff with no orb.", and(Region.KANDARIN, Region.MISTHALIN));
