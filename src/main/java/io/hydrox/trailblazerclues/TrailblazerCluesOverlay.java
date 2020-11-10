@@ -90,12 +90,12 @@ public class TrailblazerCluesOverlay extends Overlay
 			return null;
 		}
 
-		Point offset = new Point(-26, 0);
+		Point offset = new Point(0, 10);
 		if (clueWidget.getWidth() == 32)
 		{
 			// Thanks map clues for not having a proper background
 			clueWidget = clueWidget.getParent();
-			offset.move(-146, 37);
+			offset.translate(-120, 37);
 		}
 
 		graphics.setFont(FontManager.getRunescapeBoldFont());
