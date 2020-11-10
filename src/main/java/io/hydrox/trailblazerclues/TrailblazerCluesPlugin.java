@@ -81,6 +81,12 @@ public class TrailblazerCluesPlugin extends Plugin
 	private RegionRequirement currentReqs = null;
 
 	@Getter
+	private int groupID = -1;
+
+	@Getter
+	private int childID = -1;
+
+	@Getter
 	private Set<Region> unlockedRegions = new HashSet<>();
 
 	@Override
@@ -123,6 +129,8 @@ public class TrailblazerCluesPlugin extends Plugin
 		}
 
 		currentClueHash = clueScrollText.getText().hashCode();
+		groupID = WidgetID.CLUE_SCROLL_GROUP_ID;
+		childID = 2;
 
 		String rawText = clueScrollText.getText().toLowerCase();
 
@@ -169,6 +177,8 @@ public class TrailblazerCluesPlugin extends Plugin
 		}
 
 		currentReqs = Clue.fromBeginnerMap(event.getGroupId());
+		groupID = event.getGroupId();
+		childID = 0;
 	}
 
 	@Subscribe
@@ -182,6 +192,8 @@ public class TrailblazerCluesPlugin extends Plugin
 			{
 				currentClueHash = itemComposition.getId();
 				currentReqs = Clue.fromMap(currentClueHash);
+				groupID = 359;
+				childID = 0;
 			}
 		}
 	}

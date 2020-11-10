@@ -33,7 +33,6 @@ import io.hydrox.trailblazerclues.requirements.SingleRegionRequirement;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
@@ -79,19 +78,33 @@ public class TrailblazerCluesOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		RegionRequirement reqs = plugin.getCurrentReqs();
-		Widget textWidget = client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT);
-		if (textWidget == null)
+		if (plugin.getGroupID() == -1 || plugin.getChildID() == -1)
 		{
 			return null;
+		}
+		RegionRequirement reqs = plugin.getCurrentReqs();
+		Widget clueWidget = client.getWidget(plugin.getGroupID(), plugin.getChildID());
+		if (clueWidget == null)
+		{
+			return null;
+		}
+
+		Point offset = new Point(-26, 0);
+		if (clueWidget.getWidth() == 32)
+		{
+			// Thanks map clues for not having a proper background
+			clueWidget = clueWidget.getParent();
+			offset.move(-146, 37);
 		}
 
 		graphics.setFont(FontManager.getRunescapeBoldFont());
 
 		if (reqs != null)
 		{
-			Point topLeft = new Point(textWidget.getCanvasLocation().getX() + textWidget.getOriginalWidth() - 26,
-				textWidget.getCanvasLocation().getY());
+			Point topLeft = new Point(clueWidget.getCanvasLocation().getX() + clueWidget.getOriginalWidth(),
+				clueWidget.getCanvasLocation().getY());
+			topLeft.translate(offset.x, offset.y);
+
 			drawOutlinedString(graphics, "REQUIREMENTS:", topLeft.x, topLeft.y, Color.WHITE, Color.BLACK);
 			parseAndDrawReq(graphics, topLeft, reqs);
 		}
@@ -100,15 +113,15 @@ public class TrailblazerCluesOverlay extends Overlay
 		if (reqs == null || !reqs.isValid(plugin.getUnlockedRegions()))
 		{
 			drawOutlinedString(graphics, IMPOSSIBLE,
-				textWidget.getCanvasLocation().getX() + (textWidget.getWidth() / 2) - (fm.stringWidth(IMPOSSIBLE) / 2),
-				textWidget.getCanvasLocation().getY(),
+				clueWidget.getCanvasLocation().getX() + (clueWidget.getWidth() / 2) - (fm.stringWidth(IMPOSSIBLE) / 2),
+				clueWidget.getCanvasLocation().getY() + offset.y,
 				Color.RED, Color.BLACK);
 		}
 		else
 		{
 			drawOutlinedString(graphics, POSSIBLE,
-				textWidget.getCanvasLocation().getX() + (textWidget.getWidth() / 2) - (fm.stringWidth(POSSIBLE) / 2),
-				textWidget.getCanvasLocation().getY(),
+				clueWidget.getCanvasLocation().getX() + (clueWidget.getWidth() / 2) - (fm.stringWidth(POSSIBLE) / 2),
+				clueWidget.getCanvasLocation().getY() + offset.y,
 				Color.GREEN, Color.BLACK);
 		}
 
