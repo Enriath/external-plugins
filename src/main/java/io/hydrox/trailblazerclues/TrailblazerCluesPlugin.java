@@ -131,8 +131,7 @@ public class TrailblazerCluesPlugin extends Plugin
 		groupID = WidgetID.CLUE_SCROLL_GROUP_ID;
 		childID = 2;
 
-		//String rawText = clueScrollText.getText().toLowerCase();
-		String rawText = "come brave adventurer, your sense is on fire. if you talk to me, it's an old god you desire.<br><br>you will have to fly high where a sword cannot help you.<br><br>a massive battle rages beneath so be careful when you dig by the large broken crossbow.";
+		String rawText = clueScrollText.getText().toLowerCase();
 		String[] threeStep = rawText.split(THREE_STEP_CRYPTIC_SPLITTER);
 
 		if (threeStep.length == 3)
