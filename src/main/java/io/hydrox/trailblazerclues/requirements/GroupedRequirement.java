@@ -24,27 +24,7 @@
  */
 package io.hydrox.trailblazerclues.requirements;
 
-import io.hydrox.trailblazerclues.Region;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import java.util.Set;
-
-@Getter
-@RequiredArgsConstructor
-public class ORGroupedRequirements implements RegionRequirement, GroupedRequirement
+// Dummy interface to help with checking later.
+public interface GroupedRequirement
 {
-	private final RegionRequirement[] regionRequirements;
-
-	@Override
-	public boolean isValid(Set<Region> regions)
-	{
-		for (RegionRequirement req : regionRequirements)
-		{
-			if (req.isValid(regions))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
 }

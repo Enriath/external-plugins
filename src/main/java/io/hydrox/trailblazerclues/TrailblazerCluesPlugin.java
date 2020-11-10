@@ -44,7 +44,6 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.Text;
-import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -132,13 +131,14 @@ public class TrailblazerCluesPlugin extends Plugin
 		groupID = WidgetID.CLUE_SCROLL_GROUP_ID;
 		childID = 2;
 
-		String rawText = clueScrollText.getText().toLowerCase();
+		//String rawText = clueScrollText.getText().toLowerCase();
+		String rawText = "come brave adventurer, your sense is on fire. if you talk to me, it's an old god you desire.<br><br>you will have to fly high where a sword cannot help you.<br><br>a massive battle rages beneath so be careful when you dig by the large broken crossbow.";
+		String[] threeStep = rawText.split(THREE_STEP_CRYPTIC_SPLITTER);
 
-		if (StringUtils.countMatches(rawText, THREE_STEP_CRYPTIC_SPLITTER) >= 2)
+		if (threeStep.length == 3)
 		{
 			List<RegionRequirement> reqs = new ArrayList<>();
-			String[] texts = rawText.split(THREE_STEP_CRYPTIC_SPLITTER);
-			for (String clue : texts)
+			for (String clue : threeStep)
 			{
 				String text = Text.sanitizeMultilineText(clue);
 				reqs.add(Clue.fromText(text));

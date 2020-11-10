@@ -31,7 +31,7 @@ import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
-public class ANDGroupedRequirements implements RegionRequirement
+public class ANDGroupedRequirements implements RegionRequirement, GroupedRequirement
 {
 	private final RegionRequirement[] regionRequirements;
 

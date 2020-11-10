@@ -26,6 +26,7 @@ package io.hydrox.trailblazerclues;
 
 import io.hydrox.trailblazerclues.requirements.ANDGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ANDRegionRequirement;
+import io.hydrox.trailblazerclues.requirements.GroupedRequirement;
 import io.hydrox.trailblazerclues.requirements.ORGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ORRegionRequirement;
 import io.hydrox.trailblazerclues.requirements.RegionRequirement;
@@ -165,7 +166,10 @@ public class TrailblazerCluesOverlay extends Overlay
 			for (int i = 0; i < reqs.length; i++)
 			{
 				parseAndDrawReq(g, topLeft, reqs[i], i > 0 ? REGION_MULTI_AND : null);
-				topLeft.translate(0, LINE_HEIGHT + TEXT_OFFSET);
+				if (!(reqs[i] instanceof GroupedRequirement))
+				{
+					topLeft.translate(0, LINE_HEIGHT + TEXT_OFFSET);
+				}
 			}
 		}
 		else if (req instanceof ORGroupedRequirements)
@@ -175,7 +179,10 @@ public class TrailblazerCluesOverlay extends Overlay
 			for (int i = 0; i < reqs.length; i++)
 			{
 				parseAndDrawReq(g, topLeft, reqs[i], i > 0 ? REGION_MULTI_OR : null);
-				topLeft.translate(0, LINE_HEIGHT + TEXT_OFFSET);
+				if (!(reqs[i] instanceof GroupedRequirement))
+				{
+					topLeft.translate(0, LINE_HEIGHT + TEXT_OFFSET);
+				}
 			}
 		}
 	}
