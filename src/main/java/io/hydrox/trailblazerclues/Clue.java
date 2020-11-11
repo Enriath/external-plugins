@@ -549,7 +549,7 @@ class Clue
 		CLUES.put("salute in the warriors' guild bank. equip only a black salamander.", and(Region.ASGARNIA, Region.WILDERNESS));
 		CLUES.put("shrug in the mine near rimmington. equip a gold necklace, a gold ring and a bronze spear.", a(Region.ASGARNIA));
 		CLUES.put("shrug in catherby bank. yawn before you talk to me. equip a maple longbow, green d'hide chaps and an iron med helm.", a(Region.KANDARIN));
-		CLUES.put("shrug in the zamorak temple found in the eastern wilderness. beware of double agents! equip rune platelegs, an iron platebody and blue dragonhide vambraces.", and(a(Region.WILDERNESS), or(Region.KANDARIN, Region.TIRANNWN)));
+		CLUES.put("shrug in the zamorak temple found in the eastern wilderness. beware of double agents! equip rune platelegs, an iron platebody and blue dragonhide vambraces.", and(a(Region.WILDERNESS), or(Region.KANDARIN, Region.TIRANNWN, Region.FREMENNIK, Region.ASGARNIA)));
 		CLUES.put("spin at the crossroads north of rimmington. equip a green gnome hat, cream gnome top and leather chaps.", and(Region.ASGARNIA, Region.KANDARIN));
 		CLUES.put("spin in draynor manor by the fountain. equip an iron platebody, studded leather chaps and a bronze full helmet.", a(Region.MISTHALIN));
 		CLUES.put("spin in the varrock castle courtyard. equip a black axe, a coif and a ruby ring.", a(Region.MISTHALIN));
