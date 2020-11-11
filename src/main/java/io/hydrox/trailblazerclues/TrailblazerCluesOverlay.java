@@ -107,8 +107,7 @@ public class TrailblazerCluesOverlay extends Overlay
 			return null;
 		}
 
-		// The ModelID for the clue scroll background
-		if (parentWidget.getNestedChildren()[0].getModelId() != 3395 && parentWidget.getNestedChildren()[1].getModelId() != 3395)
+		if (!viewingClueScroll(parentWidget))
 		{
 			return null;
 		}
@@ -247,5 +246,18 @@ public class TrailblazerCluesOverlay extends Overlay
 			if (cross == null) return;
 			g.drawImage(cross, x + sprite.getWidth() - cross.getWidth(), y + sprite.getHeight() - cross.getHeight(), cross.getWidth(), cross.getHeight(), null);
 		}
+	}
+
+	private static boolean viewingClueScroll(final Widget parentWidget)
+	{
+		for (Widget w : parentWidget.getNestedChildren())
+		{
+			// The ModelID for the clue scroll background
+			if (w.getModelId() == 3395)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
