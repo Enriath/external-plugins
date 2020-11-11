@@ -80,16 +80,34 @@ public class TrailblazerCluesOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		Widget resizeableWidget = client.getWidget(164, 15);
-		Widget fixedWidget = client.getWidget(548, 23);
-		Widget parentWidget = resizeableWidget == null ? fixedWidget : resizeableWidget;
+		final Widget resizeableBarWidget = client.getWidget(164, 15);
+		final Widget resizeableClassicWidget = client.getWidget(161, 15);
+		final Widget fixedWidget = client.getWidget(548, 23);
+		final Widget parentWidget;
 
-		if (parentWidget == null || parentWidget.getNestedChildren() == null || parentWidget.getNestedChildren().length == 0)
+		if (resizeableBarWidget != null)
+		{
+			parentWidget = resizeableBarWidget;
+		}
+		else if (resizeableClassicWidget != null)
+		{
+			parentWidget = resizeableClassicWidget;
+		}
+		else if (fixedWidget != null)
+		{
+			parentWidget = fixedWidget;
+		}
+		else
 		{
 			return null;
 		}
 
-		Widget clueBGWidget = parentWidget.getNestedChildren()[0];
+		if (parentWidget.getNestedChildren() == null || parentWidget.getNestedChildren().length == 0)
+		{
+			return null;
+		}
+
+		final Widget clueBGWidget = parentWidget.getNestedChildren()[0];
 		// The ModelID for the clue scroll background
 		if (clueBGWidget.getModelId() != 3395)
 		{
