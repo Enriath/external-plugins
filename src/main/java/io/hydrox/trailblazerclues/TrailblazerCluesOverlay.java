@@ -107,9 +107,8 @@ public class TrailblazerCluesOverlay extends Overlay
 			return null;
 		}
 
-		final Widget clueBGWidget = parentWidget.getNestedChildren()[0];
 		// The ModelID for the clue scroll background
-		if (clueBGWidget.getModelId() != 3395)
+		if (parentWidget.getNestedChildren()[0].getModelId() != 3395 && parentWidget.getNestedChildren()[1].getModelId() != 3395)
 		{
 			return null;
 		}
