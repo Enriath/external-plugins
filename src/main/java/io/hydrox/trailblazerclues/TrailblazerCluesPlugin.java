@@ -61,6 +61,10 @@ public class TrailblazerCluesPlugin extends Plugin
 	private static final Pattern ANAGRAMS_AND_CIPHERS = Pattern.compile("^th(is|e) (anagram|cipher) reveals who to speak to next: ");
 	private static final String THREE_STEP_CRYPTIC_SPLITTER = "<br>\\s*<br>";
 	private static final Set<Integer> CHOSEN_REGION_VARBITS = ImmutableSet.of(10662, 10663, 10664, 10665, 10666, 10667);
+	private static final Set<Integer> BEGINNER_MAP_CLUE_WIDGET_IDS = ImmutableSet.of(
+		WidgetID.BEGINNER_CLUE_MAP_CHAMPIONS_GUILD, WidgetID.BEGINNER_CLUE_MAP_VARROCK_EAST_MINE,
+		WidgetID.BEGINNER_CLUE_MAP_WIZARDS_TOWER, WidgetID.BEGINNER_CLUE_MAP_DRAYNOR,
+		WidgetID.BEGINNER_CLUE_MAP_NORTH_OF_FALADOR);
 
 	@Inject
 	private Client client;
@@ -161,8 +165,7 @@ public class TrailblazerCluesPlugin extends Plugin
 	@Subscribe
 	public void onWidgetLoaded(WidgetLoaded event)
 	{
-		if (event.getGroupId() < WidgetID.BEGINNER_CLUE_MAP_CHAMPIONS_GUILD
-			|| event.getGroupId() > WidgetID.BEGINNER_CLUE_MAP_WIZARDS_TOWER)
+		if (!BEGINNER_MAP_CLUE_WIDGET_IDS.contains(event.getGroupId()))
 		{
 			return;
 		}
