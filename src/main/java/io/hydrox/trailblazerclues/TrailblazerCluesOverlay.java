@@ -34,6 +34,7 @@ import io.hydrox.trailblazerclues.requirements.SingleRegionRequirement;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
@@ -79,22 +80,28 @@ public class TrailblazerCluesOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if (plugin.getGroupID() == -1 || plugin.getChildID() == -1)
-		{
-			return null;
-		}
-		RegionRequirement reqs = plugin.getCurrentReqs();
-		Widget clueWidget = client.getWidget(plugin.getGroupID(), plugin.getChildID());
-		if (clueWidget == null)
+		Widget resizeableWidget = client.getWidget(164, 15);
+		Widget fixedWidget = client.getWidget(548, 23);
+		Widget parentWidget = resizeableWidget == null ? fixedWidget : resizeableWidget;
+
+		if (parentWidget == null || parentWidget.getNestedChildren() == null || parentWidget.getNestedChildren().length == 0)
 		{
 			return null;
 		}
 
-		Point offset = new Point(0, 10);
-		if (clueWidget.getWidth() == 32)
+		Widget clueBGWidget = parentWidget.getNestedChildren()[0];
+		// The ModelID for the clue scroll background
+		if (clueBGWidget.getModelId() != 3395)
 		{
-			// Thanks map clues for not having a proper background
-			clueWidget = clueWidget.getParent();
+			return null;
+		}
+
+		RegionRequirement reqs = plugin.getCurrentReqs();
+		Point offset = new Point(0, 10);
+		Widget clueWidget = client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT);
+		if (clueWidget == null)
+		{
+			clueWidget = parentWidget;
 			offset.translate(-120, 37);
 		}
 
