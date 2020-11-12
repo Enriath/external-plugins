@@ -26,6 +26,7 @@ package io.hydrox.trailblazerclues;
 
 import io.hydrox.trailblazerclues.requirements.ANDGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ANDRegionRequirement;
+import io.hydrox.trailblazerclues.requirements.NeverShowRequirements;
 import io.hydrox.trailblazerclues.requirements.ORGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ORRegionRequirement;
 import io.hydrox.trailblazerclues.requirements.RegionRequirement;
@@ -656,6 +657,7 @@ class Clue
 		CLUES.put("vampyres are agile opponents, damaged best with a weapon of many components.", a(Region.MORYTANIA));
 		// Special
 		CLUES.put("buried beneath the ground, who knows where it's found. lucky for you, a man called reldo may have a clue.", or(Region.MISTHALIN, Region.ASGARNIA));
+		CLUES.put("buried beneath the ground, who knows where it's found. lucky for you, a man called jorral may have a clue.", new NeverShowRequirements());
 		
 		// Coord Clues
 		COORD_CLUES.put(new WorldPoint(2479, 3158, 0), a(Region.KANDARIN));

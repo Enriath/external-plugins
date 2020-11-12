@@ -27,6 +27,7 @@ package io.hydrox.trailblazerclues;
 import io.hydrox.trailblazerclues.requirements.ANDGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ANDRegionRequirement;
 import io.hydrox.trailblazerclues.requirements.GroupedRequirement;
+import io.hydrox.trailblazerclues.requirements.NeverShowRequirements;
 import io.hydrox.trailblazerclues.requirements.ORGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ORRegionRequirement;
 import io.hydrox.trailblazerclues.requirements.RegionRequirement;
@@ -113,6 +114,10 @@ public class TrailblazerCluesOverlay extends Overlay
 		}
 
 		RegionRequirement reqs = plugin.getCurrentReqs();
+		if (reqs instanceof NeverShowRequirements)
+		{
+			return null;
+		}
 		Point offset = new Point(0, 10);
 		Widget clueWidget = client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT);
 		if (clueWidget == null)
