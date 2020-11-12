@@ -654,6 +654,8 @@ class Clue
 		CLUES.put("they come from some time ago, from a land unto the east. fossilised they have become, this small and gentle beast.", a(Region.MISTHALIN));
 		CLUES.put("to slay a dragon you must first do, before this chest piece can be put on you.", a(Region.MISTHALIN));
 		CLUES.put("vampyres are agile opponents, damaged best with a weapon of many components.", a(Region.MORYTANIA));
+		// Special
+		CLUES.put("buried beneath the ground, who knows where it's found. lucky for you, a man called reldo may have a clue.", or(Region.MISTHALIN, Region.ASGARNIA));
 		
 		// Coord Clues
 		COORD_CLUES.put(new WorldPoint(2479, 3158, 0), a(Region.KANDARIN));
