@@ -41,13 +41,18 @@ import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.tooltip.Tooltip;
+import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 import javax.inject.Inject;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TrailblazerCluesOverlay extends Overlay
 {
@@ -66,21 +71,26 @@ public class TrailblazerCluesOverlay extends Overlay
 
 	private final Client client;
 	private final SpriteManager spriteManager;
+	private final TooltipManager tooltipManager;
 	private final TrailblazerCluesPlugin plugin;
 
+	private final Map<Rectangle, String> tooltipRegions = new HashMap<>();
+
 	@Inject
-	public TrailblazerCluesOverlay(Client client, SpriteManager spriteManager, TrailblazerCluesPlugin plugin)
+	public TrailblazerCluesOverlay(Client client, SpriteManager spriteManager, TooltipManager tooltipManager, TrailblazerCluesPlugin plugin)
 	{
 		setLayer(OverlayLayer.ABOVE_MAP);
 		setPosition(OverlayPosition.DYNAMIC);
 		this.client = client;
 		this.spriteManager = spriteManager;
+		this.tooltipManager = tooltipManager;
 		this.plugin = plugin;
 	}
 
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+		tooltipRegions.clear();
 		final Widget resizeableBarWidget = client.getWidget(164, 15);
 		final Widget resizeableClassicWidget = client.getWidget(161, 15);
 		final Widget fixedWidget = client.getWidget(548, 23);
@@ -152,6 +162,17 @@ public class TrailblazerCluesOverlay extends Overlay
 				clueWidget.getCanvasLocation().getX() + (clueWidget.getWidth() / 2) - (fm.stringWidth(POSSIBLE) / 2),
 				clueWidget.getCanvasLocation().getY() + offset.y,
 				Color.GREEN, Color.BLACK);
+		}
+
+		// Draw tooltips
+		Point mousePos = new Point(client.getMouseCanvasPosition().getX(), client.getMouseCanvasPosition().getY());
+		for (Rectangle rect : tooltipRegions.keySet())
+		{
+			if (rect.contains(mousePos))
+			{
+				tooltipManager.add(new Tooltip(tooltipRegions.get(rect)));
+				break;
+			}
 		}
 
 		return null;
@@ -246,7 +267,8 @@ public class TrailblazerCluesOverlay extends Overlay
 		BufferedImage sprite = spriteManager.getSprite(data.getSpriteID(), 0);
 		if (sprite == null) return;
 		g.drawImage(sprite, x, y, sprite.getWidth(), sprite.getHeight(), null);
-		if (!plugin.getUnlockedRegions().contains(data))
+		final boolean possible = plugin.getUnlockedRegions().contains(region);
+		if (!possible)
 		{
 			BufferedImage cross = spriteManager.getSprite(SpriteID.RED_CLICK_ANIMATION_2, 0);
 			if (cross == null) return;
@@ -258,6 +280,9 @@ public class TrailblazerCluesOverlay extends Overlay
 			BufferedImage rare = spriteManager.getSprite(SpriteID.FRIENDS_CHAT_RANK_GOLD_STAR_GENERAL, 0);
 			if (rare == null) return;
 			g.drawImage(rare, x + sprite.getWidth() - rare.getWidth() + 2, y - 2, rare.getWidth(), rare.getHeight(), null);
+
+			final String tooltip = possible ? "Requires a rarer-than-usual drop" : "Would require a rarer-than-usual drop";
+			tooltipRegions.put(new Rectangle(x, y, sprite.getWidth(), sprite.getHeight()), tooltip);
 		}
 	}
 
