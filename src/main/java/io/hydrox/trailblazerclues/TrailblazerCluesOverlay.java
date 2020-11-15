@@ -290,8 +290,9 @@ public class TrailblazerCluesOverlay extends Overlay
 	{
 		for (Widget w : parentWidget.getNestedChildren())
 		{
-			// The ModelID for the clue scroll background
-			if (w.getModelId() == 3395)
+			// 3395 is the ModelID for the clue scroll background
+			// 31917 is the model used for a single map clue, because OF COURSE!
+			if (w.getModelId() == 3395 || w.getModelId() == 31917)
 			{
 				return true;
 			}
