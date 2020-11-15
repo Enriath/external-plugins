@@ -111,7 +111,7 @@ public class TrailblazerCluesPlugin extends Plugin
 		{
 			int regionID = client.getVarbitValue(varb);
 			if (regionID == 0) continue;
-			unlockedRegions.add(Region.fromID(regionID));
+			unlockedRegions.add(Region.fromData(regionID));
 		}
 	}
 

@@ -24,38 +24,23 @@
  */
 package io.hydrox.trailblazerclues;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import java.util.HashMap;
 
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class Region
+@Getter
+@RequiredArgsConstructor
+public enum RegionData
 {
-	private static final HashMap<Integer, Region> IDS = new HashMap<>();
+	MISTHALIN(1, 2749),
+	KARAMJA(2, 2750),
+	ASGARNIA(3, 2751),
+	DESERT(6, 2752),
+	MORYTANIA(5, 2753),
+	WILDERNESS(11, 2754),
+	KANDARIN(4, 2755),
+	FREMENNIK(8, 2756),
+	TIRANNWN(7, 2757);
 
-	static final Region MISTHALIN = create(RegionData.MISTHALIN);
-	static final Region KARAMJA = create(RegionData.KARAMJA);
-	static final Region ASGARNIA = create(RegionData.ASGARNIA);
-	static final Region DESERT = create(RegionData.DESERT);
-	static final Region MORYTANIA = create(RegionData.MORYTANIA);
-	static final Region WILDERNESS = create(RegionData.WILDERNESS);
-	static final Region KANDARIN = create(RegionData.KANDARIN);
-	static final Region FREMENNIK = create(RegionData.FREMENNIK);
-	static final Region TIRANNWN = create(RegionData.TIRANNWN);
-
-	@Getter
-	private final RegionData region;
-
-	private static Region create(RegionData data)
-	{
-		Region n = new Region(data);
-		IDS.put(data.getId(), n);
-		return n;
-	}
-
-	static Region fromData(int id)
-	{
-		return IDS.get(id);
-	}
+	private final int id;
+	private final int spriteID;
 }

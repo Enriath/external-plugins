@@ -24,38 +24,23 @@
  */
 package io.hydrox.trailblazerclues;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import java.util.HashMap;
 
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class Region
+@Getter
+public class RareRegion extends Region
 {
-	private static final HashMap<Integer, Region> IDS = new HashMap<>();
+	static final RareRegion MISTHALIN = new RareRegion(RegionData.MISTHALIN);
+	static final RareRegion KARAMJA = new RareRegion(RegionData.KARAMJA);
+	static final RareRegion ASGARNIA = new RareRegion(RegionData.ASGARNIA);
+	static final RareRegion DESERT = new RareRegion(RegionData.DESERT);
+	static final RareRegion MORYTANIA = new RareRegion(RegionData.MORYTANIA);
+	static final RareRegion WILDERNESS = new RareRegion(RegionData.WILDERNESS);
+	static final RareRegion KANDARIN = new RareRegion(RegionData.KANDARIN);
+	static final RareRegion FREMENNIK = new RareRegion(RegionData.FREMENNIK);
+	static final RareRegion TIRANNWN = new RareRegion(RegionData.TIRANNWN);
 
-	static final Region MISTHALIN = create(RegionData.MISTHALIN);
-	static final Region KARAMJA = create(RegionData.KARAMJA);
-	static final Region ASGARNIA = create(RegionData.ASGARNIA);
-	static final Region DESERT = create(RegionData.DESERT);
-	static final Region MORYTANIA = create(RegionData.MORYTANIA);
-	static final Region WILDERNESS = create(RegionData.WILDERNESS);
-	static final Region KANDARIN = create(RegionData.KANDARIN);
-	static final Region FREMENNIK = create(RegionData.FREMENNIK);
-	static final Region TIRANNWN = create(RegionData.TIRANNWN);
-
-	@Getter
-	private final RegionData region;
-
-	private static Region create(RegionData data)
+	private RareRegion(RegionData region)
 	{
-		Region n = new Region(data);
-		IDS.put(data.getId(), n);
-		return n;
-	}
-
-	static Region fromData(int id)
-	{
-		return IDS.get(id);
+		super(region);
 	}
 }

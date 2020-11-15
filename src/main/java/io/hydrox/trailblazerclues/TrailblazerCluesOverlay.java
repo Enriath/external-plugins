@@ -242,14 +242,22 @@ public class TrailblazerCluesOverlay extends Overlay
 
 	private void drawRegion(Graphics2D g, Region region, int x, int y)
 	{
-		BufferedImage sprite = spriteManager.getSprite(region.getSpriteID(), 0);
+		RegionData data = region.getRegion();
+		BufferedImage sprite = spriteManager.getSprite(data.getSpriteID(), 0);
 		if (sprite == null) return;
 		g.drawImage(sprite, x, y, sprite.getWidth(), sprite.getHeight(), null);
-		if (!plugin.getUnlockedRegions().contains(region))
+		if (!plugin.getUnlockedRegions().contains(data))
 		{
 			BufferedImage cross = spriteManager.getSprite(SpriteID.RED_CLICK_ANIMATION_2, 0);
 			if (cross == null) return;
 			g.drawImage(cross, x + sprite.getWidth() - cross.getWidth(), y + sprite.getHeight() - cross.getHeight(), cross.getWidth(), cross.getHeight(), null);
+		}
+
+		if (region instanceof RareRegion)
+		{
+			BufferedImage rare = spriteManager.getSprite(SpriteID.FRIENDS_CHAT_RANK_GOLD_STAR_GENERAL, 0);
+			if (rare == null) return;
+			g.drawImage(rare, x + sprite.getWidth() - rare.getWidth() + 2, y - 2, rare.getWidth(), rare.getHeight(), null);
 		}
 	}
 
