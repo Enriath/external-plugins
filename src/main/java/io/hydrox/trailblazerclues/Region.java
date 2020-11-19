@@ -58,4 +58,21 @@ public class Region
 	{
 		return IDS.get(id);
 	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Region)
+		{
+			Region other = (Region) o;
+			return other.getRegion() == getRegion();
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return getRegion().name().hashCode();
+	}
 }
