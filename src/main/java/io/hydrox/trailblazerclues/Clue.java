@@ -183,7 +183,7 @@ class Clue
 		CLUES.put("veil veda", and(Region.MISTHALIN, Region.DESERT));
 		CLUES.put("woo an egg kiwi", a(Region.KANDARIN));
 		CLUES.put("yawns gy", a(Region.TIRANNWN));
-		CLUES.put("majors lava bads air", a(Region.MISTHALIN));
+		CLUES.put("majors lava bads air", and(Region.MISTHALIN, Region.ASGARNIA, Region.FREMENNIK));
 		CLUES.put("an earl", a(Region.DESERT));
 		CLUES.put("carpet ahoy", a(Region.MISTHALIN));
 		CLUES.put("disorder", a(Region.MISTHALIN));
