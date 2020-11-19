@@ -441,7 +441,7 @@ class Clue
 		CLUES.put("a chisel and hammer reside in his home, strange for one of magic. impress him with your magical equipment.", a(Region.KANDARIN));
 		CLUES.put("you have all of the elements available to solve this clue. fortunately you do not have to go as far as to stand in a draft.", a(Region.KANDARIN));
 		CLUES.put("a demon's best friend holds the next step of this clue.", or(Region.ASGARNIA, Region.WILDERNESS, Region.KANDARIN));
-		CLUES.put("hopefully this set of armour will help you to keep surviving.", a(Region.ASGARNIA));
+		CLUES.put("hopefully this set of armour will help you to keep surviving.", and(Region.ASGARNIA, Region.MORYTANIA, Region.WILDERNESS));
 		CLUES.put("the beasts retreat, for their queen is gone; the song of this town still plays on. dig near the birthplace of a blade, be careful not to melt your spade.", a(Region.KANDARIN));
 		CLUES.put("i would make a chemistry joke, but i'm afraid i wouldn't get a reaction.", a(Region.ASGARNIA));
 		CLUES.put("show this to hazelmere.", a(Region.KANDARIN));
