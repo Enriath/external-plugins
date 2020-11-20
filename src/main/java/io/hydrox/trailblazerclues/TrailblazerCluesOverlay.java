@@ -24,6 +24,7 @@
  */
 package io.hydrox.trailblazerclues;
 
+import com.google.common.collect.ImmutableSet;
 import io.hydrox.trailblazerclues.requirements.ANDGroupedRequirements;
 import io.hydrox.trailblazerclues.requirements.ANDRegionRequirement;
 import io.hydrox.trailblazerclues.requirements.GroupedRequirement;
@@ -53,6 +54,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class TrailblazerCluesOverlay extends Overlay
 {
@@ -68,6 +70,7 @@ public class TrailblazerCluesOverlay extends Overlay
 	private static final String REGION_MULTI_OR = "OR";
 	private static final String IMPOSSIBLE = "NOT POSSIBLE TO COMPLETE";
 	private static final String POSSIBLE = "POSSIBLE TO COMPLETE";
+	private static final Set<Integer> CLUE_MODELS = ImmutableSet.of(3395, 31915, 31916, 31917, 31920, 31922);
 
 	private final Client client;
 	private final SpriteManager spriteManager;
@@ -290,9 +293,7 @@ public class TrailblazerCluesOverlay extends Overlay
 	{
 		for (Widget w : parentWidget.getNestedChildren())
 		{
-			// 3395 is the ModelID for the clue scroll background
-			// 31917 is the model used for a single map clue, because OF COURSE!
-			if (w.getModelId() == 3395 || w.getModelId() == 31917)
+			if (CLUE_MODELS.contains(w.getModelId()))
 			{
 				return true;
 			}
