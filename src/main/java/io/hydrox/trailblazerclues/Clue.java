@@ -472,7 +472,7 @@ class Clue
 		CLUES.put("elvish onions.", a(Region.TIRANNWN));
 		// Emotes
 		CLUES.put("beckon on the east coast of the kharazi jungle. beware of double agents! equip any vestment stole and a heraldic rune shield.", and(Region.KARAMJA, Region.FREMENNIK));
-		CLUES.put("cheer in the barbarian agility arena. headbang before you talk to me. equip a steel platebody, maple shortbow and a wilderness cape.", and(Region.KANDARIN, Region.WILDERNESS));
+		CLUES.put("cheer in the barbarian agility arena. headbang before you talk to me. equip a steel platebody, maple shortbow and a wilderness cape.", and(a(Region.KANDARIN), or(Region.WILDERNESS, Region.MISTHALIN)));
 		CLUES.put("bow upstairs in the edgeville monastery. equip a completed prayer book.", and(Region.ASGARNIA, Region.FREMENNIK));
 		CLUES.put("cheer in the shadow dungeon. equip a rune crossbow, climbing boots and any mitre.", and(Region.ASGARNIA, Region.KANDARIN, Region.DESERT));
 		CLUES.put("cheer at the top of the agility pyramid. beware of double agents! equip a blue mystic robe top, and any rune heraldic shield.", and(a(Region.DESERT), or(Region.WILDERNESS, Region.KANDARIN)));
@@ -566,7 +566,7 @@ class Clue
 		CLUES.put("yawn in the 7th room of pyramid plunder. beware of double agents! equip a pharaoh sceptre and a full set of menaphite robes.", a(Region.DESERT));
 		CLUES.put("yawn in the varrock library. equip a green gnome robe top, ham robe bottom and an iron warhammer.", and(Region.MISTHALIN, Region.KANDARIN));
 		CLUES.put("yawn in draynor marketplace. equip studded leather chaps, an iron kiteshield and a steel longsword.", a(Region.MISTHALIN));
-		CLUES.put("yawn in the castle wars lobby. shrug before you talk to me. equip a ruby amulet, a mithril scimitar and a wilderness cape.", and(Region.KANDARIN, Region.WILDERNESS));
+		CLUES.put("yawn in the castle wars lobby. shrug before you talk to me. equip a ruby amulet, a mithril scimitar and a wilderness cape.", and(a(Region.KANDARIN), or(Region.WILDERNESS, Region.MISTHALIN)));
 		CLUES.put("yawn in the rogues' general store. beware of double agents! equip an adamant square shield, blue dragon vambraces and a rune pickaxe.", and(a(Region.WILDERNESS), or(Region.KANDARIN, Region.TIRANNWN, Region.FREMENNIK, Region.ASGARNIA)));
 		CLUES.put("yawn at the top of trollheim. equip a lava battlestaff, black dragonhide vambraces and a mind shield.", and(and(Region.ASGARNIA, Region.KANDARIN), or(Region.MORYTANIA, Region.WILDERNESS, Region.DESERT, RareRegion.KANDARIN, RareRegion.ASGARNIA)));
 		CLUES.put("swing a bullroarer at the top of the watchtower. beware of double agents! equip a dragon plateskirt, climbing boots and a dragon chainbody.", and(and(Region.ASGARNIA, Region.KARAMJA, Region.FREMENNIK), or(Region.KANDARIN, Region.DESERT)));
