@@ -331,7 +331,7 @@ class Clue
 		CLUES.put("you'll have to plug your nose if you use this source of herbs.", a(Region.MORYTANIA));
 		CLUES.put("when you get tired of fighting, go deep, deep down until you need an antidote.", a(Region.KANDARIN));
 		CLUES.put("search the bookcase in the monastery.", a(Region.ASGARNIA));
-		CLUES.put("surprising? i bet he is...", a(Region.ASGARNIA));
+		CLUES.put("surprising? i bet he is...", a(Region.MISTHALIN));
 		CLUES.put("search upstairs in the houses of seers' village for some drawers.", a(Region.KANDARIN));
 		CLUES.put("leader of the yak city.", a(Region.FREMENNIK));
 		CLUES.put("speak to arhein in catherby.", a(Region.KANDARIN));
