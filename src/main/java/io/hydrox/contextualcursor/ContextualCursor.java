@@ -68,7 +68,7 @@ public enum ContextualCursor
 		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across", "crawl-through"),
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
 	CONSTRUCTION(SpriteID.SKILL_CONSTRUCTION, "build", "remove"),
-	COOKING(SpriteID.SKILL_COOKING, "cook"),
+	COOKING(SpriteID.SKILL_COOKING, "cook", "churn"),
 	CRAFTING(SpriteID.SKILL_CRAFTING, "spin"),
 	FARMING(SpriteID.SKILL_FARMING, "check-health", "harvest", "rake"), // `pick` interferes with non-farming crops such as Wheat
 	FIREMAKING(SpriteID.SKILL_FIREMAKING, "light", "feed"),
