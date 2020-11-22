@@ -55,7 +55,7 @@ public enum ContextualCursor
 	PICK_UP("pick_up", "take", "withdraw" ,"fill"),
 	PLANK("plank", "buy-plank"),
 	READ("read", "read", "story"),
-	SEARCH("search", "search", "lookup", "examine", "view"),
+	SEARCH("search", "search", "lookup", "examine", "view", "look-inside"),
 	TALK("talk", "talk", "talk-to", "talk to"),
 	UNTIE("untie"),
 	USE("use", "use"),
