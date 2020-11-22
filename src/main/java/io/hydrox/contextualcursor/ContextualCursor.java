@@ -83,7 +83,7 @@ public enum ContextualCursor
 	SLAYER(SpriteID.SKILL_SLAYER, "assignment"),
 	STRENGTH(SpriteID.SKILL_STRENGTH, "bang", "move"),
 	THIEVING(SpriteID.SKILL_THIEVING, "steal-from", "pickpocket", "search for traps", "pick-lock"),
-	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop", "cut");
+	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop", "cut", "hack");
 
 	private BufferedImage cursor;
 	private Integer spriteID;
