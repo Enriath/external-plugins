@@ -127,16 +127,22 @@ public class TrailblazerCluesOverlay extends Overlay
 		}
 
 		RegionRequirement reqs = plugin.getCurrentReqs();
-		if (reqs instanceof NeverShowRequirements)
-		{
-			return null;
-		}
+		FontMetrics fm = graphics.getFontMetrics();
 		Point offset = new Point(0, 10);
 		Widget clueWidget = client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT);
 		if (clueWidget == null)
 		{
 			clueWidget = parentWidget;
 			offset.translate(-120, 37);
+		}
+
+		if (reqs instanceof NeverShowRequirements)
+		{
+			drawOutlinedString(graphics, "GOOD LUCK",
+				clueWidget.getCanvasLocation().getX() + (clueWidget.getWidth() / 2) - (fm.stringWidth("GOOD LUCK") / 2),
+				clueWidget.getCanvasLocation().getY() + offset.y,
+				Color.YELLOW, Color.BLACK);
+			return null;
 		}
 
 		graphics.setFont(FontManager.getRunescapeBoldFont());
@@ -151,7 +157,6 @@ public class TrailblazerCluesOverlay extends Overlay
 			parseAndDrawReq(graphics, topLeft, reqs);
 		}
 
-		FontMetrics fm = graphics.getFontMetrics();
 		if (reqs == null || !reqs.isValid(plugin.getUnlockedRegions()))
 		{
 			drawOutlinedString(graphics, IMPOSSIBLE,
