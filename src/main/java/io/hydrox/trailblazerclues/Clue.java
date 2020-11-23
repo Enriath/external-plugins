@@ -713,7 +713,7 @@ class Clue
 		COORD_CLUES.put(new WorldPoint(3168, 3041, 0), a(Region.DESERT));
 		COORD_CLUES.put(new WorldPoint(2542, 3031, 0), a(Region.KANDARIN));
 		COORD_CLUES.put(new WorldPoint(2581, 3030, 0), a(Region.KANDARIN));
-		COORD_CLUES.put(new WorldPoint(2961, 3024, 0), a(Region.KARAMJA));
+		COORD_CLUES.put(new WorldPoint(2961, 3024, 0), and(Region.KARAMJA, Region.KANDARIN));
 		COORD_CLUES.put(new WorldPoint(2339, 3311, 0), a(Region.TIRANNWN));
 		COORD_CLUES.put(new WorldPoint(3440, 3341, 0), a(Region.MORYTANIA));
 		COORD_CLUES.put(new WorldPoint(2763, 2974, 0), a(Region.KARAMJA));
