@@ -26,6 +26,7 @@ package io.hydrox.trailblazerclues;
 
 import com.google.common.collect.ImmutableSet;
 import io.hydrox.trailblazerclues.requirements.ANDGroupedRequirements;
+import io.hydrox.trailblazerclues.requirements.NeverShowRequirements;
 import io.hydrox.trailblazerclues.requirements.RegionRequirement;
 import lombok.Getter;
 import net.runelite.api.Client;
@@ -179,11 +180,20 @@ public class TrailblazerCluesPlugin extends Plugin
 		if (event.getMenuOption() != null && event.getMenuOption().equals("Read"))
 		{
 			final ItemComposition itemComposition = itemManager.getItemComposition(event.getId());
+			if (itemComposition == null)
+			{
+				return;
+			}
 
-			if (itemComposition != null && itemComposition.getName().startsWith("Clue scroll"))
+			if (itemComposition.getName().startsWith("Clue scroll"))
 			{
 				currentClueHash = itemComposition.getId();
 				currentReqs = Clue.fromMap(currentClueHash);
+			}
+			else if (itemComposition.getName().startsWith("Challenge scroll"))
+			{
+				currentClueHash = itemComposition.getId();
+				currentReqs = new NeverShowRequirements();
 			}
 		}
 	}
