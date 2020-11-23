@@ -784,7 +784,7 @@ class Clue
 		COORD_CLUES.put(new WorldPoint(2872, 3937, 0), and(Region.FREMENNIK, Region.ASGARNIA, Region.KANDARIN));
 		COORD_CLUES.put(new WorldPoint(2484, 4016, 0), a(Region.FREMENNIK));
 		COORD_CLUES.put(new WorldPoint(2222, 3331, 0), a(Region.TIRANNWN));
-		COORD_CLUES.put(new WorldPoint(3560, 3987, 0), and(Region.FREMENNIK, Region.MISTHALIN)); // TODO: Lithkren. Not entirely sure, since the area is DS2 specific
+		COORD_CLUES.put(new WorldPoint(3560, 3987, 0), and(Region.FREMENNIK, Region.MISTHALIN));
 		// Master
 		COORD_CLUES.put(new WorldPoint(2178, 3209, 0), a(Region.TIRANNWN));
 		COORD_CLUES.put(new WorldPoint(2155, 3100, 0), a(Region.TIRANNWN));
@@ -795,7 +795,7 @@ class Clue
 		COORD_CLUES.put(new WorldPoint(3622, 3320, 0), a(Region.MORYTANIA));
 		COORD_CLUES.put(new WorldPoint(2303, 3328, 0), a(Region.TIRANNWN));
 		COORD_CLUES.put(new WorldPoint(3570, 3405, 0), a(Region.MORYTANIA));
-		COORD_CLUES.put(new WorldPoint(2840, 3423, 0), a(Region.ASGARNIA)); // TODO: Water Obelisk. Could also need Kandarin
+		COORD_CLUES.put(new WorldPoint(2840, 3423, 0), and(Region.ASGARNIA, Region.KANDARIN));
 		COORD_CLUES.put(new WorldPoint(3604, 3564, 0), a(Region.MORYTANIA));
 		COORD_CLUES.put(new WorldPoint(3085, 3569, 0), and(Region.WILDERNESS, Region.MISTHALIN));
 		COORD_CLUES.put(new WorldPoint(2934, 2727, 0), a(Region.KANDARIN));
