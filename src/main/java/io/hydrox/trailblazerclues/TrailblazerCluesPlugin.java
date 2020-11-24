@@ -84,6 +84,8 @@ public class TrailblazerCluesPlugin extends Plugin
 	@Getter
 	private RegionRequirement currentReqs = null;
 
+	private boolean isChallenge;
+
 	@Getter
 	private Set<Region> unlockedRegions = new HashSet<>();
 
@@ -121,7 +123,7 @@ public class TrailblazerCluesPlugin extends Plugin
 	{
 		final Widget clueScrollText = client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT);
 
-		if (clueScrollText == null || clueScrollText.getText().hashCode() == currentClueHash)
+		if (clueScrollText == null || clueScrollText.getText().hashCode() == currentClueHash || isChallenge)
 		{
 			return;
 		}
@@ -187,11 +189,13 @@ public class TrailblazerCluesPlugin extends Plugin
 
 			if (itemComposition.getName().startsWith("Clue scroll"))
 			{
+				isChallenge = false;
 				currentClueHash = itemComposition.getId();
 				currentReqs = Clue.fromMap(currentClueHash);
 			}
 			else if (itemComposition.getName().startsWith("Challenge scroll"))
 			{
+				isChallenge = true;
 				currentClueHash = itemComposition.getId();
 				currentReqs = new NeverShowRequirements();
 			}

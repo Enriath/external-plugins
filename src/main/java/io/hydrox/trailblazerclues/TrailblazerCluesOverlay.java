@@ -136,6 +136,8 @@ public class TrailblazerCluesOverlay extends Overlay
 			offset.translate(-120, 37);
 		}
 
+		graphics.setFont(FontManager.getRunescapeBoldFont());
+
 		if (reqs instanceof NeverShowRequirements)
 		{
 			drawOutlinedString(graphics, "GOOD LUCK",
@@ -144,8 +146,6 @@ public class TrailblazerCluesOverlay extends Overlay
 				Color.YELLOW, Color.BLACK);
 			return null;
 		}
-
-		graphics.setFont(FontManager.getRunescapeBoldFont());
 
 		if (reqs != null)
 		{
