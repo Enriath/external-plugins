@@ -656,7 +656,7 @@ class Clue
 		CLUES.put("to slay a dragon you must first do, before this chest piece can be put on you.", a(Region.MISTHALIN));
 		CLUES.put("vampyres are agile opponents, damaged best with a weapon of many components.", a(Region.MORYTANIA));
 		// Special
-		CLUES.put("buried beneath the ground, who knows where it's found. lucky for you, a man called reldo may have a clue.", or(Region.MISTHALIN, Region.ASGARNIA));
+		CLUES.put("buried beneath the ground, who knows where it's found. lucky for you, a man called reldo may have a clue.", or(Region.MISTHALIN, Region.ASGARNIA, Region.DESERT));
 		CLUES.put("buried beneath the ground, who knows where it's found. lucky for you, a man called jorral may have a clue.", new NeverShowRequirements());
 		
 		// Coord Clues
