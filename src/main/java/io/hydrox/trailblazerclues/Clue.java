@@ -415,7 +415,7 @@ class Clue
 		CLUES.put("the hand ain't listening.", a(Region.ASGARNIA));
 		CLUES.put("search the chest in the left-hand tower of camelot castle.", a(Region.KANDARIN));
 		CLUES.put("anger those who adhere to saradomin's edicts to prevent travel.", a(Region.ASGARNIA));
-		CLUES.put("south of a river in a town surrounded by the undead, what lies beneath the furnace?", a(Region.MORYTANIA));
+		CLUES.put("south of a river in a town surrounded by the undead, what lies beneath the furnace?", a(Region.KARAMJA));
 		CLUES.put("talk to the squire in the white knights' castle in falador.", a(Region.ASGARNIA));
 		CLUES.put("in a town where everyone has perfect vision, seek some locked drawers in a house that sits opposite a workshop.", a(Region.KANDARIN));
 		CLUES.put("the treasure is buried in a small building full of bones. here is a hint: it's not near a graveyard.", a(Region.MISTHALIN));
