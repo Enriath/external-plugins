@@ -496,6 +496,7 @@ class Clue
 		CLUES.put("bow in the ticket office of the duel arena. equip an iron chain body, leather chaps and coif.", a(Region.DESERT));
 		CLUES.put("bow at the top of the lighthouse. beware of double agents! equip a blue dragonhide body, blue dragonhide vambraces and no jewelry.", a(Region.FREMENNIK));
 		CLUES.put("blow a kiss between the tables in shilo village bank. beware of double agents! equip a blue mystic hat, bone spear and rune platebody.", and(Region.KARAMJA, Region.MISTHALIN, Region.KANDARIN));
+		CLUES.put("Blow a kiss in the heart of the lava maze. Equip black dragonhide chaps, a spotted cape and a rolling pin.", and(Region.WILDERNESS, Region.KANDARIN, Region.ASGARNIA, Region.MISTHALIN));
 		CLUES.put("cheer at the druids' circle. equip a blue wizard hat, a bronze two-handed sword and ham boots.", and(Region.MISTHALIN, Region.ASGARNIA));
 		CLUES.put("cheer in the edgeville general store. dance before you talk to me. equip a brown apron, leather boots and leather gloves.", a(Region.MISTHALIN));
 		CLUES.put("cheer in the ogre pen in the training camp. show you are angry before you talk to me. equip a green dragonhide body and chaps and a steel square shield.", and(a(Region.KANDARIN), or(Region.ASGARNIA, Region.TIRANNWN)));
