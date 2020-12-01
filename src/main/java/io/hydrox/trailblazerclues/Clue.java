@@ -393,7 +393,7 @@ class Clue
 		CLUES.put("three rule below and three sit at top. come dig at my entrance.", a(Region.FREMENNIK));
 		CLUES.put("search the drawers in the ground floor of a shop in yanille.", a(Region.KANDARIN));
 		CLUES.put("search the drawers of houses in burthorpe.", a(Region.ASGARNIA));
-		CLUES.put("where safe to speak, the man who offers the pouch of smallest size wishes to see your alignment.", a(Region.MISTHALIN));
+		CLUES.put("where safe to speak, the man who offers the pouch of smallest size wishes to see your alignment.", and(Region.MISTHALIN, Region.WILDERNESS));
 		CLUES.put("search the crates in the guard house of the northern gate of east ardougne.", a(Region.KANDARIN));
 		CLUES.put("go to the village being attacked by trolls, search the drawers in one of the houses.", a(Region.ASGARNIA));
 		CLUES.put("you'll get licked.", or(Region.ASGARNIA, Region.MORYTANIA, Region.KANDARIN, Region.WILDERNESS));
