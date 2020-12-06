@@ -99,15 +99,15 @@ public class TrailblazerCluesOverlay extends Overlay
 		final Widget fixedWidget = client.getWidget(548, 23);
 		final Widget parentWidget;
 
-		if (resizeableBarWidget != null)
+		if (resizeableBarWidget != null && !resizeableBarWidget.isHidden())
 		{
 			parentWidget = resizeableBarWidget;
 		}
-		else if (resizeableClassicWidget != null)
+		else if (resizeableClassicWidget != null && !resizeableClassicWidget.isHidden())
 		{
 			parentWidget = resizeableClassicWidget;
 		}
-		else if (fixedWidget != null)
+		else if (fixedWidget != null && !fixedWidget.isHidden())
 		{
 			parentWidget = fixedWidget;
 		}
