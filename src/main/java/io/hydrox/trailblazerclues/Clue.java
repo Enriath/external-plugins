@@ -519,7 +519,7 @@ class Clue
 		CLUES.put("dance at the cat-doored pyramid in sophanem. beware of double agents! equip a ring of life, an uncharged amulet of glory and an adamant two-handed sword.", a(Region.DESERT));
 		CLUES.put("dance in the centre of canifis. bow before you talk to me. equip a green gnome robe top, mithril plate legs and an iron two-handed sword.", and(Region.KANDARIN, Region.MORYTANIA));
 		CLUES.put("dance in the king black dragon's lair. beware of double agents! equip a black dragonhide body, black dragonhide vambraces and a black dragon mask.", a(Region.WILDERNESS));
-		CLUES.put("dance at the entrance to the grand exchange. equip a pink skirt, pink robe top and a body tiara.", and(Region.MISTHALIN, Region.ASGARNIA));
+		CLUES.put("dance at the entrance to the grand exchange. equip a pink skirt, pink robe top and a body tiara.", and(Region.MISTHALIN, Region.ASGARNIA, Region.KANDARIN));
 		CLUES.put("goblin salute in the goblin village. beware of double agents! equip a bandos godsword, a bandos cloak and a bandos platebody.", a(Region.ASGARNIA));
 		CLUES.put("headbang in the mine north of al kharid. equip a desert shirt, leather gloves and leather boots.", and(Region.MISTHALIN, Region.DESERT));
 		CLUES.put("headbang at the exam centre. beware of double agents! equip a mystic fire staff, a diamond bracelet and rune boots.", and(and(Region.MISTHALIN), or(Region.KANDARIN, Region.WILDERNESS, RareRegion.MISTHALIN), or(Region.TIRANNWN, Region.MORYTANIA)));
