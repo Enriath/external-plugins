@@ -396,7 +396,7 @@ class Clue
 		CLUES.put("where safe to speak, the man who offers the pouch of smallest size wishes to see your alignment.", and(Region.MISTHALIN, Region.WILDERNESS));
 		CLUES.put("search the crates in the guard house of the northern gate of east ardougne.", a(Region.KANDARIN));
 		CLUES.put("go to the village being attacked by trolls, search the drawers in one of the houses.", a(Region.ASGARNIA));
-		CLUES.put("you'll get licked.", or(Region.ASGARNIA, Region.MORYTANIA, Region.KANDARIN, Region.WILDERNESS));
+		CLUES.put("you'll get licked.", or(Region.ASGARNIA, Region.MORYTANIA, Region.WILDERNESS, Region.TIRANNWN));
 		CLUES.put("dig in front of the icy arena where 1 of 4 was fought.", a(Region.ASGARNIA));
 		CLUES.put("speak to roavar.", a(Region.MORYTANIA));
 		CLUES.put("search the drawers downstairs of houses in the eastern part of falador.", a(Region.ASGARNIA));
