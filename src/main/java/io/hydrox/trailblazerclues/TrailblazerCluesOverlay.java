@@ -82,7 +82,7 @@ public class TrailblazerCluesOverlay extends Overlay
 	@Inject
 	public TrailblazerCluesOverlay(Client client, SpriteManager spriteManager, TooltipManager tooltipManager, TrailblazerCluesPlugin plugin)
 	{
-		setLayer(OverlayLayer.ABOVE_MAP);
+		setLayer(OverlayLayer.ABOVE_WIDGETS);
 		setPosition(OverlayPosition.DYNAMIC);
 		this.client = client;
 		this.spriteManager = spriteManager;
