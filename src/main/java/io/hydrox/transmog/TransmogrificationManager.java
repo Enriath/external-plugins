@@ -43,6 +43,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.awt.TrayIcon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -88,6 +89,9 @@ public class TransmogrificationManager
 	@Getter
 	@Setter
 	private boolean transmogActive = true;
+
+	@Getter
+	private int transmogHash = 0;
 
 	public void shutDown()
 	{
@@ -220,7 +224,9 @@ public class TransmogrificationManager
 				kits[slot.getKitIndex()] = id;
 			}
 		}
+		transmogHash = Arrays.hashCode(kits);
 		player.getPlayerComposition().setHash();
+
 	}
 
 	void removeTransmog()
@@ -233,6 +239,11 @@ public class TransmogrificationManager
 		int[] kits = comp.getEquipmentIds();
 		System.arraycopy(currentActualState, 0, kits, 0, kits.length);
 		comp.setHash();
+	}
+
+	void saveCurrent()
+	{
+		currentActualState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds().clone();
 	}
 
 	public void updateDefault()

@@ -534,4 +534,12 @@ public class UIManager
 			isSearching = false;
 		}
 	}
+
+	public void tickPreview()
+	{
+		if (playerPreview != null)
+		{
+			playerPreview.tickRotation();
+		}
+	}
 }

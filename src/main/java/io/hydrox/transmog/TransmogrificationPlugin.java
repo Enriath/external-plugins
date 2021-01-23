@@ -32,7 +32,6 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.MenuEntry;
-import net.runelite.api.Player;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
@@ -42,7 +41,6 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuShouldLeftClick;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
-import net.runelite.api.events.VarClientIntChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.Subscribe;
@@ -60,6 +58,9 @@ import java.util.Arrays;
 @Slf4j
 public class TransmogrificationPlugin extends Plugin
 {
+	private static final String FORCE_RIGHT_CLICK_MENU_FLAG = "<col=ff981f><col=004356>";
+	private static final int SCRIPT_ID_EQUIPMENT_TAB_CREATED = 914;
+
 	@Inject
 	private Client client;
 
@@ -79,7 +80,7 @@ public class TransmogrificationPlugin extends Plugin
 	private UIManager uiManager;
 
 	private int lastWorld = 0;
-	private int old384 = 0;
+	private boolean forceRightClickFlag;
 
 	@Getter
 	private boolean inPvpSituation;
@@ -92,6 +93,7 @@ public class TransmogrificationPlugin extends Plugin
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
 			lastWorld = client.getWorld();
+			transmogManager.saveCurrent();
 			transmogManager.loadData();
 			transmogManager.updateTransmog();
 			clientThread.invoke(() ->
@@ -109,9 +111,13 @@ public class TransmogrificationPlugin extends Plugin
 		transmogManager.shutDown();
 		uiManager.shutDown();
 		lastWorld = 0;
-		old384 = 0;
 	}
 
+	/**
+	 * This plugin is modelled after RS3's Transmog system, which is disabled in PvP
+	 * While that's because theirs is transmitted to other clients, I'd rather my
+	 * code not mess with something where gear switches matter massively, just in case.
+	 */
 	private void updatePvpState()
 	{
 		final boolean newState = client.getVar(Varbits.PVP_SPEC_ORB) == 1;
@@ -134,7 +140,8 @@ public class TransmogrificationPlugin extends Plugin
 				lastWorld = client.getWorld();
 				transmogManager.loadData();
 			}
-		} else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
+		}
+		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
 		{
 			lastWorld = 0;
 			uiManager.setUiCreated(false);
@@ -142,23 +149,86 @@ public class TransmogrificationPlugin extends Plugin
 		}
 	}
 
+	/**
+	 * Changing equipment removes the current transmog. Reapply if active,
+	 * or keep track of the real state if not active
+	 */
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged e)
 	{
-		if (e.getContainerId() != InventoryID.EQUIPMENT.getId() || !config.transmogActive())
+		if (e.getContainerId() != InventoryID.EQUIPMENT.getId())
 		{
+			return;
+		}
+
+		if (!config.transmogActive())
+		{
+			transmogManager.saveCurrent();
 			return;
 		}
 
 		transmogManager.reapplyTransmog();
 	}
 
-	private boolean forceRightClickFlag;
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged e)
+	{
+		updatePvpState();
+	}
 
+	@Subscribe
+	public void onGameTick(GameTick e)
+	{
+		if (client.getLocalPlayer() == null)
+		{
+			return;
+		}
+
+		if (!config.transmogActive())
+		{
+			return;
+		}
+		// On most teleports, the player kits are reset. This will reapply the transmog if needed.
+		final int currentHash = Arrays.hashCode(client.getLocalPlayer().getPlayerComposition().getEquipmentIds());
+		if (currentHash != transmogManager.getTransmogHash())
+		{
+			transmogManager.reapplyTransmog();
+		}
+	}
+
+	// UI Events
+
+	@Subscribe
+	public void onResizeableChanged(ResizeableChanged e)
+	{
+		uiManager.onResizeableChanged();
+	}
+
+	@Subscribe
+	public void onScriptPostFired(ScriptPostFired e)
+	{
+		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !uiManager.isUiCreated())
+		{
+			uiManager.createInitialUI();
+			uiManager.setUiCreated(true);
+		}
+	}
+
+	@Subscribe
+	public void onClientTick(ClientTick e)
+	{
+		uiManager.tickPreview();
+	}
+
+	/**
+	 * 3 of the UI buttons have a specific name. CustomWidget adds colouring to emulate vanilla, meaning
+	 * you get the name in FORCE_RIGHT_CLICK_MENU_FLAG. This is used both to hide the widget name
+	 * (since it's in the wrong place), and to give an easy way to check if we should force a right click.
+	 */
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded e)
 	{
-		if (e.getTarget().equals("<col=ff981f><col=004356>"))
+		if (e.getTarget().equals(FORCE_RIGHT_CLICK_MENU_FLAG))
 		{
 			forceRightClickFlag = true;
 		}
@@ -176,86 +246,11 @@ public class TransmogrificationPlugin extends Plugin
 		MenuEntry[] menuEntries = client.getMenuEntries();
 		for (MenuEntry entry : menuEntries)
 		{
-			if (entry.getTarget().equals("<col=ff981f><col=004356>"))
+			if (entry.getTarget().equals(FORCE_RIGHT_CLICK_MENU_FLAG))
 			{
 				e.setForceRightClick(true);
 				return;
 			}
-		}
-	}
-
-	@Subscribe
-	public void onResizeableChanged(ResizeableChanged e)
-	{
-		uiManager.onResizeableChanged();
-	}
-
-	@Subscribe
-	public void onScriptPostFired(ScriptPostFired e)
-	{
-		if (e.getScriptId() == 914 && !uiManager.isUiCreated())
-		{
-			uiManager.createInitialUI();
-			uiManager.setUiCreated(true);
-		}
-	}
-
-	@Subscribe
-	public void onVarbitChanged(VarbitChanged e)
-	{
-		updatePvpState();
-	}
-
-	@Subscribe
-	public void onVarClientIntChanged(VarClientIntChanged e)
-	{
-		// idk what VarCInt 384 is for, but it only changes when the player gets past the splash screen
-		if (e.getIndex() == 384)
-		{
-			int new384 = client.getVarcIntValue(384);
-			if (new384 != old384)
-			{
-				old384 = new384;
-				transmogManager.updateTransmog();
-			}
-		}
-	}
-
-	private int lastHash;
-	private boolean forceChangedFlag;
-
-	@Subscribe
-	public void onGameTick(GameTick e)
-	{
-		if (!config.transmogActive())
-		{
-			return;
-		}
-		Player local = client.getLocalPlayer();
-		if (local == null)
-		{
-			return;
-		}
-		final int currentHash = Arrays.hashCode(local.getPlayerComposition().getEquipmentIds());
-		if (currentHash != lastHash)
-		{
-			forceChangedFlag = true;
-			lastHash = currentHash;
-		}
-	}
-
-	@Subscribe
-	public void onClientTick(ClientTick e)
-	{
-		if (forceChangedFlag)
-		{
-			transmogManager.updateTransmog();
-			forceChangedFlag = false;
-		}
-
-		if (uiManager.getPlayerPreview() != null)
-		{
-			uiManager.getPlayerPreview().tickRotation();
 		}
 	}
 }
