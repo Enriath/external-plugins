@@ -288,8 +288,8 @@ public class TransmogrificationManager
 
 	void loadData()
 	{
-		config.loadDefault(client.getUsername());
-		config.loadPresets(client.getUsername());
+		config.loadDefault();
+		config.loadPresets();
 		clientThread.invoke(() -> presets.stream().filter(Objects::nonNull).forEach(e -> e.loadNames(itemManager)));
 	}
 

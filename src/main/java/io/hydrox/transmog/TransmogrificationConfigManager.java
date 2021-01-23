@@ -25,14 +25,11 @@
 package io.hydrox.transmog;
 
 import static io.hydrox.transmog.TransmogPreset.PRESET_COUNT;
-import net.runelite.api.Client;
-import net.runelite.api.WorldType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,58 +41,52 @@ public class TransmogrificationConfigManager
 	private static final String CONFIG_OVERRIDE = "override";
 	private static final String CONFIG_PRESET = "preset_";
 
-	private final Client client;
 	private final ConfigManager configManager;
 	private final Provider<TransmogrificationManager> manager;
 
 	@Inject
-	TransmogrificationConfigManager(Client client, ConfigManager configManager, Provider<TransmogrificationManager> manager)
+	TransmogrificationConfigManager(ConfigManager configManager, Provider<TransmogrificationManager> manager)
 	{
-		this.client = client;
 		this.configManager = configManager;
 		this.manager = manager;
 	}
 
 	public boolean transmogActive()
 	{
-		String key = client.getUsername() + ".transmogActive";
-		return Optional.ofNullable(configManager.getConfiguration(CONFIG_GROUP, key, boolean.class)).orElse(false);
+		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, "transmogActive", boolean.class)).orElse(false);
 	}
 
 	public void transmogActive(boolean value)
 	{
-		String key = client.getUsername() + ".transmogActive";
-		configManager.setConfiguration(CONFIG_GROUP, key, value);
+		configManager.setRSProfileConfiguration(CONFIG_GROUP, "transmogActive", value);
 	}
 
 	public int currentPreset()
 	{
-		String key = client.getUsername() + ".currentPreset";
-		return Optional.ofNullable(configManager.getConfiguration(CONFIG_GROUP, key, int.class)).orElse(1);
+		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, "currentPreset", int.class)).orElse(1);
 	}
 
 	void currentPreset(int value)
 	{
 		if (value > 0 && value <= PRESET_COUNT)
 		{
-			String key = client.getUsername() + ".currentPreset";
-			configManager.setConfiguration(CONFIG_GROUP, key, value);
+			configManager.setRSProfileConfiguration(CONFIG_GROUP, "currentPreset", value);
 		}
 	}
 
 	void savePreset(TransmogPreset preset, int presetID)
 	{
-		String key = CONFIG_OVERRIDE + "." + client.getUsername() +	"." + CONFIG_PRESET + presetID;
+		String key = CONFIG_OVERRIDE + "." + CONFIG_PRESET + presetID;
 		if (preset != null)
 		{
 			String value = preset.toConfig();
 			if (value != null)
 			{
-				configManager.setConfiguration(CONFIG_GROUP, key, value);
+				configManager.setRSProfileConfiguration(CONFIG_GROUP, key, value);
 				return;
 			}
 		}
-		configManager.unsetConfiguration(CONFIG_GROUP, key);
+		configManager.unsetRSProfileConfiguration(CONFIG_GROUP, key);
 	}
 
 	public void savePresets()
@@ -108,20 +99,19 @@ public class TransmogrificationConfigManager
 
 	void saveDefault(int[] state)
 	{
-		String key = CONFIG_DEFAULT + "." +	client.getUsername() + "." + getWorldSaveType(client.getWorldType());
-		configManager.setConfiguration(CONFIG_GROUP, key, Arrays.stream(state)
+		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT, Arrays.stream(state)
 			.mapToObj(String::valueOf)
 			.collect(Collectors.joining(","))
 		);
 	}
 
-	void loadPresets(String username)
+	void loadPresets()
 	{
-		final String keyBase = CONFIG_OVERRIDE + "." + username +	"." + CONFIG_PRESET;
+		final String keyBase = CONFIG_OVERRIDE + "." + CONFIG_PRESET;
 		// Let's start at 1 for semantics
 		for (int i = 1; i <= PRESET_COUNT; i++)
 		{
-			String data = configManager.getConfiguration(CONFIG_GROUP, keyBase + i);
+			String data = configManager.getRSProfileConfiguration(CONFIG_GROUP, keyBase + i);
 			if (data == null)
 			{
 				continue;
@@ -136,10 +126,9 @@ public class TransmogrificationConfigManager
 		}
 	}
 
-	void loadDefault(String username)
+	void loadDefault()
 	{
-		String key = CONFIG_DEFAULT + "." +	username + "." + getWorldSaveType(client.getWorldType());
-		String data = configManager.getConfiguration(CONFIG_GROUP, key);
+		String data = configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
 		if (data == null)
 		{
 			getManager().setEmptyState(null);
@@ -149,27 +138,6 @@ public class TransmogrificationConfigManager
 		{
 			getManager().setEmptyState(Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
 		}
-	}
-
-	private static String getWorldSaveType(EnumSet<WorldType> types)
-	{
-		if (types.contains(WorldType.LEAGUE))
-		{
-			return "league";
-		}
-		else if (types.contains(WorldType.DEADMAN_TOURNAMENT))
-		{
-			return "dmmt";
-		}
-		else if (types.contains(WorldType.DEADMAN))
-		{
-			return "dmm";
-		}
-		else if (types.contains(WorldType.TOURNAMENT))
-		{
-			return "tourny";
-		}
-		return "normal";
 	}
 
 	private TransmogrificationManager getManager()
