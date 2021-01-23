@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+// Based on ChatboxItemSearch.java
 public abstract class CustomSearch extends ChatboxTextInput
 {
 	protected static final int ICON_HEIGHT = 32;

@@ -31,8 +31,6 @@ import net.runelite.api.widgets.Widget;
 
 public class CustomWidgetActionButton extends CustomWidgetWithIcon implements InteractibleWidget
 {
-	private String action;
-
 	private Widget overlay;
 
 	private Widget topLeftBrace;
