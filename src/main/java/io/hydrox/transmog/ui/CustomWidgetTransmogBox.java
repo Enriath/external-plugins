@@ -28,7 +28,7 @@ import io.hydrox.transmog.MappingMapping;
 import io.hydrox.transmog.TransmogSlot;
 import io.hydrox.transmog.TransmogSlot.SlotType;
 import static io.hydrox.transmog.ui.MenuOps.CLEAR;
-import static io.hydrox.transmog.ui.MenuOps.FORCE_DEFAULT;
+import static io.hydrox.transmog.ui.MenuOps.HIDE;
 import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
 import net.runelite.api.ScriptEvent;
 import net.runelite.api.SpriteID;
@@ -38,6 +38,12 @@ import net.runelite.api.widgets.Widget;
 public class CustomWidgetTransmogBox extends CustomWidget implements InteractibleWidget
 {
 	private static final int BACKGROUND_ID = 170;
+	private static final String SET_ITEM_STRING = "Set item for";
+	private static final String CLEAR_STRING = "Clear";
+	private static final String HIDE_STRING = "Hide";
+	// The Special slots are dependant on the equipped armour, so some different terminology is needed.
+	private static final String SPECIAL_CLEAR_STRING = "Follow armour for";
+	private static final String SPECIAL_HIDE_STRING = "Use base";
 
 	private Widget slotWidget;
 	private Widget contentsWidget;
@@ -65,9 +71,17 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 		slotDefaultWidget.setHidden(false);
 		slotWidget.setHidden(false);
 		contentsWidget.setHidden(true);
-		overlayWidget.setAction(SET_ITEM, "Set item for");
-		overlayWidget.setAction(CLEAR, "Clear");
-		overlayWidget.setAction(FORCE_DEFAULT, null);
+		overlayWidget.setAction(SET_ITEM, SET_ITEM_STRING);
+		overlayWidget.setAction(HIDE, null);
+
+		if (slot.getSlotType() == SlotType.SPECIAL)
+		{
+			overlayWidget.setAction(CLEAR, SPECIAL_CLEAR_STRING);
+		}
+		else
+		{
+			overlayWidget.setAction(CLEAR, CLEAR_STRING);
+		}
 	}
 
 	public void setEmpty()
@@ -75,9 +89,17 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 		slotDefaultWidget.setHidden(true);
 		slotWidget.setHidden(false);
 		contentsWidget.setHidden(true);
-		overlayWidget.setAction(SET_ITEM, "Set item for");
+		overlayWidget.setAction(SET_ITEM, SET_ITEM_STRING);
 		overlayWidget.setAction(CLEAR, null);
-		overlayWidget.setAction(FORCE_DEFAULT, "Force default for");
+
+		if (slot.getSlotType() == SlotType.SPECIAL)
+		{
+			overlayWidget.setAction(HIDE, SPECIAL_HIDE_STRING);
+		}
+		else
+		{
+			overlayWidget.setAction(HIDE, HIDE_STRING);
+		}
 	}
 
 	public void setContent(int id, String name)
@@ -95,8 +117,17 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 		}
 
 		overlayWidget.setAction(SET_ITEM, "Replace <col=ff981f>" + name + "</col> for");
-		overlayWidget.setAction(CLEAR, "Clear");
-		overlayWidget.setAction(FORCE_DEFAULT, "Force default for");
+
+		if (slot.getSlotType() == SlotType.SPECIAL)
+		{
+			overlayWidget.setAction(CLEAR, SPECIAL_CLEAR_STRING);
+			overlayWidget.setAction(HIDE, SPECIAL_HIDE_STRING);
+		}
+		else
+		{
+			overlayWidget.setAction(CLEAR, CLEAR_STRING);
+			overlayWidget.setAction(HIDE, HIDE_STRING);
+		}
 	}
 
 	public void set(Integer contents, String name)
@@ -151,7 +182,6 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 			mapping = MappingMapping.fromSlot(slot);
 			contentsWidget = createModelWidget(36, 32);
 			contentsWidget.setModelType(1);
-			contentsWidget.setModelId(28417);
 			contentsWidget.setModelZoom(mapping.getModelZoom());
 			contentsWidget.setRotationZ(150);
 		}

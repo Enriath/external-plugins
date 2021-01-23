@@ -38,7 +38,7 @@ import io.hydrox.transmog.TransmogrificationConfigManager;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.TransmogrificationPlugin;
 import static io.hydrox.transmog.ui.MenuOps.CLEAR;
-import static io.hydrox.transmog.ui.MenuOps.FORCE_DEFAULT;
+import static io.hydrox.transmog.ui.MenuOps.HIDE;
 import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
 import lombok.Getter;
 import lombok.Setter;
@@ -298,7 +298,7 @@ public class UIManager
 				preset.clearSlot(slot);
 				manager.updateTransmog();
 				break;
-			case FORCE_DEFAULT:
+			case HIDE:
 				chatboxPanelManager.close();
 				widget.setDefault();
 				preset.setDefaultSlot(slot);
