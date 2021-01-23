@@ -53,7 +53,8 @@ import java.util.Arrays;
 @PluginDescriptor(
 	name = "Transmogrification",
 	description = "Wear the armour you want, no matter what you're doing.",
-	tags = {"fashion", "equipment"}
+	tags = {"transmog", "transmogrification", "fashion", "armour", "armor", "equipment"}
+
 )
 @Slf4j
 public class TransmogrificationPlugin extends Plugin
