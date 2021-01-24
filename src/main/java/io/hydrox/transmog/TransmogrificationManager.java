@@ -87,10 +87,6 @@ public class TransmogrificationManager
 	private int[] currentActualState;
 
 	@Getter
-	@Setter
-	private boolean transmogActive = true;
-
-	@Getter
 	private int transmogHash = 0;
 
 	public void shutDown()
@@ -120,7 +116,7 @@ public class TransmogrificationManager
 	{
 		clearUserActualState();
 
-		if (transmogActive)
+		if (config.transmogActive())
 		{
 			applyTransmog();
 		}
