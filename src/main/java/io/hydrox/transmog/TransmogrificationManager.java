@@ -188,11 +188,7 @@ public class TransmogrificationManager
 
 		if (!isDefaultStateSet())
 		{
-			notifier.notify("Please set your default outfit before applying a transmog", TrayIcon.MessageType.WARNING);
-			chatMessageManager.queue(QueuedMessage.builder()
-				.type(ChatMessageType.ENGINE)
-				.value("Please set your default outfit before applying a transmog")
-				.build());
+			hintDefaultState();
 			return;
 		}
 
@@ -307,5 +303,14 @@ public class TransmogrificationManager
 			return null;
 		}
 		return HairMapping.fromKitID(emptyState[TransmogSlot.HAIR.getKitIndex()]).getGender();
+	}
+
+	public void hintDefaultState()
+	{
+		notifier.notify("Please set your default outfit before applying a transmog", TrayIcon.MessageType.WARNING);
+		chatMessageManager.queue(QueuedMessage.builder()
+			.type(ChatMessageType.ENGINE)
+			.value("<col=dd0000>Please set your default outfit before applying a transmog</col>")
+			.build());
 	}
 }

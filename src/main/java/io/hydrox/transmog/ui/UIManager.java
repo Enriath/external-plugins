@@ -210,6 +210,7 @@ public class UIManager
 				if ((!manager.isDefaultStateSet() && state) || plugin.isInPvpSituation())
 				{
 					stateToggle.toggle();
+					manager.hintDefaultState();
 					return;
 				}
 				config.transmogActive(state);
