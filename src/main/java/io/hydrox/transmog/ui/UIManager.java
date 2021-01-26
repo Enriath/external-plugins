@@ -207,7 +207,7 @@ public class UIManager
 			CustomSprites.TRANSMOG_LOGO.getSpriteId(),
 			state ->
 			{
-				if ((!manager.isDefaultStateSet() && !state) || plugin.isInPvpSituation())
+				if ((!manager.isDefaultStateSet() && state) || plugin.isInPvpSituation())
 				{
 					stateToggle.toggle();
 					return;
