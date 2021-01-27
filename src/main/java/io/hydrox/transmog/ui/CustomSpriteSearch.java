@@ -134,12 +134,7 @@ public class CustomSpriteSearch extends CustomSearch
 	{
 		results.clear();
 		index = -1;
-
 		String search = getValue().toLowerCase();
-		if (search.isEmpty())
-		{
-			return;
-		}
 
 		for (Mapping mapping : source)
 		{

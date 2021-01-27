@@ -76,6 +76,12 @@ public abstract class CustomSearch extends ChatboxTextInput
 	}
 
 	@Override
+	protected void open() {
+		filterResults();
+		super.open();
+	}
+
+	@Override
 	protected void update()
 	{
 		Widget container = chatboxPanelManager.getContainerWidget();

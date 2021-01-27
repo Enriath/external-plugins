@@ -137,14 +137,9 @@ public class CustomItemSearch extends CustomSearch
 	{
 		results.clear();
 		index = -1;
-
 		String search = getValue().toLowerCase();
-		if (search.isEmpty())
-		{
-			return;
-		}
-
 		Set<ItemIcon> itemIcons = new HashSet<>();
+
 		for (int i = 0; i < client.getItemCount(); i++)
 		{
 			ItemComposition itemComposition = itemManager.getItemComposition(itemManager.canonicalize(i));
