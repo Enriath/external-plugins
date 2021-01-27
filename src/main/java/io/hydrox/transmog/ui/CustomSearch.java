@@ -120,47 +120,6 @@ public abstract class CustomSearch extends ChatboxTextInput
 		exit.setHasListener(true);
 		exit.revalidate();
 
-		// Scrollbar
-		/*
-
-		Widget scrollArea = container.createChild(-1, WidgetType.GRAPHIC);
-		scrollArea.setOriginalX(0);
-		scrollArea.setOriginalY(16);
-		scrollArea.setOriginalWidth(16);
-		scrollArea.setOriginalHeight(container.getHeight() - (40 + (FONT_SIZE * 2)));
-		scrollArea.setXPositionMode(WidgetPositionMode.ABSOLUTE_RIGHT);
-		scrollArea.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
-		scrollArea.setSpriteId(792);
-		scrollArea.revalidate();
-
-		Widget scrollUp = container.createChild(-1, WidgetType.GRAPHIC);
-		scrollUp.setOriginalX(0);
-		scrollUp.setOriginalY(8 + (FONT_SIZE * 2));
-		scrollUp.setOriginalWidth(16);
-		scrollUp.setOriginalHeight(16);
-		scrollUp.setSpriteId(773);
-		scrollUp.setXPositionMode(WidgetPositionMode.ABSOLUTE_RIGHT);
-		scrollUp.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);
-		scrollUp.revalidate();
-
-		Widget scrollDown = container.createChild(-1, WidgetType.GRAPHIC);
-		scrollDown.setOriginalX(0);
-		scrollDown.setOriginalY(0);
-		scrollDown.setOriginalWidth(16);
-		scrollDown.setOriginalHeight(16);
-		scrollDown.setSpriteId(788);
-		scrollDown.setXPositionMode(WidgetPositionMode.ABSOLUTE_RIGHT);
-		scrollDown.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
-		scrollDown.revalidate();
-
-		Widget scroller = container.createChild(-1, WidgetType.GRAPHIC);
-		scroller.setOriginalX(0);
-		scroller.setOriginalY(0);
-		scroller.setOriginalWidth(16);
-		scroller.setOriginalHeight(10);
-		scroller.setSpriteId(790);
-		*/
-
 		createContents(container);
 	}
 
