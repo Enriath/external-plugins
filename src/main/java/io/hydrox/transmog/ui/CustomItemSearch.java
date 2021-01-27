@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog.ui;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import io.hydrox.transmog.StupidItems;
 import io.hydrox.transmog.TransmogSlot;
@@ -49,6 +50,9 @@ import java.util.function.BiConsumer;
 @Singleton
 public class CustomItemSearch extends CustomSearch
 {
+	// JMod Items
+	private static final Set<Integer> IGNORED_ITEMS = Sets.newHashSet(22664, 22665, 22666);
+
 	@Setter
 	private TransmogSlot slot;
 
@@ -155,8 +159,8 @@ public class CustomItemSearch extends CustomSearch
 
 			// The client assigns "null" to item names of items it doesn't know about
 			// and the item might already be in the results from canonicalize
-			if (stats.getSlot() == slot.getKitIndex() && name.contains(search) && !results.contains(itemComposition) && !name.equals("null"))
-			//if (!name.equals("null") && name.contains(search) && !results.containsKey(itemComposition.getId()) && stats.getSlot() == slot.getKitIndex())
+			if (stats.getSlot() == slot.getKitIndex() && name.contains(search) &&
+				!results.contains(itemComposition) && !name.equals("null") && !IGNORED_ITEMS.contains(i))
 			{
 				// Check if the results already contain the same item image
 				ItemIcon itemIcon = new ItemIcon(itemComposition.getInventoryModel(),
