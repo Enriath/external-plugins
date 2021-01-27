@@ -69,9 +69,9 @@ public class CustomSpriteSearch extends CustomSearch
 		int x = PADDING;
 		int y = PADDING * 3;
 		int idx = 0;
-		for (Object o : results)
+		for (int i = page * MAX_RESULTS; i < (page + 1) * MAX_RESULTS && i < results.size(); i++)
 		{
-			final Mapping mapping = (Mapping) o;
+			final Mapping mapping = (Mapping) results.get(i);
 
 			Widget model = container.createChild(-1, WidgetType.MODEL);
 			model.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);

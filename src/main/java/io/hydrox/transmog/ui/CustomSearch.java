@@ -58,6 +58,7 @@ public abstract class CustomSearch extends ChatboxTextInput
 
 	protected String tooltipText;
 	protected int index = -1;
+	protected int page = 0;
 
 	protected CustomSearch(ChatboxPanelManager chatboxPanelManager, ClientThread clientThread, Client client)
 	{
@@ -106,6 +107,59 @@ public abstract class CustomSearch extends ChatboxTextInput
 		separator.setWidthMode(WidgetSizeMode.MINUS);
 		separator.setTextColor(0x666666);
 		separator.revalidate();
+
+		// Make sure the page is always valid, even when narrowing a search while looking at a higher page
+		// This is preferable to resetting the page to 1 each time.
+		int lastPage = results.size() / MAX_RESULTS;
+		if (page > lastPage)
+		{
+			page = lastPage;
+		}
+
+		Widget pageBack = container.createChild(-1, WidgetType.GRAPHIC);
+		pageBack.setHidden(page == 0 || results.isEmpty());
+		pageBack.setAction(0, "Previous Page");
+		pageBack.setSpriteId(SpriteID.BACK_ARROW_BUTTON_SMALL);
+		pageBack.setOriginalWidth(20);
+		pageBack.setOriginalHeight(20);
+		pageBack.setOriginalX(container.getWidth() - 90);
+		pageBack.setOriginalY(0);
+		pageBack.setOnOpListener((JavaScriptCallback) e ->
+		{
+			page = page <= 0 ? 0 : page - 1;
+			update();
+		});
+		pageBack.setHasListener(true);
+		pageBack.revalidate();
+
+		Widget pageNum = container.createChild(-1, WidgetType.TEXT);
+		// We don't want to show the page number if there's only one page
+		pageNum.setHidden((isSearchOnLastPage() && page == 0) || results.isEmpty());
+		pageNum.setFontId(495);
+		pageNum.setText((page + 1) + "");
+		pageNum.setOriginalWidth(20);
+		pageNum.setOriginalHeight(20);
+		pageNum.setOriginalX(container.getWidth() - 70);
+		pageNum.setOriginalY(2);
+		pageNum.setXTextAlignment(WidgetTextAlignment.CENTER);
+		pageNum.setYTextAlignment(WidgetTextAlignment.CENTER);
+		pageNum.revalidate();
+
+		Widget pageNext = container.createChild(-1, WidgetType.GRAPHIC);
+		pageNext.setHidden(isSearchOnLastPage() || results.isEmpty());
+		pageNext.setAction(0, "Next Page");
+		pageNext.setSpriteId(SpriteID.FORWARD_ARROW_BUTTON_SMALL);
+		pageNext.setOriginalWidth(20);
+		pageNext.setOriginalHeight(20);
+		pageNext.setOriginalX(container.getWidth() - 50);
+		pageNext.setOriginalY(0);
+		pageNext.setOnOpListener((JavaScriptCallback) e ->
+		{
+			page = isSearchOnLastPage() ? page : page + 1;
+			update();
+		});
+		pageNext.setHasListener(true);
+		pageNext.revalidate();
 
 		Widget exit = container.createChild(-1, WidgetType.GRAPHIC);
 		exit.setOriginalX(container.getWidth() - 20);
@@ -221,6 +275,7 @@ public abstract class CustomSearch extends ChatboxTextInput
 		value("");
 		results.clear();
 		index = -1;
+		page = 0;
 		super.close();
 	}
 
@@ -245,5 +300,10 @@ public abstract class CustomSearch extends ChatboxTextInput
 	public void setPrompt(String prompt)
 	{
 		super.prompt(prompt);
+	}
+
+	private boolean isSearchOnLastPage()
+	{
+		return (page + 1) * MAX_RESULTS >= results.size();
 	}
 }

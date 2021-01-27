@@ -82,9 +82,9 @@ public class CustomItemSearch extends CustomSearch
 		int x = PADDING;
 		int y = PADDING * 3;
 		int idx = 0;
-		for (Object o : results)
+		for (int i = page * MAX_RESULTS; i < (page + 1) * MAX_RESULTS && i < results.size(); i++)
 		{
-			final ItemComposition itemComposition = (ItemComposition) o;
+			final ItemComposition itemComposition = (ItemComposition) results.get(i);
 			Widget item = container.createChild(-1, WidgetType.GRAPHIC);
 			item.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);
 			item.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);
@@ -145,8 +145,7 @@ public class CustomItemSearch extends CustomSearch
 		}
 
 		Set<ItemIcon> itemIcons = new HashSet<>();
-		for (int i = 0; i < client.getItemCount() && results.size() < MAX_RESULTS; i++)
-		//for (int i = client.getItemCount() - 1; i >= 0 && results.size() < MAX_RESULTS; i--)
+		for (int i = 0; i < client.getItemCount(); i++)
 		{
 			ItemComposition itemComposition = itemManager.getItemComposition(itemManager.canonicalize(i));
 			ItemStats itemStats = itemManager.getItemStats(itemComposition.getId(), false);
