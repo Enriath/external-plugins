@@ -157,8 +157,8 @@ public class TransmogrificationManager
 		{
 			config.currentPreset(index);
 			updateTransmog();
-			getUIManager().getSavePresetButton().addOption(0, "Save to Current Preset <col=ff981f>" + index);
-			getUIManager().getDeletePresetButton().addOption(0, "Delete Current Preset <col=ff981f>" + index);
+			// getUIManager().getSavePresetButton().addOption(0, "Save to Current Preset <col=ff981f>" + index);
+			// getUIManager().getDeletePresetButton().addOption(0, "Delete Current Preset <col=ff981f>" + index);
 			TransmogPreset preset = getCurrentPreset();
 			for (TransmogSlot slot : TransmogSlot.values())
 			{

@@ -119,10 +119,12 @@ public class UIManager
 	private Widget pvpBlocker;
 	@Getter
 	private CustomWidgetPlayerPreview playerPreview;
+	/*
 	@Getter
 	private CustomWidgetActionButton savePresetButton;
 	@Getter
 	private CustomWidgetActionButton deletePresetButton;
+	*/
 	@Getter
 	private CustomWidgetActionButton saveDefaultStateButton;
 	@Getter
@@ -370,6 +372,7 @@ public class UIManager
 		selectPresetButton.addOption(4, "Select Preset <col=ff981f>4");
 		selectPresetButton.layout(7, 213);
 
+		/*
 		savePresetButton = new CustomWidgetActionButton(
 			parent,
 			"<col=004356>",
@@ -428,6 +431,18 @@ public class UIManager
 		deletePresetButton.addOption(3, "Delete Preset <col=ff981f>3");
 		deletePresetButton.addOption(4, "Delete Preset <col=ff981f>4");
 		deletePresetButton.layout(97, 213);
+		*/
+
+		Widget remembrance = parent.createChild(-1, WidgetType.TEXT);
+		remembrance.setTextColor(CustomWidget.fromRGB(Color.YELLOW));
+		remembrance.setTextShadowed(true);
+		remembrance.setFontId(FontID.PLAIN_11);
+		remembrance.setOriginalWidth(92);
+		remembrance.setOriginalHeight(40);
+		remembrance.setOriginalX(52);
+		remembrance.setOriginalY(213);
+		remembrance.setText("Save and delete did nothing.     They will return when fixed.");
+		remembrance.revalidate();
 
 		saveDefaultStateButton = new CustomWidgetActionButton(
 			parent,
