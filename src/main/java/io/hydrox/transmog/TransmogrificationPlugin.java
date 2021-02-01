@@ -86,6 +86,9 @@ public class TransmogrificationPlugin extends Plugin
 	@Getter
 	private boolean inPvpSituation;
 
+	@Getter
+	private boolean emptyEquipment;
+
 	@Override
 	public void startUp()
 	{
@@ -161,6 +164,11 @@ public class TransmogrificationPlugin extends Plugin
 		{
 			return;
 		}
+
+		emptyEquipment = e.getItemContainer() == null ||
+			Arrays.stream(e.getItemContainer().getItems()).distinct().count() == 1;
+
+		uiManager.updateTutorial(emptyEquipment);
 
 		if (!config.transmogActive())
 		{

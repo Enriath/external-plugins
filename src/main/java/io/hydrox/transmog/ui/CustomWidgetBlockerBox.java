@@ -39,7 +39,9 @@ public class CustomWidgetBlockerBox extends CustomWidget
 	private Widget leftBar;
 	private Widget middleBar;
 	private Widget rightBar;
-	private Widget text;
+	private Widget cornerBlocker;
+	private Widget textStage1;
+	private Widget textStage2;
 	private Widget arrow;
 
 	public CustomWidgetBlockerBox(Widget parent, String name)
@@ -52,8 +54,28 @@ public class CustomWidgetBlockerBox extends CustomWidget
 		leftBar.setHidden(state);
 		middleBar.setHidden(state);
 		rightBar.setHidden(state);
-		text.setHidden(state);
+		cornerBlocker.setHidden(state);
+		textStage1.setHidden(state);
+		textStage2.setHidden(state);
 		arrow.setHidden(state);
+	}
+
+	public void setTutorialState(int state)
+	{
+		switch (state)
+		{
+			case 1:
+				textStage1.setHidden(false);
+				textStage2.setHidden(true);
+				arrow.setHidden(true);
+				cornerBlocker.setHidden(false);
+				return;
+			case 2:
+				textStage1.setHidden(true);
+				textStage2.setHidden(false);
+				arrow.setHidden(false);
+				cornerBlocker.setHidden(true);
+		}
 	}
 
 	@Override
@@ -62,8 +84,10 @@ public class CustomWidgetBlockerBox extends CustomWidget
 		layoutWidget(leftBar, x, y + TOP_LEFT_CORNER_SIZE);
 		layoutWidget(middleBar, x + TOP_LEFT_CORNER_SIZE, y);
 		layoutWidget(rightBar, x + width - BOTTOM_RIGHT_CORNER_SIZE, y);
+		layoutWidget(cornerBlocker, x + width - BOTTOM_RIGHT_CORNER_SIZE, y + height - BOTTOM_RIGHT_CORNER_SIZE);
 
-		layoutWidget(text, x + 10, y);
+		layoutWidget(textStage1, x + 10, y);
+		layoutWidget(textStage2, x + 10, y);
 		layoutWidget(arrow, x + width - 100, y + height - 100);
 
 		parent.revalidate();
@@ -95,13 +119,28 @@ public class CustomWidgetBlockerBox extends CustomWidget
 		rightBar.setNoClickThrough(true);
 		rightBar.setOnOpListener(empty);
 
-		text = createTextWidget("Remove your armour and click the button in the corner to provide a default state.");
-		text.setXTextAlignment(WidgetTextAlignment.CENTER);
-		text.setYTextAlignment(WidgetTextAlignment.CENTER);
-		text.setOriginalWidth(width - 20);
-		text.setOriginalHeight(height);
-		text.setTextColor(fromRGB(Color.YELLOW));
-		text.setFontId(FontID.PLAIN_12);
+		cornerBlocker = createRectangleWidget(BOTTOM_RIGHT_CORNER_SIZE, BOTTOM_RIGHT_CORNER_SIZE);
+		cornerBlocker.setFilled(true);
+		cornerBlocker.setOpacity(120);
+		cornerBlocker.setHasListener(true);
+		cornerBlocker.setNoClickThrough(true);
+		cornerBlocker.setOnOpListener(empty);
+
+		textStage1 = createTextWidget("The plugin needs to know your base outfit. First, remove all of your equipment.");
+		textStage1.setXTextAlignment(WidgetTextAlignment.CENTER);
+		textStage1.setYTextAlignment(WidgetTextAlignment.CENTER);
+		textStage1.setOriginalWidth(width - 20);
+		textStage1.setOriginalHeight(height);
+		textStage1.setTextColor(fromRGB(Color.YELLOW));
+		textStage1.setFontId(FontID.PLAIN_12);
+
+		textStage2 = createTextWidget("Now click the button in the corner to provide a default state.");
+		textStage2.setXTextAlignment(WidgetTextAlignment.CENTER);
+		textStage2.setYTextAlignment(WidgetTextAlignment.CENTER);
+		textStage2.setOriginalWidth(width - 20);
+		textStage2.setOriginalHeight(height);
+		textStage2.setTextColor(fromRGB(Color.YELLOW));
+		textStage2.setFontId(FontID.PLAIN_12);
 
 		// RL does not have the stuff required to rotate sprites exported (if there is such a thing),
 		// so a custom needs be used instead

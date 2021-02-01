@@ -465,6 +465,7 @@ public class UIManager
 			blockerBox.setHidden(true);
 		}
 
+		updateTutorial(plugin.isEmptyEquipment());
 		parent.revalidate();
 
 		manager.selectTransmog(config.currentPreset());
@@ -561,6 +562,14 @@ public class UIManager
 		if (playerPreview != null)
 		{
 			playerPreview.tickRotation();
+		}
+	}
+
+	public void updateTutorial(boolean equipmentState)
+	{
+		if (!manager.isDefaultStateSet() && blockerBox != null)
+		{
+			blockerBox.setTutorialState(equipmentState ? 2 : 1);
 		}
 	}
 }
