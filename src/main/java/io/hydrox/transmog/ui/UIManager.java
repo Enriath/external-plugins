@@ -141,7 +141,7 @@ public class UIManager
 
 	public void shutDown()
 	{
-		clientThread.invoke(this::removeUI);
+		clientThread.invoke(this::removeCustomUI);
 		uiSlots.clear();
 		uiCreated = false;
 		if (isSearching)
@@ -163,8 +163,8 @@ public class UIManager
 	{
 		uiCreated = false;
 		uiSlots.clear();
-		removeUI();
-		createInitialUI();
+		removeCustomUI();
+		createEquipmentTabUI();
 	}
 
 	private Widget getContainer()
@@ -173,7 +173,7 @@ public class UIManager
 		return equipment.getParent();
 	}
 
-	public void createInitialUI()
+	public void createEquipmentTabUI()
 	{
 		final Widget parent = getContainer();
 		CustomWidgetToggleButton showUI = new CustomWidgetToggleButton(
@@ -186,12 +186,13 @@ public class UIManager
 			{
 				if (selected)
 				{
-					createUI();
+					hideVanillaUI();
+					createMainUI();
 				}
 				else
 				{
-					removeUI();
-					createInitialUI();
+					removeCustomUI();
+					createEquipmentTabUI();
 				}
 			});
 		showUI.setVerbs("Edit", "Exit");
@@ -242,82 +243,18 @@ public class UIManager
 		pvpBlocker.setAction(0, "Transmog is disabled in PvP situations");
 	}
 
-	public void onTransmogUISlotClicked(int op, TransmogSlot slot)
+	private void hideVanillaUI()
 	{
-		CustomWidgetTransmogBox widget = uiSlots.get(slot);
-		TransmogPreset preset = manager.getCurrentPreset();
-		switch (op)
-		{
-			case SET_ITEM:
-				isSearching = true;
-				if (slot.getSlotType() == SlotType.SPECIAL)
-				{
-					CustomSpriteSearch s = spriteSearch;
-					s.setTooltipText("Set as " + slot.getName());
-					s.setPrompt("Choose for " + slot.getName() + " slot");
-					s.setSlot(slot);
-					s.setOnItemSelected((m) ->
-					{
-						widget.setContent(m.modelId(), m.prettyName());
-						isSearching = false;
-						preset.setSlot(slot, m.kitId(), m.prettyName());
-						manager.updateTransmog();
-					});
-
-					switch (slot)
-					{
-						case HAIR:
-							s.setSource(HairMapping.values());
-							break;
-						case JAW:
-							s.setSource(FacialHairMapping.values());
-							break;
-						case SLEEVES:
-							s.setSource(SleeveMapping.values());
-							break;
-					}
-
-					s.build();
-				}
-				else
-				{
-					CustomItemSearch i = itemSearch;
-					i.setTooltipText("Set as " + slot.getName());
-					i.setPrompt("Choose for " + slot.getName() + " slot");
-					i.setSlot(slot);
-					i.setOnItemSelected((id, name) ->
-					{
-						widget.setContent(id, name);
-						isSearching = false;
-						preset.setSlot(slot, id, name);
-						manager.updateTransmog();
-					});
-					i.build();
-				}
-				break;
-			case CLEAR:
-				chatboxPanelManager.close();
-				widget.setEmpty();
-				preset.clearSlot(slot);
-				manager.updateTransmog();
-				break;
-			case HIDE:
-				chatboxPanelManager.close();
-				widget.setDefault();
-				preset.setDefaultSlot(slot);
-				manager.updateTransmog();
-				break;
-		}
-	}
-
-	private void createUI()
-	{
-		final Widget parent = getContainer();
-		for (Widget child : parent.getNestedChildren())
+		for (Widget child : getContainer().getNestedChildren())
 		{
 			child.setHidden(true);
 			child.revalidate();
 		}
+	}
+
+	private void createMainUI()
+	{
+		final Widget parent = getContainer();
 
 		helpText = parent.createChild(-1, WidgetType.TEXT);
 		helpText.setTextColor(CustomWidget.fromRGB(Color.YELLOW));
@@ -533,7 +470,7 @@ public class UIManager
 		manager.selectTransmog(config.currentPreset());
 	}
 
-	public void removeUI()
+	public void removeCustomUI()
 	{
 		final Widget parent = getContainer();
 		parent.deleteAllChildren();
@@ -548,6 +485,74 @@ public class UIManager
 		{
 			chatboxPanelManager.close();
 			isSearching = false;
+		}
+	}
+
+	public void onTransmogUISlotClicked(int op, TransmogSlot slot)
+	{
+		CustomWidgetTransmogBox widget = uiSlots.get(slot);
+		TransmogPreset preset = manager.getCurrentPreset();
+		switch (op)
+		{
+			case SET_ITEM:
+				isSearching = true;
+				if (slot.getSlotType() == SlotType.SPECIAL)
+				{
+					CustomSpriteSearch s = spriteSearch;
+					s.setTooltipText("Set as " + slot.getName());
+					s.setPrompt("Choose for " + slot.getName() + " slot");
+					s.setSlot(slot);
+					s.setOnItemSelected((m) ->
+					{
+						widget.setContent(m.modelId(), m.prettyName());
+						isSearching = false;
+						preset.setSlot(slot, m.kitId(), m.prettyName());
+						manager.updateTransmog();
+					});
+
+					switch (slot)
+					{
+						case HAIR:
+							s.setSource(HairMapping.values());
+							break;
+						case JAW:
+							s.setSource(FacialHairMapping.values());
+							break;
+						case SLEEVES:
+							s.setSource(SleeveMapping.values());
+							break;
+					}
+
+					s.build();
+				}
+				else
+				{
+					CustomItemSearch i = itemSearch;
+					i.setTooltipText("Set as " + slot.getName());
+					i.setPrompt("Choose for " + slot.getName() + " slot");
+					i.setSlot(slot);
+					i.setOnItemSelected((id, name) ->
+					{
+						widget.setContent(id, name);
+						isSearching = false;
+						preset.setSlot(slot, id, name);
+						manager.updateTransmog();
+					});
+					i.build();
+				}
+				break;
+			case CLEAR:
+				chatboxPanelManager.close();
+				widget.setEmpty();
+				preset.clearSlot(slot);
+				manager.updateTransmog();
+				break;
+			case HIDE:
+				chatboxPanelManager.close();
+				widget.setDefault();
+				preset.setDefaultSlot(slot);
+				manager.updateTransmog();
+				break;
 		}
 	}
 

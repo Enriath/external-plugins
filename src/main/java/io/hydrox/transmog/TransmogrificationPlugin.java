@@ -99,7 +99,7 @@ public class TransmogrificationPlugin extends Plugin
 			transmogManager.updateTransmog();
 			clientThread.invoke(() ->
 				{
-					uiManager.createInitialUI();
+					uiManager.createEquipmentTabUI();
 					updatePvpState();
 				});
 		}
@@ -210,7 +210,7 @@ public class TransmogrificationPlugin extends Plugin
 	{
 		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !uiManager.isUiCreated())
 		{
-			uiManager.createInitialUI();
+			uiManager.createEquipmentTabUI();
 			uiManager.setUiCreated(true);
 		}
 	}
