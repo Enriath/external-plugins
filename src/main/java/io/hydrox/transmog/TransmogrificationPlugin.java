@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
+import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ClientTick;
@@ -104,6 +105,7 @@ public class TransmogrificationPlugin extends Plugin
 				{
 					uiManager.createEquipmentTabUI();
 					updatePvpState();
+					updateEquipmentState();
 				});
 		}
 	}
@@ -143,6 +145,7 @@ public class TransmogrificationPlugin extends Plugin
 			{
 				lastWorld = client.getWorld();
 				transmogManager.loadData();
+				updateEquipmentState();
 			}
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
@@ -165,10 +168,7 @@ public class TransmogrificationPlugin extends Plugin
 			return;
 		}
 
-		emptyEquipment = e.getItemContainer() == null ||
-			Arrays.stream(e.getItemContainer().getItems()).distinct().count() == 1;
-
-		uiManager.updateTutorial(emptyEquipment);
+		updateEquipmentState();
 
 		if (!config.transmogActive())
 		{
@@ -177,6 +177,16 @@ public class TransmogrificationPlugin extends Plugin
 		}
 
 		transmogManager.reapplyTransmog();
+	}
+
+	private void updateEquipmentState()
+	{
+		ItemContainer ic = client.getItemContainer(InventoryID.EQUIPMENT);
+
+		emptyEquipment = ic == null ||
+			Arrays.stream(ic.getItems()).distinct().noneMatch(i -> i != null && i.getId() != -1);
+
+		uiManager.updateTutorial(emptyEquipment);
 	}
 
 	@Subscribe

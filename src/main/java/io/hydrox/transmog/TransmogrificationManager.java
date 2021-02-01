@@ -238,16 +238,26 @@ public class TransmogrificationManager
 		currentActualState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds().clone();
 	}
 
-	public void updateDefault()
+	public void updateDefault(int opClicked)
 	{
-		chatMessageManager.queue(QueuedMessage.builder()
-			.type(ChatMessageType.ENGINE)
-			.value("Saved your default outfit")
-			.build());
-		emptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
-		config.saveDefault(emptyState);
-		getUIManager().getSaveDefaultStateButton().setIconSprite(115);
-		getUIManager().getBlockerBox().setHidden(true);
+		if (plugin.isEmptyEquipment() || opClicked == 2)
+		{
+			chatMessageManager.queue(QueuedMessage.builder()
+				.type(ChatMessageType.ENGINE)
+				.value("Saved your default outfit")
+				.build());
+			emptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
+			config.saveDefault(emptyState);
+			getUIManager().getSaveDefaultStateButton().setIconSprite(115);
+			getUIManager().getBlockerBox().setHidden(true);
+		}
+		else
+		{
+			chatMessageManager.queue(QueuedMessage.builder()
+				.type(ChatMessageType.ENGINE)
+				.value("<col=dd0000>Remove your armour before setting a default state.</col> Right click to override.")
+				.build());
+		}
 	}
 
 	/**

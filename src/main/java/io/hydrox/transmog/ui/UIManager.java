@@ -385,13 +385,14 @@ public class UIManager
 			parent,
 			"Default State",
 			SpriteID.PRAYER_THICK_SKIN,
-			op -> manager.updateDefault()
+			op -> manager.updateDefault(op)
 		);
 		saveDefaultStateButton.setSize(40, 40);
 		saveDefaultStateButton.setIconSize(30, 30);
 		saveDefaultStateButton.create();
 		saveDefaultStateButton.setIconSprite(manager.isDefaultStateSet() ? SpriteID.PRAYER_THICK_SKIN : SpriteID.PRAYER_ROCK_SKIN);
 		saveDefaultStateButton.addOption(1, "Save as");
+		saveDefaultStateButton.addOption(2, "Force save as");
 		saveDefaultStateButton.layout(142, 213);
 
 		// Create inter-slot bracers
