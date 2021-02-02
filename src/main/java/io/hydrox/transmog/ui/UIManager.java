@@ -141,9 +141,7 @@ public class UIManager
 	@Getter
 	private CustomWidgetActionButton deletePresetButton;
 	*/
-	@Getter
 	private CustomWidgetActionButton saveDefaultStateButton;
-	@Getter
 	private CustomWidgetBlockerBox blockerBox;
 
 	private Widget[] presetScrollbars;
@@ -415,7 +413,14 @@ public class UIManager
 			parent,
 			"Default State",
 			SpriteID.PRAYER_THICK_SKIN,
-			op -> manager.updateDefault(op)
+			op ->
+			{
+				if (manager.updateDefault(op))
+				{
+					saveDefaultStateButton.setIconSprite(115);
+					blockerBox.setHidden(true);
+				}
+			}
 		);
 		saveDefaultStateButton.setSize(40, 40);
 		saveDefaultStateButton.setIconSize(30, 30);
