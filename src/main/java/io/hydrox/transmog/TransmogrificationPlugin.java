@@ -46,9 +46,12 @@ import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.SpriteManager;
+import net.runelite.client.input.MouseManager;
+import net.runelite.client.input.MouseWheelListener;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import javax.inject.Inject;
+import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
 @PluginDescriptor(
@@ -58,7 +61,7 @@ import java.util.Arrays;
 
 )
 @Slf4j
-public class TransmogrificationPlugin extends Plugin
+public class TransmogrificationPlugin extends Plugin implements MouseWheelListener
 {
 	private static final String FORCE_RIGHT_CLICK_MENU_FLAG = "<col=ff981f><col=004356>";
 	private static final int SCRIPT_ID_EQUIPMENT_TAB_CREATED = 914;
@@ -68,6 +71,9 @@ public class TransmogrificationPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
+
+	@Inject
+	private MouseManager mouseManager;
 
 	@Inject
 	private SpriteManager spriteManager;
@@ -94,6 +100,7 @@ public class TransmogrificationPlugin extends Plugin
 	public void startUp()
 	{
 		spriteManager.addSpriteOverrides(CustomSprites.values());
+		mouseManager.registerMouseWheelListener(this);
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
@@ -103,7 +110,7 @@ public class TransmogrificationPlugin extends Plugin
 			transmogManager.updateTransmog();
 			clientThread.invoke(() ->
 				{
-					uiManager.createEquipmentTabUI();
+					uiManager.createEquipmentTabUI(false);
 					updatePvpState();
 					updateEquipmentState();
 				});
@@ -114,6 +121,7 @@ public class TransmogrificationPlugin extends Plugin
 	public void shutDown()
 	{
 		spriteManager.removeSpriteOverrides(CustomSprites.values());
+		mouseManager.unregisterMouseWheelListener(this);
 		transmogManager.shutDown();
 		uiManager.shutDown();
 		lastWorld = 0;
@@ -228,7 +236,7 @@ public class TransmogrificationPlugin extends Plugin
 	{
 		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !uiManager.isUiCreated())
 		{
-			uiManager.createEquipmentTabUI();
+			uiManager.createEquipmentTabUI(false);
 			uiManager.setUiCreated(true);
 		}
 	}
@@ -273,6 +281,13 @@ public class TransmogrificationPlugin extends Plugin
 		}
 	}
 
+	@Override
+	public MouseWheelEvent mouseWheelMoved(MouseWheelEvent event)
+	{
+		uiManager.mouseWheelMoved(event);
+		return event;
+	}
+	
 	public Gender getGender()
 	{
 		if (client.getLocalPlayer() == null)
