@@ -115,7 +115,7 @@ public class TransmogPreset
 		}
 	}
 
-	String getName(TransmogSlot slot)
+	public String getName(TransmogSlot slot)
 	{
 		return names.get(slot);
 	}

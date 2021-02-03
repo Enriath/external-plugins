@@ -110,7 +110,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			transmogManager.updateTransmog();
 			clientThread.invoke(() ->
 				{
-					uiManager.createEquipmentTabUI(false);
+					uiManager.createTab(uiManager.getEquipmentOverlay());
 					updatePvpState();
 					updateEquipmentState();
 				});
@@ -236,7 +236,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	{
 		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !uiManager.isUiCreated())
 		{
-			uiManager.createEquipmentTabUI(false);
+			uiManager.createTab(uiManager.getEquipmentOverlay());
 			uiManager.setUiCreated(true);
 		}
 	}
@@ -244,7 +244,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onClientTick(ClientTick e)
 	{
-		uiManager.tickPreview();
+		uiManager.onClientTick();
 	}
 
 	/**
