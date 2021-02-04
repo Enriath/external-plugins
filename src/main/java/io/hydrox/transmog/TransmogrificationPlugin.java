@@ -272,4 +272,13 @@ public class TransmogrificationPlugin extends Plugin
 			}
 		}
 	}
+
+	public Gender getGender()
+	{
+		if (client.getLocalPlayer() == null)
+		{
+			return null;
+		}
+		return client.getLocalPlayer().getPlayerComposition().isFemale() ? Gender.FEMALE : Gender.MALE;
+	}
 }

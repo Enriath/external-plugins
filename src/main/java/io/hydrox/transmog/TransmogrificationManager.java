@@ -306,15 +306,6 @@ public class TransmogrificationManager
 		clientThread.invoke(() -> presets.stream().filter(Objects::nonNull).forEach(e -> e.loadNames(itemManager)));
 	}
 
-	public Gender getGender()
-	{
-		if (!isDefaultStateSet())
-		{
-			return null;
-		}
-		return HairMapping.fromKitID(emptyState[TransmogSlot.HAIR.getKitIndex()]).getGender();
-	}
-
 	public void hintDefaultState()
 	{
 		notifier.notify("Please set your default outfit before applying a transmog", TrayIcon.MessageType.WARNING);

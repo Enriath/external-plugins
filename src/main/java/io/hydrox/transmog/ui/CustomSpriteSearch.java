@@ -29,6 +29,7 @@ import io.hydrox.transmog.Mapping;
 import io.hydrox.transmog.MappingMapping;
 import io.hydrox.transmog.TransmogSlot;
 import io.hydrox.transmog.TransmogrificationManager;
+import io.hydrox.transmog.TransmogrificationPlugin;
 import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.widgets.JavaScriptCallback;
@@ -43,7 +44,7 @@ import java.util.function.Consumer;
 @Singleton
 public class CustomSpriteSearch extends CustomSearch
 {
-	private final TransmogrificationManager transmogrificationManager;
+	private final TransmogrificationPlugin plugin;
 
 	@Setter
 	protected Consumer<Mapping> onItemSelected;
@@ -56,10 +57,10 @@ public class CustomSpriteSearch extends CustomSearch
 
 	@Inject
 	private CustomSpriteSearch(ChatboxPanelManager chatboxPanelManager, ClientThread clientThread,
-							   Client client, TransmogrificationManager transmogrificationManager)
+							   Client client, TransmogrificationPlugin plugin)
 	{
 		super(chatboxPanelManager, clientThread, client);
-		this.transmogrificationManager = transmogrificationManager;
+		this.plugin = plugin;
 	}
 
 	@Override
@@ -139,7 +140,7 @@ public class CustomSpriteSearch extends CustomSearch
 		for (Mapping mapping : source)
 		{
 			if (mapping.prettyName().toLowerCase().contains(search) &&
-				mapping.gender() == transmogrificationManager.getGender())
+				mapping.gender() == plugin.getGender())
 			{
 				results.add(mapping);
 			}
