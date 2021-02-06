@@ -38,17 +38,20 @@ public class EquipmentOverlay extends CustomTab
 	private CustomWidgetToggleButton stateToggle;
 	private Widget pvpBlocker;
 
-	@Inject
-	private TransmogrificationConfigManager config;
+	private final TransmogrificationConfigManager config;
+	private final TransmogrificationPlugin plugin;
+	private final TransmogrificationManager manager;
+	private final UIManager uiManager;
 
 	@Inject
-	private TransmogrificationPlugin plugin;
-
-	@Inject
-	private TransmogrificationManager manager;
-
-	@Inject
-	private UIManager uiManager;
+	EquipmentOverlay(TransmogrificationConfigManager config, TransmogrificationPlugin plugin,
+					 TransmogrificationManager manager, UIManager uiManager)
+	{
+		this.config = config;
+		this.plugin = plugin;
+		this.manager = manager;
+		this.uiManager = uiManager;
+	}
 
 	@Override
 	void create()

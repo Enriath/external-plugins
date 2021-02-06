@@ -80,29 +80,15 @@ public class MainTab extends CustomTab
 		.add(Pair.of(new Rectangle(-20, 78, 20, 36), SpriteID.IRON_RIVETS_HORIZONTAL))
 		.build();
 
-	@Inject
-	private ChatboxPanelManager chatboxPanelManager;
 
-	@Inject
-	private CustomItemSearch itemSearch;
-
-	@Inject
-	private CustomSpriteSearch spriteSearch;
-
-	@Inject
-	private ItemManager itemManager;
-
-	@Inject
-	private TransmogrificationConfigManager config;
-
-	@Inject
-	private TransmogrificationManager manager;
-
-	@Inject
-	private TransmogrificationPlugin plugin;
-
-	@Inject
-	private UIManager uiManager;
+	private final ChatboxPanelManager chatboxPanelManager;
+	private final CustomItemSearch itemSearch;
+	private final CustomSpriteSearch spriteSearch;
+	private final ItemManager itemManager;
+	private final TransmogrificationConfigManager config;
+	private final TransmogrificationManager manager;
+	private final TransmogrificationPlugin plugin;
+	private final UIManager uiManager;
 
 	@Getter
 	private final Map<TransmogSlot, CustomWidgetTransmogBox> uiSlots = new HashMap<>();
@@ -111,6 +97,21 @@ public class MainTab extends CustomTab
 	private CustomWidgetPlayerPreview playerPreview;
 	private CustomWidgetActionButton saveDefaultStateButton;
 	private CustomWidgetBlockerBox blockerBox;
+
+	@Inject
+	MainTab(ChatboxPanelManager chatboxPanelManager, CustomItemSearch itemSearch, CustomSpriteSearch spriteSearch,
+			ItemManager itemManager, TransmogrificationConfigManager config, TransmogrificationManager manager,
+			TransmogrificationPlugin plugin, UIManager uiManager)
+	{
+		this.chatboxPanelManager = chatboxPanelManager;
+		this.itemSearch = itemSearch;
+		this.spriteSearch = spriteSearch;
+		this.itemManager = itemManager;
+		this.config = config;
+		this.manager = manager;
+		this.plugin = plugin;
+		this.uiManager = uiManager;
+	}
 
 	@Override
 	void shutDown()

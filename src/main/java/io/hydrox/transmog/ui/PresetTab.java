@@ -51,20 +51,12 @@ public class PresetTab extends CustomTab
 	private static final int SCROLLBAR_TRACK_HEIGHT = SCROLLBAR_HEIGHT - (SCROLLBAR_BUTTON_HEIGHT * 2);
 	private static final int SCROLLBAR_THUMB_CAP_HEIGHT = 5;
 
-	@Inject
-	private Client client;
 
-	@Inject
-	private ClientThread clientThread;
-
-	@Inject
-	private TransmogrificationConfigManager config;
-
-	@Inject
-	private TransmogrificationManager manager;
-
-	@Inject
-	private UIManager uiManager;
+	private final Client client;
+	private final ClientThread clientThread;
+	private final TransmogrificationConfigManager config;
+	private final TransmogrificationManager manager;
+	private final UIManager uiManager;
 
 	private Widget[] presetScrollbars;
 	private Rectangle boxBounds;
@@ -72,6 +64,17 @@ public class PresetTab extends CustomTab
 	private int maxScrollPos = 0;
 
 	private Map<Widget, Integer> presets = new HashMap<>();
+
+	@Inject
+	PresetTab(Client client, ClientThread clientThread, TransmogrificationConfigManager config,
+			  TransmogrificationManager manager, UIManager uiManager)
+	{
+		this.client = client;
+		this.clientThread = clientThread;
+		this.config = config;
+		this.manager = manager;
+		this.uiManager = uiManager;
+	}
 
 	@Override
 	void create()

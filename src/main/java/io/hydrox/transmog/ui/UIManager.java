@@ -42,23 +42,18 @@ import java.awt.event.MouseWheelEvent;
 public class UIManager
 {
 
-	@Inject
-	private ChatboxPanelManager chatboxPanelManager;
-
-	@Inject
-	private Client client;
-
-	@Inject
-	private ClientThread clientThread;
+	private final ChatboxPanelManager chatboxPanelManager;
+	private final Client client;
+	private final ClientThread clientThread;
 
 	@Getter
-	private CustomTab mainTab = new MainTab();
+	private final MainTab mainTab;
 
 	@Getter
-	private CustomTab equipmentOverlay = new EquipmentOverlay();
+	private final EquipmentOverlay equipmentOverlay;
 
 	@Getter
-	private CustomTab presetTab = new PresetTab();
+	private final PresetTab presetTab;
 
 
 
@@ -78,6 +73,18 @@ public class UIManager
 	private boolean isSearching = false;
 
 	CustomTab currentTab;
+
+	@Inject
+	UIManager(ChatboxPanelManager chatboxPanelManager, Client client, ClientThread clientThread,
+			  MainTab mainTab, EquipmentOverlay equipmentOverlay, PresetTab presetTab)
+	{
+		this.chatboxPanelManager = chatboxPanelManager;
+		this.client = client;
+		this.clientThread = clientThread;
+		this.mainTab = mainTab;
+		this.equipmentOverlay = equipmentOverlay;
+		this.presetTab = presetTab;
+	}
 
 	public void shutDown()
 	{

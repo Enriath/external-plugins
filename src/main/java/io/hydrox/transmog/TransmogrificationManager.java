@@ -53,29 +53,15 @@ import java.util.stream.IntStream;
 @Slf4j
 public class TransmogrificationManager
 {
-	@Inject
-	private Client client;
 
-	@Inject
-	private ClientThread clientThread;
-
-	@Inject
-	private Notifier notifier;
-
-	@Inject
-	private ItemManager itemManager;
-
-	@Inject
-	private ChatMessageManager chatMessageManager;
-
-	@Inject
-	private TransmogrificationPlugin plugin;
-
-	@Inject
-	private TransmogrificationConfigManager config;
-
-	@Inject
-	private Provider<UIManager> uiManager;
+	private final Client client;
+	private final ClientThread clientThread;
+	private final Notifier notifier;
+	private final ItemManager itemManager;
+	private final ChatMessageManager chatMessageManager;
+	private final TransmogrificationPlugin plugin;
+	private final TransmogrificationConfigManager config;
+	private final Provider<UIManager> uiManager;
 
 	@Getter
 	private List<TransmogPreset> presets = initialisePresetStorage();
@@ -88,6 +74,21 @@ public class TransmogrificationManager
 
 	@Getter
 	private int transmogHash = 0;
+
+	@Inject
+	TransmogrificationManager(Client client, ClientThread clientThread, Notifier notifier, ItemManager itemManager,
+							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin,
+							  TransmogrificationConfigManager config, Provider<UIManager> uiManager)
+	{
+		this.client = client;
+		this.clientThread = clientThread;
+		this.notifier = notifier;
+		this.itemManager = itemManager;
+		this.chatMessageManager = chatMessageManager;
+		this.plugin = plugin;
+		this.config = config;
+		this.uiManager = uiManager;
+	}
 
 	public void shutDown()
 	{
