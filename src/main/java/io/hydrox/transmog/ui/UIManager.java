@@ -24,6 +24,9 @@
  */
 package io.hydrox.transmog.ui;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import io.hydrox.transmog.TransmogPreset;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,8 +36,6 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.event.MouseWheelEvent;
 
 @Singleton
@@ -46,14 +47,26 @@ public class UIManager
 	private final Client client;
 	private final ClientThread clientThread;
 
-	@Getter
-	private final MainTab mainTab;
+	private final Provider<MainTab> mainTab;
 
-	@Getter
-	private final EquipmentOverlay equipmentOverlay;
+	private final Provider<EquipmentOverlay> equipmentOverlay;
 
-	@Getter
-	private final PresetTab presetTab;
+	private final Provider<PresetTab> presetTab;
+
+	public MainTab getMainTab()
+	{
+		return mainTab.get();
+	}
+
+	public EquipmentOverlay getEquipmentOverlay()
+	{
+		return equipmentOverlay.get();
+	}
+
+	public PresetTab getPresetTab()
+	{
+		return presetTab.get();
+	}
 
 
 
@@ -76,7 +89,7 @@ public class UIManager
 
 	@Inject
 	UIManager(ChatboxPanelManager chatboxPanelManager, Client client, ClientThread clientThread,
-			  MainTab mainTab, EquipmentOverlay equipmentOverlay, PresetTab presetTab)
+			  Provider<MainTab> mainTab, Provider<EquipmentOverlay> equipmentOverlay, Provider<PresetTab> presetTab)
 	{
 		this.chatboxPanelManager = chatboxPanelManager;
 		this.client = client;
@@ -91,7 +104,7 @@ public class UIManager
 		clientThread.invoke(this::removeCustomUI);
 		uiCreated = false;
 		closeSearch();
-		mainTab.shutDown();
+		currentTab.shutDown();
 	}
 
 	public void createTab(CustomTab tab)
@@ -109,7 +122,7 @@ public class UIManager
 	{
 		uiCreated = false;
 		removeCustomUI();
-		createTab(equipmentOverlay);
+		createTab(equipmentOverlay.get());
 	}
 
 	Widget getContainer()

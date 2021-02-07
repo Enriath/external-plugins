@@ -26,6 +26,7 @@ package io.hydrox.transmog.ui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 import io.hydrox.transmog.FacialHairMapping;
 import io.hydrox.transmog.HairMapping;
 import io.hydrox.transmog.Mapping;
@@ -33,7 +34,6 @@ import io.hydrox.transmog.MappingMapping;
 import io.hydrox.transmog.SleeveMapping;
 import io.hydrox.transmog.TransmogPreset;
 import io.hydrox.transmog.TransmogSlot;
-import io.hydrox.transmog.TransmogrificationConfigManager;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.TransmogrificationPlugin;
 import static io.hydrox.transmog.ui.MenuOps.CLEAR;
@@ -48,7 +48,6 @@ import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import org.apache.commons.lang3.tuple.Pair;
-import javax.inject.Inject;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.HashMap;
@@ -85,7 +84,6 @@ public class MainTab extends CustomTab
 	private final CustomItemSearch itemSearch;
 	private final CustomSpriteSearch spriteSearch;
 	private final ItemManager itemManager;
-	private final TransmogrificationConfigManager config;
 	private final TransmogrificationManager manager;
 	private final TransmogrificationPlugin plugin;
 	private final UIManager uiManager;
@@ -100,17 +98,15 @@ public class MainTab extends CustomTab
 
 	@Inject
 	MainTab(ChatboxPanelManager chatboxPanelManager, CustomItemSearch itemSearch, CustomSpriteSearch spriteSearch,
-			ItemManager itemManager, TransmogrificationConfigManager config, TransmogrificationManager manager,
-			TransmogrificationPlugin plugin, UIManager uiManager)
+			ItemManager itemManager, TransmogrificationPlugin plugin)
 	{
 		this.chatboxPanelManager = chatboxPanelManager;
 		this.itemSearch = itemSearch;
 		this.spriteSearch = spriteSearch;
 		this.itemManager = itemManager;
-		this.config = config;
-		this.manager = manager;
+		this.manager = plugin.getManager();
 		this.plugin = plugin;
-		this.uiManager = uiManager;
+		this.uiManager = plugin.getUIManager();
 	}
 
 	@Override
@@ -356,10 +352,11 @@ public class MainTab extends CustomTab
 
 		parent.revalidate();
 
-		manager.selectTransmog(config.currentPreset());
+		manager.updateTransmog();
 	}
 
-	public void tickPreview()
+	@Override
+	void onClientTick()
 	{
 		if (playerPreview != null)
 		{
@@ -367,6 +364,7 @@ public class MainTab extends CustomTab
 		}
 	}
 
+	@Override
 	public void updateTutorial(boolean equipmentState)
 	{
 		if (!manager.isDefaultStateSet() && blockerBox != null)
@@ -375,6 +373,7 @@ public class MainTab extends CustomTab
 		}
 	}
 
+	@Override
 	public void loadPreset(TransmogPreset preset)
 	{
 		for (TransmogSlot slot : TransmogSlot.values())
@@ -383,7 +382,7 @@ public class MainTab extends CustomTab
 		}
 	}
 
-	public void onTransmogUISlotClicked(int op, TransmogSlot slot)
+	private void onTransmogUISlotClicked(int op, TransmogSlot slot)
 	{
 		CustomWidgetTransmogBox widget = uiSlots.get(slot);
 		TransmogPreset preset = manager.getCurrentPreset();

@@ -38,7 +38,7 @@ import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
-import javax.inject.Singleton;
+import com.google.inject.Singleton;
 import java.util.function.Consumer;
 
 @Singleton

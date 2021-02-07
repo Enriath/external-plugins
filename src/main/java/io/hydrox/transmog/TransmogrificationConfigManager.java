@@ -24,15 +24,15 @@
  */
 package io.hydrox.transmog;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import static io.hydrox.transmog.TransmogPreset.PRESET_COUNT;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.util.Text;
-import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Singleton
 // Don't you just hate it when the config becomes null when it has only hidden configs?
 public class TransmogrificationConfigManager
 {
@@ -42,13 +42,11 @@ public class TransmogrificationConfigManager
 	private static final String CONFIG_PRESET = "preset_";
 
 	private final ConfigManager configManager;
-	private final Provider<TransmogrificationManager> manager;
 
 	@Inject
-	TransmogrificationConfigManager(ConfigManager configManager, Provider<TransmogrificationManager> manager)
+	TransmogrificationConfigManager(ConfigManager configManager)
 	{
 		this.configManager = configManager;
-		this.manager = manager;
 	}
 
 	public boolean transmogActive()
@@ -89,14 +87,6 @@ public class TransmogrificationConfigManager
 		configManager.unsetRSProfileConfiguration(CONFIG_GROUP, key);
 	}
 
-	public void savePresets()
-	{
-		for (int i = 1; i <= PRESET_COUNT; i++)
-		{
-			savePreset(getManager().getPreset(i), i);
-		}
-	}
-
 	void saveDefault(int[] state)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT, Arrays.stream(state)
@@ -105,43 +95,13 @@ public class TransmogrificationConfigManager
 		);
 	}
 
-	void loadPresets()
+	String loadPreset(int index)
 	{
-		final String keyBase = CONFIG_OVERRIDE + "." + CONFIG_PRESET;
-		// Let's start at 1 for semantics
-		for (int i = 1; i <= PRESET_COUNT; i++)
-		{
-			String data = configManager.getRSProfileConfiguration(CONFIG_GROUP, keyBase + i);
-			if (data == null)
-			{
-				continue;
-			}
-			TransmogPreset preset = getManager().getPreset(i);
-			if (preset == null)
-			{
-				preset = new TransmogPreset();
-			}
-			preset.fromConfig(data);
-			getManager().setPreset(i, preset);
-		}
+		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_OVERRIDE + "." + CONFIG_PRESET + index);
 	}
 
-	void loadDefault()
+	String loadDefault()
 	{
-		String data = configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
-		if (data == null)
-		{
-			getManager().setEmptyState(null);
-			transmogActive(false);
-		}
-		else
-		{
-			getManager().setEmptyState(Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
-		}
-	}
-
-	private TransmogrificationManager getManager()
-	{
-		return manager.get();
+		return  configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
 	}
 }

@@ -24,8 +24,6 @@
  */
 package io.hydrox.transmog.ui;
 
-import io.hydrox.transmog.TransmogrificationConfigManager;
-import io.hydrox.transmog.TransmogrificationManager;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
@@ -35,7 +33,8 @@ import net.runelite.api.widgets.WidgetSizeMode;
 import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
-import javax.inject.Inject;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import java.awt.Rectangle;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
@@ -54,9 +53,7 @@ public class PresetTab extends CustomTab
 
 	private final Client client;
 	private final ClientThread clientThread;
-	private final TransmogrificationConfigManager config;
-	private final TransmogrificationManager manager;
-	private final UIManager uiManager;
+	private final Provider<UIManager> uiManager;
 
 	private Widget[] presetScrollbars;
 	private Rectangle boxBounds;
@@ -66,20 +63,22 @@ public class PresetTab extends CustomTab
 	private Map<Widget, Integer> presets = new HashMap<>();
 
 	@Inject
-	PresetTab(Client client, ClientThread clientThread, TransmogrificationConfigManager config,
-			  TransmogrificationManager manager, UIManager uiManager)
+	PresetTab(Client client, ClientThread clientThread, Provider<UIManager> uiManager)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
-		this.config = config;
-		this.manager = manager;
 		this.uiManager = uiManager;
+	}
+
+	private UIManager getUIManager()
+	{
+		return uiManager.get();
 	}
 
 	@Override
 	void create()
 	{
-		final Widget parent = uiManager.getContainer();
+		final Widget parent = getUIManager().getContainer();
 		// Cache the bounds for scrolling code, which runs off of client thread
 		boxBounds = parent.getBounds();
 		scrollPos = 0;
@@ -209,13 +208,13 @@ public class PresetTab extends CustomTab
 			parent,
 			"Presets",
 			SpriteID.TAB_EMOTES,
-			config.currentPreset() + "",
+			"",
 			op ->
 			{
-				uiManager.removeCustomUI();
-				uiManager.hideVanillaUI();
-				((EquipmentOverlay) uiManager.getEquipmentOverlay()).create(true);
-				uiManager.createTab(uiManager.getMainTab());
+				getUIManager().removeCustomUI();
+				getUIManager().hideVanillaUI();
+				((EquipmentOverlay) getUIManager().getEquipmentOverlay()).create(true);
+				getUIManager().createTab(getUIManager().getMainTab());
 			}
 		);
 		selectPresetButton.setSize(40, 40);
@@ -311,10 +310,9 @@ public class PresetTab extends CustomTab
 		*/
 
 		parent.revalidate();
-
-		manager.selectTransmog(config.currentPreset());
 	}
 
+	@Override
 	public void mouseWheelMoved(MouseWheelEvent event)
 	{
 		if (boxBounds != null && boxBounds.contains(event.getPoint()))
@@ -323,7 +321,7 @@ public class PresetTab extends CustomTab
 		}
 	}
 
-	public void scrollPresets(int pixels)
+	private void scrollPresets(int pixels)
 	{
 		scrollPos += pixels;
 		doScroll();
@@ -351,7 +349,7 @@ public class PresetTab extends CustomTab
 		}
 	}
 
-	public void layoutScrollbar()
+	private void layoutScrollbar()
 	{
 		// Get the percentage of the presets visible on screen, and use that to figure out the size of the scrollbar in
 		// the track. Make sure it's always at least large enough for the caps if there are way too many presets

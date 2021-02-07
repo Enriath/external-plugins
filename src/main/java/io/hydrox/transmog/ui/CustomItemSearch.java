@@ -42,7 +42,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.http.api.item.ItemEquipmentStats;
 import net.runelite.http.api.item.ItemStats;
-import javax.inject.Singleton;
+import com.google.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;

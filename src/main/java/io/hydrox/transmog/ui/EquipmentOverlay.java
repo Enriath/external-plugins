@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog.ui;
 
+import com.google.inject.Inject;
 import io.hydrox.transmog.TransmogrificationConfigManager;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.TransmogrificationPlugin;
@@ -31,7 +32,6 @@ import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetType;
-import javax.inject.Inject;
 
 public class EquipmentOverlay extends CustomTab
 {
@@ -44,13 +44,12 @@ public class EquipmentOverlay extends CustomTab
 	private final UIManager uiManager;
 
 	@Inject
-	EquipmentOverlay(TransmogrificationConfigManager config, TransmogrificationPlugin plugin,
-					 TransmogrificationManager manager, UIManager uiManager)
+	EquipmentOverlay(TransmogrificationPlugin plugin)
 	{
-		this.config = config;
+		this.config = plugin.getConfig();
 		this.plugin = plugin;
-		this.manager = manager;
-		this.uiManager = uiManager;
+		this.manager = plugin.getManager();
+		this.uiManager = plugin.getUIManager();
 	}
 
 	@Override
@@ -134,6 +133,7 @@ public class EquipmentOverlay extends CustomTab
 		pvpBlocker.setAction(0, "Transmog is disabled in PvP situations");
 	}
 
+	@Override
 	void onPvpChanged(boolean newValue)
 	{
 		if (pvpBlocker != null)

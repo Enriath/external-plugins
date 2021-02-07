@@ -24,6 +24,9 @@
  */
 package io.hydrox.transmog;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import static io.hydrox.transmog.TransmogPreset.PRESET_COUNT;
 import io.hydrox.transmog.ui.UIManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,9 +41,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import net.runelite.client.util.Text;
 import java.awt.TrayIcon;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +62,7 @@ public class TransmogrificationManager
 	private final ChatMessageManager chatMessageManager;
 	private final TransmogrificationPlugin plugin;
 	private final TransmogrificationConfigManager config;
-	private final Provider<UIManager> uiManager;
+	private final UIManager uiManager;
 
 	@Getter
 	private List<TransmogPreset> presets = initialisePresetStorage();
@@ -77,8 +78,7 @@ public class TransmogrificationManager
 
 	@Inject
 	TransmogrificationManager(Client client, ClientThread clientThread, Notifier notifier, ItemManager itemManager,
-							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin,
-							  TransmogrificationConfigManager config, Provider<UIManager> uiManager)
+							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
@@ -86,8 +86,8 @@ public class TransmogrificationManager
 		this.itemManager = itemManager;
 		this.chatMessageManager = chatMessageManager;
 		this.plugin = plugin;
-		this.config = config;
-		this.uiManager = uiManager;
+		this.config = plugin.getConfig();
+		this.uiManager = plugin.getUIManager();
 	}
 
 	public void shutDown()
@@ -161,7 +161,7 @@ public class TransmogrificationManager
 			updateTransmog();
 			// getUIManager().getSavePresetButton().addOption(0, "Save to Current Preset <col=ff981f>" + index);
 			// getUIManager().getDeletePresetButton().addOption(0, "Delete Current Preset <col=ff981f>" + index);
-			getUIManager().loadPreset(getCurrentPreset());
+			uiManager.loadPreset(getCurrentPreset());
 		}
 	}
 
@@ -289,18 +289,49 @@ public class TransmogrificationManager
 
 	public void save()
 	{
-		config.savePresets();
+		for (int i = 1; i <= PRESET_COUNT; i++)
+		{
+			config.savePreset(getPreset(i), i);
+		}
 	}
 
-	private UIManager getUIManager()
+	private void loadPresets()
 	{
-		return uiManager.get();
+		for (int i = 1; i <= PRESET_COUNT; i++)
+		{
+			String data = config.loadPreset(i);
+			if (data == null)
+			{
+				continue;
+			}
+			TransmogPreset preset = getPreset(i);
+			if (preset == null)
+			{
+				preset = new TransmogPreset();
+			}
+			preset.fromConfig(data);
+			setPreset(i, preset);
+		}
+	}
+
+	private void loadDefault()
+	{
+		String data = config.loadDefault();
+		if (data == null)
+		{
+			setEmptyState(null);
+			config.transmogActive(false);
+		}
+		else
+		{
+			setEmptyState(Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
+		}
 	}
 
 	void loadData()
 	{
-		config.loadDefault();
-		config.loadPresets();
+		loadDefault();
+		loadPresets();
 		clientThread.invoke(() -> presets.stream().filter(Objects::nonNull).forEach(e -> e.loadNames(itemManager)));
 	}
 

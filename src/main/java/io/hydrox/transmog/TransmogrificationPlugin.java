@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog;
 
+import com.google.inject.Inject;
 import io.hydrox.transmog.ui.CustomSprites;
 import io.hydrox.transmog.ui.UIManager;
 import lombok.Getter;
@@ -50,7 +51,7 @@ import net.runelite.client.input.MouseManager;
 import net.runelite.client.input.MouseWheelListener;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import javax.inject.Inject;
+import javax.inject.Provider;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
@@ -79,13 +80,30 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	private SpriteManager spriteManager;
 
 	@Inject
-	private TransmogrificationConfigManager config;
+	private Provider<TransmogrificationConfigManager> config;
 
 	@Inject
-	private TransmogrificationManager transmogManager;
+	private Provider<TransmogrificationManager> transmogManager;
 
 	@Inject
-	private UIManager uiManager;
+	private Provider<UIManager> uiManager;
+
+	public TransmogrificationConfigManager getConfig()
+	{
+		return config.get();
+	}
+
+	public TransmogrificationManager getManager()
+	{
+		return transmogManager.get();
+	}
+
+	public UIManager getUIManager()
+	{
+		return uiManager.get();
+	}
+
+
 
 	private int lastWorld = 0;
 	private boolean forceRightClickFlag;
@@ -105,12 +123,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
 			lastWorld = client.getWorld();
-			transmogManager.saveCurrent();
-			transmogManager.loadData();
-			transmogManager.updateTransmog();
+			getManager().saveCurrent();
+			getManager().loadData();
+			getManager().updateTransmog();
 			clientThread.invoke(() ->
 				{
-					uiManager.createTab(uiManager.getEquipmentOverlay());
+					getUIManager().createTab(getUIManager().getEquipmentOverlay());
 					updatePvpState();
 					updateEquipmentState();
 				});
@@ -122,8 +140,8 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	{
 		spriteManager.removeSpriteOverrides(CustomSprites.values());
 		mouseManager.unregisterMouseWheelListener(this);
-		transmogManager.shutDown();
-		uiManager.shutDown();
+		getManager().shutDown();
+		getUIManager().shutDown();
 		lastWorld = 0;
 	}
 
@@ -139,8 +157,8 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		if (newState != inPvpSituation)
 		{
 			inPvpSituation = newState;
-			transmogManager.onPvpChanged(newState);
-			uiManager.onPvpChanged(newState);
+			getManager().onPvpChanged(newState);
+			getUIManager().onPvpChanged(newState);
 		}
 	}
 
@@ -152,15 +170,15 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			if (client.getWorld() != lastWorld)
 			{
 				lastWorld = client.getWorld();
-				transmogManager.loadData();
+				getManager().loadData();
 				updateEquipmentState();
 			}
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
 		{
 			lastWorld = 0;
-			uiManager.setUiCreated(false);
-			transmogManager.clearUserStates();
+			getUIManager().setUiCreated(false);
+			getManager().clearUserStates();
 		}
 	}
 
@@ -178,13 +196,13 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		updateEquipmentState();
 
-		if (!config.transmogActive())
+		if (!getConfig().transmogActive())
 		{
-			transmogManager.saveCurrent();
+			getManager().saveCurrent();
 			return;
 		}
 
-		transmogManager.reapplyTransmog();
+		getManager().reapplyTransmog();
 	}
 
 	private void updateEquipmentState()
@@ -194,7 +212,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		emptyEquipment = ic == null ||
 			Arrays.stream(ic.getItems()).distinct().noneMatch(i -> i != null && i.getId() != -1);
 
-		uiManager.updateTutorial(emptyEquipment);
+		getUIManager().updateTutorial(emptyEquipment);
 	}
 
 	@Subscribe
@@ -211,15 +229,15 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			return;
 		}
 
-		if (!config.transmogActive())
+		if (!getConfig().transmogActive())
 		{
 			return;
 		}
 		// On most teleports, the player kits are reset. This will reapply the transmog if needed.
 		final int currentHash = Arrays.hashCode(client.getLocalPlayer().getPlayerComposition().getEquipmentIds());
-		if (currentHash != transmogManager.getTransmogHash())
+		if (currentHash != getManager().getTransmogHash())
 		{
-			transmogManager.reapplyTransmog();
+			getManager().reapplyTransmog();
 		}
 	}
 
@@ -228,23 +246,23 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onResizeableChanged(ResizeableChanged e)
 	{
-		uiManager.onResizeableChanged();
+		getUIManager().onResizeableChanged();
 	}
 
 	@Subscribe
 	public void onScriptPostFired(ScriptPostFired e)
 	{
-		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !uiManager.isUiCreated())
+		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !getUIManager().isUiCreated())
 		{
-			uiManager.createTab(uiManager.getEquipmentOverlay());
-			uiManager.setUiCreated(true);
+			getUIManager().createTab(getUIManager().getEquipmentOverlay());
+			getUIManager().setUiCreated(true);
 		}
 	}
 
 	@Subscribe
 	public void onClientTick(ClientTick e)
 	{
-		uiManager.onClientTick();
+		getUIManager().onClientTick();
 	}
 
 	/**
@@ -284,7 +302,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Override
 	public MouseWheelEvent mouseWheelMoved(MouseWheelEvent event)
 	{
-		uiManager.mouseWheelMoved(event);
+		getUIManager().mouseWheelMoved(event);
 		return event;
 	}
 	
