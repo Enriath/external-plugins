@@ -166,21 +166,33 @@ public class UIManager
 
 	public void loadPreset(TransmogPreset preset)
 	{
-		currentTab.loadPreset(preset);
+		if (currentTab != null)
+		{
+			currentTab.loadPreset(preset);
+		}
 	}
 
 	public void onClientTick()
 	{
-		currentTab.onClientTick();
+		if (currentTab != null)
+		{
+			currentTab.onClientTick();
+		}
 	}
 
 	public void updateTutorial(boolean equipmentState)
 	{
-		currentTab.updateTutorial(equipmentState);
+		if (currentTab != null)
+		{
+			currentTab.updateTutorial(equipmentState);
+		}
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent event)
 	{
-		currentTab.mouseWheelMoved(event);
+		if (currentTab != null)
+		{
+			currentTab.mouseWheelMoved(event);
+		}
 	}
 }
