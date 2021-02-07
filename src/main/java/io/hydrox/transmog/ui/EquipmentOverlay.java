@@ -44,9 +44,9 @@ public class EquipmentOverlay extends CustomTab
 	private final UIManager uiManager;
 
 	@Inject
-	EquipmentOverlay(TransmogrificationPlugin plugin)
+	EquipmentOverlay(TransmogrificationPlugin plugin, TransmogrificationConfigManager config)
 	{
-		this.config = plugin.getConfig();
+		this.config = config;
 		this.plugin = plugin;
 		this.manager = plugin.getManager();
 		this.uiManager = plugin.getUIManager();

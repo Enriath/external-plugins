@@ -213,7 +213,7 @@ public class PresetTab extends CustomTab
 			{
 				getUIManager().removeCustomUI();
 				getUIManager().hideVanillaUI();
-				((EquipmentOverlay) getUIManager().getEquipmentOverlay()).create(true);
+				getUIManager().getEquipmentOverlay().create(true);
 				getUIManager().createTab(getUIManager().getMainTab());
 			}
 		);

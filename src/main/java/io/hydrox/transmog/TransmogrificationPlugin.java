@@ -80,30 +80,17 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	private SpriteManager spriteManager;
 
 	@Inject
-	private Provider<TransmogrificationConfigManager> config;
+	private TransmogrificationConfigManager config;
+
+	// The providers are needed to break cyclic inject loops between the UI tabs and the managers.
+	// I hate it, but I really don't want to unpick this mess right now
+	@Inject
+	private Provider<TransmogrificationManager> transmogManagerProvider;
+	private TransmogrificationManager transmogManager;
 
 	@Inject
-	private Provider<TransmogrificationManager> transmogManager;
-
-	@Inject
-	private Provider<UIManager> uiManager;
-
-	public TransmogrificationConfigManager getConfig()
-	{
-		return config.get();
-	}
-
-	public TransmogrificationManager getManager()
-	{
-		return transmogManager.get();
-	}
-
-	public UIManager getUIManager()
-	{
-		return uiManager.get();
-	}
-
-
+	private Provider<UIManager> uiManagerProvider;
+	private UIManager uiManager;
 
 	private int lastWorld = 0;
 	private boolean forceRightClickFlag;
@@ -117,18 +104,27 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Override
 	public void startUp()
 	{
+		if (transmogManager == null)
+		{
+			transmogManager = getManager();
+		}
+		if (uiManager == null)
+		{
+			uiManager = getUIManager();
+		}
+
 		spriteManager.addSpriteOverrides(CustomSprites.values());
 		mouseManager.registerMouseWheelListener(this);
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
 			lastWorld = client.getWorld();
-			getManager().saveCurrent();
-			getManager().loadData();
-			getManager().updateTransmog();
+			transmogManager.saveCurrent();
+			transmogManager.loadData();
+			transmogManager.updateTransmog();
 			clientThread.invoke(() ->
 				{
-					getUIManager().createTab(getUIManager().getEquipmentOverlay());
+					uiManager.createTab(uiManager.getEquipmentOverlay());
 					updatePvpState();
 					updateEquipmentState();
 				});
@@ -140,8 +136,8 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	{
 		spriteManager.removeSpriteOverrides(CustomSprites.values());
 		mouseManager.unregisterMouseWheelListener(this);
-		getManager().shutDown();
-		getUIManager().shutDown();
+		transmogManager.shutDown();
+		uiManager.shutDown();
 		lastWorld = 0;
 	}
 
@@ -157,8 +153,8 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		if (newState != inPvpSituation)
 		{
 			inPvpSituation = newState;
-			getManager().onPvpChanged(newState);
-			getUIManager().onPvpChanged(newState);
+			transmogManager.onPvpChanged(newState);
+			uiManager.onPvpChanged(newState);
 		}
 	}
 
@@ -170,15 +166,15 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			if (client.getWorld() != lastWorld)
 			{
 				lastWorld = client.getWorld();
-				getManager().loadData();
+				transmogManager.loadData();
 				updateEquipmentState();
 			}
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
 		{
 			lastWorld = 0;
-			getUIManager().setUiCreated(false);
-			getManager().clearUserStates();
+			uiManager.setUiCreated(false);
+			transmogManager.clearUserStates();
 		}
 	}
 
@@ -196,13 +192,13 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		updateEquipmentState();
 
-		if (!getConfig().transmogActive())
+		if (!config.transmogActive())
 		{
-			getManager().saveCurrent();
+			transmogManager.saveCurrent();
 			return;
 		}
 
-		getManager().reapplyTransmog();
+		transmogManager.reapplyTransmog();
 	}
 
 	private void updateEquipmentState()
@@ -212,7 +208,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		emptyEquipment = ic == null ||
 			Arrays.stream(ic.getItems()).distinct().noneMatch(i -> i != null && i.getId() != -1);
 
-		getUIManager().updateTutorial(emptyEquipment);
+		uiManager.updateTutorial(emptyEquipment);
 	}
 
 	@Subscribe
@@ -229,15 +225,15 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			return;
 		}
 
-		if (!getConfig().transmogActive())
+		if (!config.transmogActive())
 		{
 			return;
 		}
 		// On most teleports, the player kits are reset. This will reapply the transmog if needed.
 		final int currentHash = Arrays.hashCode(client.getLocalPlayer().getPlayerComposition().getEquipmentIds());
-		if (currentHash != getManager().getTransmogHash())
+		if (currentHash != transmogManager.getTransmogHash())
 		{
-			getManager().reapplyTransmog();
+			transmogManager.reapplyTransmog();
 		}
 	}
 
@@ -246,23 +242,23 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onResizeableChanged(ResizeableChanged e)
 	{
-		getUIManager().onResizeableChanged();
+		uiManager.onResizeableChanged();
 	}
 
 	@Subscribe
 	public void onScriptPostFired(ScriptPostFired e)
 	{
-		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !getUIManager().isUiCreated())
+		if (e.getScriptId() == SCRIPT_ID_EQUIPMENT_TAB_CREATED && !uiManager.isUiCreated())
 		{
-			getUIManager().createTab(getUIManager().getEquipmentOverlay());
-			getUIManager().setUiCreated(true);
+			uiManager.createTab(uiManager.getEquipmentOverlay());
+			uiManager.setUiCreated(true);
 		}
 	}
 
 	@Subscribe
 	public void onClientTick(ClientTick e)
 	{
-		getUIManager().onClientTick();
+		uiManager.onClientTick();
 	}
 
 	/**
@@ -302,7 +298,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Override
 	public MouseWheelEvent mouseWheelMoved(MouseWheelEvent event)
 	{
-		getUIManager().mouseWheelMoved(event);
+		uiManager.mouseWheelMoved(event);
 		return event;
 	}
 	
@@ -313,5 +309,15 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			return null;
 		}
 		return client.getLocalPlayer().getPlayerComposition().isFemale() ? Gender.FEMALE : Gender.MALE;
+	}
+
+	public TransmogrificationManager getManager()
+	{
+		return transmogManagerProvider.get();
+	}
+
+	public UIManager getUIManager()
+	{
+		return uiManagerProvider.get();
 	}
 }

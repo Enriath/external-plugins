@@ -78,7 +78,8 @@ public class TransmogrificationManager
 
 	@Inject
 	TransmogrificationManager(Client client, ClientThread clientThread, Notifier notifier, ItemManager itemManager,
-							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin)
+							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin,
+							  TransmogrificationConfigManager config, UIManager uiManager)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
@@ -86,8 +87,8 @@ public class TransmogrificationManager
 		this.itemManager = itemManager;
 		this.chatMessageManager = chatMessageManager;
 		this.plugin = plugin;
-		this.config = plugin.getConfig();
-		this.uiManager = plugin.getUIManager();
+		this.config = config;
+		this.uiManager = uiManager;
 	}
 
 	public void shutDown()
