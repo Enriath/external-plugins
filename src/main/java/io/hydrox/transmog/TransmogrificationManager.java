@@ -91,6 +91,7 @@ public class TransmogrificationManager
 
 	public void shutDown()
 	{
+		save();
 		removeTransmog();
 		currentActualState = null;
 		emptyState = null;
