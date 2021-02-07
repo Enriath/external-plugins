@@ -125,7 +125,7 @@ public class MainTab extends CustomTab
 	void create()
 	{
 		final Widget parent = uiManager.getContainer();
-		uiManager.getEquipmentOverlay().create();
+		uiManager.getEquipmentOverlay().create(true);
 
 		helpText = parent.createChild(-1, WidgetType.TEXT);
 		helpText.setTextColor(CustomWidget.fromRGB(Color.YELLOW));
