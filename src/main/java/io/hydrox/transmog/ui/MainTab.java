@@ -98,13 +98,13 @@ public class MainTab extends CustomTab
 
 	@Inject
 	MainTab(ChatboxPanelManager chatboxPanelManager, CustomItemSearch itemSearch, CustomSpriteSearch spriteSearch,
-			ItemManager itemManager, TransmogrificationPlugin plugin)
+			ItemManager itemManager, TransmogrificationPlugin plugin, TransmogrificationManager manager)
 	{
 		this.chatboxPanelManager = chatboxPanelManager;
 		this.itemSearch = itemSearch;
 		this.spriteSearch = spriteSearch;
 		this.itemManager = itemManager;
-		this.manager = plugin.getManager();
+		this.manager = manager;
 		this.plugin = plugin;
 		this.uiManager = plugin.getUIManager();
 	}

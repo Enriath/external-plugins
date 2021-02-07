@@ -82,12 +82,11 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Inject
 	private TransmogrificationConfigManager config;
 
-	// The providers are needed to break cyclic inject loops between the UI tabs and the managers.
-	// I hate it, but I really don't want to unpick this mess right now
 	@Inject
-	private Provider<TransmogrificationManager> transmogManagerProvider;
 	private TransmogrificationManager transmogManager;
 
+	// The provider is needed to break cyclic inject loops between the UI tabs and UI Manager, for some reason.
+	// I hate it, but I really don't want to unpick this mess right now.
 	@Inject
 	private Provider<UIManager> uiManagerProvider;
 	private UIManager uiManager;
@@ -104,10 +103,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Override
 	public void startUp()
 	{
-		if (transmogManager == null)
-		{
-			transmogManager = getManager();
-		}
 		if (uiManager == null)
 		{
 			uiManager = getUIManager();
@@ -309,11 +304,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			return null;
 		}
 		return client.getLocalPlayer().getPlayerComposition().isFemale() ? Gender.FEMALE : Gender.MALE;
-	}
-
-	public TransmogrificationManager getManager()
-	{
-		return transmogManagerProvider.get();
 	}
 
 	public UIManager getUIManager()

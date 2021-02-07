@@ -27,7 +27,6 @@ package io.hydrox.transmog;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import static io.hydrox.transmog.TransmogPreset.PRESET_COUNT;
-import io.hydrox.transmog.ui.UIManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +61,6 @@ public class TransmogrificationManager
 	private final ChatMessageManager chatMessageManager;
 	private final TransmogrificationPlugin plugin;
 	private final TransmogrificationConfigManager config;
-	private final UIManager uiManager;
 
 	@Getter
 	private List<TransmogPreset> presets = initialisePresetStorage();
@@ -79,7 +77,7 @@ public class TransmogrificationManager
 	@Inject
 	TransmogrificationManager(Client client, ClientThread clientThread, Notifier notifier, ItemManager itemManager,
 							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin,
-							  TransmogrificationConfigManager config, UIManager uiManager)
+							  TransmogrificationConfigManager config)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
@@ -88,7 +86,6 @@ public class TransmogrificationManager
 		this.chatMessageManager = chatMessageManager;
 		this.plugin = plugin;
 		this.config = config;
-		this.uiManager = uiManager;
 	}
 
 	public void shutDown()
@@ -152,18 +149,6 @@ public class TransmogrificationManager
 			presets.set(config.currentPreset() - 1, preset);
 		}
 		return preset;
-	}
-
-	public void selectTransmog(int index)
-	{
-		if (index > 0 && index <= TransmogPreset.PRESET_COUNT)
-		{
-			config.currentPreset(index);
-			updateTransmog();
-			// getUIManager().getSavePresetButton().addOption(0, "Save to Current Preset <col=ff981f>" + index);
-			// getUIManager().getDeletePresetButton().addOption(0, "Delete Current Preset <col=ff981f>" + index);
-			uiManager.loadPreset(getCurrentPreset());
-		}
 	}
 
 	public void updateTransmog()
