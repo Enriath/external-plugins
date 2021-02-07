@@ -260,14 +260,6 @@ public class TransmogrificationManager
 		presets.set(index - 1, preset);
 	}
 
-	/**
-	 * Helper function to copy the current preset to another index
-	 */
-	public void copyCurrentPresetTo(int index)
-	{
-		setPreset(index, getCurrentPreset());
-	}
-
 	public boolean isDefaultStateSet()
 	{
 		return emptyState != null && emptyState.length > 0;

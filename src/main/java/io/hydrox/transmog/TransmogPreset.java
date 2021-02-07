@@ -154,7 +154,7 @@ public class TransmogPreset
 		}
 	}
 
-	void loadNames(ItemManager itemManager)
+	void loadNames(final ItemManager itemManager)
 	{
 		for (Map.Entry<TransmogSlot, Integer> entry : overrides.entrySet())
 		{
