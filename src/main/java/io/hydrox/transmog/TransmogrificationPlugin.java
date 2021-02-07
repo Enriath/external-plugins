@@ -150,7 +150,6 @@ public class TransmogrificationPlugin extends Plugin
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
 		{
-			transmogManager.save();
 			lastWorld = 0;
 			uiManager.setUiCreated(false);
 			transmogManager.clearUserStates();

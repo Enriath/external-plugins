@@ -510,6 +510,7 @@ public class UIManager
 						isSearching = false;
 						preset.setSlot(slot, m.kitId(), m.prettyName());
 						manager.updateTransmog();
+						manager.save();
 					});
 
 					switch (slot)
@@ -539,6 +540,7 @@ public class UIManager
 						isSearching = false;
 						preset.setSlot(slot, id, name);
 						manager.updateTransmog();
+						manager.save();
 					});
 					i.build();
 				}
@@ -548,12 +550,14 @@ public class UIManager
 				widget.setEmpty();
 				preset.clearSlot(slot);
 				manager.updateTransmog();
+				manager.save();
 				break;
 			case HIDE:
 				chatboxPanelManager.close();
 				widget.setDefault();
 				preset.setDefaultSlot(slot);
 				manager.updateTransmog();
+				manager.save();
 				break;
 		}
 	}
