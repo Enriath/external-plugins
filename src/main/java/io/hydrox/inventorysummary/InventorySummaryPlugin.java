@@ -24,24 +24,30 @@
  */
 package io.hydrox.inventorysummary;
 
-import javax.inject.Inject;
 import com.google.inject.Provides;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summingInt;
 import net.runelite.api.Client;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
+import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.Text;
+import net.runelite.client.util.WildcardMatcher;
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @PluginDescriptor(
 	name = "Inventory Summary",
@@ -59,6 +65,15 @@ public class InventorySummaryPlugin extends Plugin
 	@Inject
 	private OverlayManager overlayManager;
 
+	@Inject
+	private InventorySummaryConfig config;
+
+	@Inject
+	private ItemManager itemManager;
+
+	private List<String> whitelist = new CopyOnWriteArrayList<>();
+	private List<String> blacklist = new CopyOnWriteArrayList<>();
+
 	@Provides
 	InventorySummaryConfig provideConfig(ConfigManager configManager)
 	{
@@ -69,6 +84,8 @@ public class InventorySummaryPlugin extends Plugin
 	public void startUp()
 	{
 		overlayManager.add(overlay);
+		whitelist = Text.fromCSV(config.whitelist());
+		blacklist = Text.fromCSV(config.blacklist());
 		groupItems();
 	}
 
@@ -83,6 +100,8 @@ public class InventorySummaryPlugin extends Plugin
 	{
 		if (event.getGroup().equals("inventorysummary"))
 		{
+			whitelist = Text.fromCSV(config.whitelist());
+			blacklist = Text.fromCSV(config.blacklist());
 			groupItems();
 		}
 	}
@@ -102,10 +121,31 @@ public class InventorySummaryPlugin extends Plugin
 		groupItems(container == null ? new Item[0] : container.getItems());
 	}
 
+	private boolean listContains(List<String> list, String search)
+	{
+		for (String item : list)
+		{
+			if (WildcardMatcher.matches(item, search))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+    private boolean shouldItemBeShown(Item item)
+    {
+        ItemComposition itemComp = itemManager.getItemComposition(item.getId());
+        return (!config.whitelistEnabled() || listContains(whitelist, itemComp.getName())) &&
+                !(config.blacklistEnabled() && listContains(blacklist, itemComp.getName()));
+    }
+
 	private void groupItems(Item[] items)
 	{
+
 		Map<Integer, Integer> groupedItems = Arrays.stream(items)
 			.filter(p -> p.getId() != -1)
+			.filter(this::shouldItemBeShown)
 			.collect(groupingBy(Item::getId, LinkedHashMap::new, summingInt(Item::getQuantity)));
 
 		int spacesUsed = (int) Arrays.stream(items)

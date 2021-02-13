@@ -27,10 +27,27 @@ package io.hydrox.inventorysummary;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
 
 @ConfigGroup("inventorysummary")
 public interface InventorySummaryConfig extends Config
 {
+	@ConfigSection(
+		name = "Whitelist",
+		description = "Whitelist related configurations",
+		position = 1,
+		closedByDefault = true
+	)
+	String whitelist = "whitelist";
+
+	@ConfigSection(
+		name = "Blacklist",
+		description = "Blacklist related configurations",
+		position = 2,
+		closedByDefault = true
+	)
+	String blacklist = "blacklist";
+
 	@ConfigItem(
 		keyName = "showFreeSlots",
 		name = "Show Free Slots",
@@ -40,4 +57,40 @@ public interface InventorySummaryConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+		keyName = "whitelistEnabled",
+		name = "Enable Whitelist",
+		description = "Whether only items listed in the whitelist should be counted",
+		position = 1,
+		section = whitelist
+	)
+	default boolean whitelistEnabled() { return false; }
+
+	@ConfigItem(
+		keyName = "whitelist",
+		name = "Whitelist",
+		description = "List of the items to display",
+		position = 2,
+		section = whitelist
+	)
+	default String whitelist() { return ""; }
+
+	@ConfigItem(
+		keyName = "blacklistEnabled",
+		name = "Enable Blacklist",
+		description = "Whether items in the blacklist should be hidden",
+		position = 1,
+		section = blacklist
+	)
+	default boolean blacklistEnabled() { return false; }
+
+	@ConfigItem(
+		keyName = "blacklist",
+		name = "Blacklist",
+		description = "List of items to hide",
+		position = 2,
+		section = blacklist
+	)
+	default String blacklist() { return ""; }
 }
