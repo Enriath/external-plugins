@@ -79,6 +79,7 @@ public class EquipmentOverlay extends CustomTab
 				{
 					uiManager.removeCustomUI();
 					create(false);
+					manager.savePresets();
 				}
 			});
 		showUI.setVerbs("Edit", "Exit");
