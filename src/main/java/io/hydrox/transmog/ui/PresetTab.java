@@ -24,6 +24,9 @@
  */
 package io.hydrox.transmog.ui;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
@@ -33,14 +36,13 @@ import net.runelite.api.widgets.WidgetSizeMode;
 import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import java.awt.Rectangle;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Singleton
 public class PresetTab extends CustomTab
 {
 	private static final int SCROLLBAR_HEIGHT = 203;

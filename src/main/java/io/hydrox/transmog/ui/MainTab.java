@@ -27,6 +27,7 @@ package io.hydrox.transmog.ui;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.hydrox.transmog.FacialHairMapping;
 import io.hydrox.transmog.HairMapping;
 import io.hydrox.transmog.Mapping;
@@ -54,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Singleton
 public class MainTab extends CustomTab
 {
 	private static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";

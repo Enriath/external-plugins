@@ -25,6 +25,7 @@
 package io.hydrox.transmog.ui;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.hydrox.transmog.TransmogrificationConfigManager;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.TransmogrificationPlugin;
@@ -33,6 +34,7 @@ import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetType;
 
+@Singleton
 public class EquipmentOverlay extends CustomTab
 {
 	private CustomWidgetToggleButton stateToggle;
