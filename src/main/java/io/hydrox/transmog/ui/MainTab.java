@@ -300,7 +300,7 @@ public class MainTab extends CustomTab
 			{
 				box = new CustomWidgetTransmogBox(TransmogSlot.SlotType.ITEM, parent, slot, this::onTransmogUISlotClicked);
 				box.create();
-				Integer item = preset.getId(slot, false);
+				Integer item = preset.getIdForSlot(slot, false);
 				if (item == null)
 				{
 					box.setEmpty();
@@ -318,7 +318,7 @@ public class MainTab extends CustomTab
 			{
 				box = new CustomWidgetTransmogBox(TransmogSlot.SlotType.SPECIAL, parent, slot, this::onTransmogUISlotClicked);
 				box.create();
-				Integer contents = preset.getId(slot, false);
+				Integer contents = preset.getIdForSlot(slot, false);
 				if (contents == null)
 				{
 					box.setEmpty();
@@ -378,7 +378,7 @@ public class MainTab extends CustomTab
 	{
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
-			uiSlots.get(slot).set(preset.getId(slot, false), preset.getName(slot));
+			uiSlots.get(slot).set(preset.getIdForSlot(slot, false), preset.getName(slot));
 		}
 	}
 

@@ -26,7 +26,6 @@ package io.hydrox.transmog;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import static io.hydrox.transmog.TransmogPreset.PRESET_COUNT;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +41,11 @@ import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.Text;
 import java.awt.TrayIcon;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Singleton
 @Slf4j
@@ -63,7 +61,7 @@ public class TransmogrificationManager
 	private final TransmogrificationConfigManager config;
 
 	@Getter
-	private List<TransmogPreset> presets = initialisePresetStorage();
+	private Map<Integer, TransmogPreset> presets = new HashMap<>();
 
 	@Setter
 	private int[] emptyState;
@@ -90,11 +88,11 @@ public class TransmogrificationManager
 
 	public void shutDown()
 	{
-		save();
+		savePresets();
 		removeTransmog();
 		currentActualState = null;
 		emptyState = null;
-		presets = initialisePresetStorage();
+		presets.clear();
 	}
 
 	public void onPvpChanged(boolean newValue)
@@ -133,20 +131,22 @@ public class TransmogrificationManager
 		currentActualState = null;
 	}
 
-	private List<TransmogPreset> initialisePresetStorage()
+	public TransmogPreset createNewPreset()
 	{
-		return IntStream.range(0, TransmogPreset.PRESET_COUNT)
-			.mapToObj(i -> (TransmogPreset) null)
-			.collect(Collectors.toCollection(ArrayList::new));
+		int presetId = config.nextIndex();
+		TransmogPreset preset = new TransmogPreset(presetId);
+		config.nextIndex(presetId + 1);
+		presets.put(presetId, preset);
+		return preset;
 	}
 
 	public TransmogPreset getCurrentPreset()
 	{
-		TransmogPreset preset = getPreset(config.currentPreset());
+		TransmogPreset preset = presets.get(config.currentPreset());
 		if (preset == null)
 		{
-			preset = new TransmogPreset();
-			presets.set(config.currentPreset() - 1, preset);
+			preset = createNewPreset();
+			config.currentPreset(preset.getId());
 		}
 		return preset;
 	}
@@ -186,7 +186,7 @@ public class TransmogrificationManager
 		}
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
-			Integer id = preset.getId(slot, true);
+			Integer id = preset.getIdForSlot(slot, true);
 			if (id == null) // IGNORE
 			{
 				kits[slot.getKitIndex()] = currentActualState[slot.getKitIndex()];
@@ -231,7 +231,7 @@ public class TransmogrificationManager
 				.value("Saved your default outfit")
 				.build());
 			emptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
-			config.saveDefault(emptyState);
+			config.saveDefaultState(emptyState);
 			return true;
 		}
 		else
@@ -244,57 +244,14 @@ public class TransmogrificationManager
 		}
 	}
 
-	/**
-	 * Get a preset by index, handling the fact that the preset list has the -1 offset
-	 */
-	public TransmogPreset getPreset(int index)
-	{
-		return presets.get(index - 1);
-	}
-
-	/**
-	 * Set a preset by index, handling the fact that the preset list has the -1 offset
-	 */
-	public void setPreset(int index, TransmogPreset preset)
-	{
-		presets.set(index - 1, preset);
-	}
-
 	public boolean isDefaultStateSet()
 	{
 		return emptyState != null && emptyState.length > 0;
 	}
 
-	public void save()
-	{
-		for (int i = 1; i <= PRESET_COUNT; i++)
-		{
-			config.savePreset(getPreset(i), i);
-		}
-	}
-
-	private void loadPresets()
-	{
-		for (int i = 1; i <= PRESET_COUNT; i++)
-		{
-			String data = config.loadPreset(i);
-			if (data == null)
-			{
-				continue;
-			}
-			TransmogPreset preset = getPreset(i);
-			if (preset == null)
-			{
-				preset = new TransmogPreset();
-			}
-			preset.fromConfig(data);
-			setPreset(i, preset);
-		}
-	}
-
 	private void loadDefault()
 	{
-		String data = config.loadDefault();
+		String data = config.loadDefaultState();
 		if (data == null)
 		{
 			setEmptyState(null);
@@ -309,8 +266,57 @@ public class TransmogrificationManager
 	void loadData()
 	{
 		loadDefault();
-		loadPresets();
-		clientThread.invoke(() -> presets.stream().filter(Objects::nonNull).forEach(e -> e.loadNames(itemManager)));
+		clientThread.invoke(() -> loadPresets(itemManager));
+	}
+
+	void loadPresets(ItemManager itemManager)
+	{
+		for (int i = 0; i < config.nextIndex(); i++)
+		{
+			String presetData = config.loadPreset(i);
+			if (presetData == null)
+			{
+				continue;
+			}
+			TransmogPreset preset = TransmogPreset.fromConfig(i, presetData);
+			preset.loadNames(itemManager);
+			presets.put(i, preset);
+		}
+	}
+
+	public void saveActivePreset()
+	{
+		config.savePreset(getCurrentPreset());
+	}
+
+	public void savePresets()
+	{
+		int current = config.currentPreset();
+
+		int lastId = -1;
+		// Get an ordered list of presets to go through, to find any gaps in the indexing
+		List<Map.Entry<Integer, TransmogPreset>> entries = presets.entrySet().stream()
+			.sorted(Map.Entry.comparingByKey())
+			.collect(Collectors.toList());
+
+		for (Map.Entry<Integer, TransmogPreset> e : entries)
+		{
+			// Check if there was an empty space in the sequence
+			if (e.getKey() != lastId + 1)
+			{
+				// If this preset was the current one, we need to update it to point to the correct id
+				if (current == e.getKey())
+				{
+					config.currentPreset(lastId + 1);
+				}
+				// Crush the space
+				presets.remove(e.getValue().getId());
+				e.getValue().setId(lastId + 1);
+				presets.put(lastId + 1, e.getValue());
+			}
+			config.savePreset(e.getKey(), e.getValue());
+		}
+		config.nextIndex(lastId + 1);
 	}
 
 	public void hintDefaultState()

@@ -24,11 +24,11 @@
  */
 package io.hydrox.transmog;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.util.Text;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -36,14 +36,28 @@ import java.util.stream.Collectors;
 
 public class TransmogPreset
 {
-	static final int PRESET_COUNT = 4;
 	static final int EMPTY = -1;
 	static final Integer IGNORE = null;
 
 	private final Map<TransmogSlot, Integer> overrides = new HashMap<>();
 	private final Map<TransmogSlot, String> names = new HashMap<>();
 
-	public TransmogPreset()
+	@Getter
+	@Setter
+	private int id;
+	@Getter
+	@Setter
+	private int icon;
+	@Getter
+	@Setter
+	private String name;
+
+	public TransmogPreset(int id)
+	{
+		this(id, -1, "");
+	}
+
+	public TransmogPreset(int id, int icon, String name)
 	{
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
@@ -52,6 +66,34 @@ public class TransmogPreset
 				setDefaultSlot(slot);
 			}
 		}
+
+		this.id = id;
+		this.icon = icon;
+		this.name = name;
+	}
+
+	public static TransmogPreset fromConfig(int id, String configData)
+	{
+		PresetParser parser = PresetParser.getParser(configData);
+		parser.parse(configData);
+
+		TransmogPreset preset = new TransmogPreset(id, parser.getIcon(), parser.getName());
+
+		for (int i = 0; i < parser.getSlotValues().size(); i++)
+		{
+			TransmogSlot slot = TransmogSlot.values()[i];
+			String val = parser.getSlotValues().get(i);
+			if (val.equals("null"))
+			{
+				preset.overrides.remove(slot);
+			}
+			else
+			{
+				preset.overrides.put(slot, Integer.parseInt(val));
+			}
+		}
+
+		return preset;
 	}
 
 	public void setDefaultSlot(TransmogSlot slot)
@@ -71,7 +113,7 @@ public class TransmogPreset
 		names.remove(slot);
 	}
 
-	public Integer getId(TransmogSlot slot, boolean forKit)
+	public Integer getIdForSlot(TransmogSlot slot, boolean forKit)
 	{
 		final Integer transmog = overrides.get(slot);
 		if (transmog == null)
@@ -134,24 +176,6 @@ public class TransmogPreset
 			.map(Map.Entry::getValue)
 			.map(v -> v == null ? "null" : String.valueOf(v))
 			.collect(Collectors.joining(","));
-	}
-
-	void fromConfig(String configStr)
-	{
-		List<String> values = Text.fromCSV(configStr);
-		for (int i = 0; i < values.size(); i++)
-		{
-			TransmogSlot slot = TransmogSlot.values()[i];
-			String val = values.get(i);
-			if (val.equals("null"))
-			{
-				overrides.remove(slot);
-			}
-			else
-			{
-				overrides.put(slot, Integer.parseInt(val));
-			}
-		}
 	}
 
 	void loadNames(final ItemManager itemManager)
