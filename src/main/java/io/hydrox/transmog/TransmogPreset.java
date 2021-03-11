@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog;
 
+import io.hydrox.transmog.config.PresetParser;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.client.game.ItemManager;
@@ -162,7 +163,7 @@ public class TransmogPreset
 		return names.get(slot);
 	}
 
-	String toConfig()
+	public String toConfig()
 	{
 		if (overrides.isEmpty())
 		{

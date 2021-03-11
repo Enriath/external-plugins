@@ -26,6 +26,7 @@ package io.hydrox.transmog;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.hydrox.transmog.config.TransmogrificationConfigManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

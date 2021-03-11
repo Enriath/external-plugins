@@ -22,10 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.hydrox.transmog;
+package io.hydrox.transmog.config;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.hydrox.transmog.TransmogPreset;
 import net.runelite.client.config.ConfigManager;
 import java.util.Arrays;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class TransmogrificationConfigManager
 		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_CURRENT_PRESET, int.class)).orElse(nextIndex());
 	}
 
-	void currentPreset(int value)
+	public void currentPreset(int value)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_CURRENT_PRESET, value);
 	}
@@ -84,12 +85,12 @@ public class TransmogrificationConfigManager
 	 * Sets the next index to be used by a preset.
 	 * Could also be considered the number of presets.
 	 */
-	void nextIndex(int value)
+	public void nextIndex(int value)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, value);
 	}
 
-	void savePreset(TransmogPreset preset)
+	public void savePreset(TransmogPreset preset)
 	{
 		String key = CONFIG_OVERRIDE + "." + CONFIG_PRESET + preset.getId();
 		String value = preset.toConfig();
@@ -99,7 +100,7 @@ public class TransmogrificationConfigManager
 		}
 	}
 
-	void savePreset(int presetID, TransmogPreset preset)
+	public void savePreset(int presetID, TransmogPreset preset)
 	{
 		String key = CONFIG_OVERRIDE + "." + CONFIG_PRESET + presetID;
 		if (preset != null)
@@ -114,7 +115,7 @@ public class TransmogrificationConfigManager
 		configManager.unsetRSProfileConfiguration(CONFIG_GROUP, key);
 	}
 
-	void saveDefaultState(int[] state)
+	public void saveDefaultState(int[] state)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT, Arrays.stream(state)
 			.mapToObj(String::valueOf)
@@ -122,12 +123,12 @@ public class TransmogrificationConfigManager
 		);
 	}
 
-	String loadPreset(int index)
+	public String loadPreset(int index)
 	{
 		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_OVERRIDE + "." + CONFIG_PRESET + index);
 	}
 
-	String loadDefaultState()
+	public String loadDefaultState()
 	{
 		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
 	}

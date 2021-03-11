@@ -22,35 +22,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.hydrox.transmog;
+package io.hydrox.transmog.config;
 
-import lombok.Getter;
-import java.util.List;
+import net.runelite.client.util.Text;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public abstract class PresetParser
+public class V1Parser extends PresetParser
 {
-	@Getter
-	protected String name = "";
+	private static final Pattern PARSER = Pattern.compile("^((?:null|-1|\\d+|,)+)$");
 
-	@Getter
-	protected int icon = -1;
-
-	@Getter
-	protected List<String> slotValues;
-
-	public abstract void parse(String configData);
-
-	public abstract void migrate(PresetParser other);
-
-	public static PresetParser getParser(String configData)
+	public void parse(String configData)
 	{
-		String flag = configData.substring(0, 1);
-		switch (flag)
+		Matcher m = PARSER.matcher(configData);
+		if (!m.matches())
 		{
-			case V2Parser.VERSION_FLAG:
-				return new V2Parser();
-			default:
-				return new V1Parser();
+			return;
 		}
+
+		slotValues = Text.fromCSV(m.group(1));
+	}
+
+	public void migrate(PresetParser other)
+	{
+		slotValues = other.getSlotValues();
 	}
 }

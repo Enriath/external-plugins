@@ -25,6 +25,7 @@
 package io.hydrox.transmog;
 
 import com.google.inject.Inject;
+import io.hydrox.transmog.config.TransmogrificationConfigManager;
 import io.hydrox.transmog.ui.CustomSprites;
 import io.hydrox.transmog.ui.UIManager;
 import lombok.Getter;
