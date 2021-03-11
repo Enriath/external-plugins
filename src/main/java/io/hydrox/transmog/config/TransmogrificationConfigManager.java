@@ -123,12 +123,12 @@ public class TransmogrificationConfigManager
 		);
 	}
 
-	public String loadPreset(int index)
+	public String getPresetData(int index)
 	{
 		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_OVERRIDE + "." + CONFIG_PRESET + index);
 	}
 
-	public String loadDefaultState()
+	public String getDefaultStateData()
 	{
 		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
 	}

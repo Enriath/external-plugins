@@ -252,7 +252,7 @@ public class TransmogrificationManager
 
 	private void loadDefault()
 	{
-		String data = config.loadDefaultState();
+		String data = config.getDefaultStateData();
 		if (data == null)
 		{
 			setEmptyState(null);
@@ -274,7 +274,7 @@ public class TransmogrificationManager
 	{
 		for (int i = 0; i < config.nextIndex(); i++)
 		{
-			String presetData = config.loadPreset(i);
+			String presetData = config.getPresetData(i);
 			if (presetData == null)
 			{
 				continue;
