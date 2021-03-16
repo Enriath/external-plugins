@@ -24,9 +24,21 @@
  */
 package io.hydrox.coffincounter;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Client;
+import net.runelite.api.InventoryID;
+import net.runelite.api.ItemContainer;
+import net.runelite.api.MenuAction;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.ItemContainerChanged;
+import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -54,6 +66,9 @@ public class CoffinCounterPlugin extends Plugin
 	private static final Pattern PICK_UP_PATTERN = Pattern.compile("You put the (\\w+) remains into your open coffin\\.");
 
 	@Inject
+	private Client client;
+
+	@Inject
 	private CoffinCounterOverlay overlay;
 
 	@Inject
@@ -65,6 +80,11 @@ public class CoffinCounterPlugin extends Plugin
 	@Getter
 	private final Map<Shade, Integer> stored = Arrays.stream(Shade.values())
 		.collect(LinkedHashMap::new, (map, shade) -> map.put(shade, -1), Map::putAll);
+
+	private Multiset<Integer> inventorySnapshot;
+	private boolean checkFill;
+	private boolean usingRemains;
+	private boolean usingCoffin;
 
 	@Override
 	public void startUp()
@@ -108,5 +128,91 @@ public class CoffinCounterPlugin extends Plugin
 			}
 			stored.put(shade, stored.get(shade) + 1);
 		}
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event)
+	{
+		// Handle when the player uses remains on the coffin
+		if (usingRemains || usingCoffin)
+		{
+			if (event.getMenuAction() == MenuAction.ITEM_USE_ON_WIDGET_ITEM &&
+				((usingRemains && Coffin.getFromItem(event.getId()) != null)
+				|| (usingCoffin && Shade.fromRemainsID(event.getId()) != null)))
+			{
+				inventorySnapshot = createInventorySnapshot();
+				checkFill = true;
+			}
+			// There is no situation in which a menu action can be clicked but the item will stay selected, so cancel it
+			usingRemains = false;
+			usingCoffin = false;
+		}
+		// Handle when the fill option is used. CC_OP is for when the coffin is equipped.
+		else if (event.getMenuOption().equals("Fill") &&
+			(event.getMenuAction() == MenuAction.ITEM_FIRST_OPTION && Coffin.getFromItem(event.getId()) != null)
+			|| (event.getMenuAction() == MenuAction.CC_OP && event.getId() == 2))
+		{
+			inventorySnapshot = createInventorySnapshot();
+			checkFill = true;
+		}
+		// First half of checking if the player has selected either remains or a coffin
+		else if (event.getMenuAction() == MenuAction.ITEM_USE)
+		{
+			if (Shade.fromRemainsID(event.getId()) != null)
+			{
+				usingRemains = true;
+			}
+			else if (Coffin.getFromItem(event.getId()) != null)
+			{
+				usingCoffin = true;
+			}
+		}
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		if (!checkFill)
+		{
+			return;
+		}
+		// Check if there was a message saying that the coffin is full.
+		final Widget chatDialogueSprite = client.getWidget(WidgetInfo.DIALOG_SPRITE_SPRITE);
+		if (chatDialogueSprite != null && Coffin.getFromItem(chatDialogueSprite.getItemId()) != null)
+		{
+			checkFill = false;
+		}
+	}
+
+	@Subscribe
+	public void onItemContainerChanged(ItemContainerChanged event)
+	{
+		if (!checkFill || event.getContainerId() != InventoryID.INVENTORY.getId() || inventorySnapshot == null)
+		{
+			return;
+		}
+		checkFill = false;
+		Multiset<Integer> current = createInventorySnapshot();
+		Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
+
+		delta.forEachEntry((id, change) ->
+		{
+			Shade shade = Shade.fromRemainsID(id);
+			stored.put(shade, stored.get(shade) + change);
+		});
+	}
+
+	private Multiset<Integer> createInventorySnapshot()
+	{
+		ItemContainer itemContainer = client.getItemContainer(InventoryID.INVENTORY);
+		if (itemContainer != null)
+		{
+			Multiset<Integer> snapshot = HashMultiset.create();
+			Arrays.stream(itemContainer.getItems())
+				.filter(item -> Shade.REMAINS().contains(item.getId()))
+				.forEach(item -> snapshot.add(item.getId(), item.getQuantity()));
+			return snapshot;
+		}
+		return null;
 	}
 }

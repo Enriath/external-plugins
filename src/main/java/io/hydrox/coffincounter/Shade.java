@@ -25,10 +25,12 @@
 package io.hydrox.coffincounter;
 
 import lombok.Getter;
+import net.runelite.api.ItemID;
 import org.apache.commons.text.WordUtils;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 public enum Shade
@@ -42,27 +44,30 @@ public enum Shade
 	(248,176,8)
 	 */
 
-	LOAR(new Color(3, 214, 3)),
-	PHRIN(new Color(0, 0, 0), Color.WHITE),
-	RIYL(new Color(189, 3, 1)),
-	ASYN(new Color(0, 114, 255)),
-	FIYR(new Color(144, 132, 132)),
-	URIUM(new Color(248,176,8));
+	LOAR(ItemID.LOAR_REMAINS, new Color(3, 214, 3)),
+	PHRIN(ItemID.PHRIN_REMAINS, new Color(0, 0, 0), Color.WHITE),
+	RIYL(ItemID.RIYL_REMAINS, new Color(189, 3, 1)),
+	ASYN(ItemID.ASYN_REMAINS, new Color(0, 114, 255)),
+	FIYR(ItemID.FIYR_REMAINS, new Color(144, 132, 132)),
+	URIUM(ItemID.URIUM_REMAINS, new Color(248,176,8));
 
 	private final String name;
+	private final int remainsID;
 	private final Color colour;
 	private final Color outline;
 
 	private static final Map<String, Shade> NAME_MAP = new HashMap<>();
+	private static final Map<Integer, Shade> REMAINS_MAP = new HashMap<>();
 
-	Shade(Color colour)
+	Shade(int remainsID, Color colour)
 	{
-		this(colour, Color.BLACK);
+		this(remainsID, colour, Color.BLACK);
 	}
 
-	Shade(Color colour, Color shadow)
+	Shade(int remainsID, Color colour, Color shadow)
 	{
 		this.name = WordUtils.capitalize(name().toLowerCase());
+		this.remainsID = remainsID;
 		this.colour = colour;
 		this.outline = shadow;
 	}
@@ -72,11 +77,22 @@ public enum Shade
 		for (Shade s : values())
 		{
 			NAME_MAP.put(s.getName(), s);
+			REMAINS_MAP.put(s.getRemainsID(), s);
 		}
 	}
 
 	static Shade fromName(String name)
 	{
 		return NAME_MAP.get(name);
+	}
+
+	static Shade fromRemainsID(int id)
+	{
+		return REMAINS_MAP.get(id);
+	}
+
+	static Set<Integer> REMAINS()
+	{
+		return REMAINS_MAP.keySet();
 	}
 }
