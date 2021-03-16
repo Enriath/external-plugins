@@ -30,10 +30,13 @@ import com.google.common.collect.Multisets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.ItemContainer;
+import net.runelite.api.ItemID;
 import net.runelite.api.MenuAction;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
@@ -48,9 +51,11 @@ import net.runelite.client.util.Text;
 import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @PluginDescriptor(
 	name = "Coffin Counter",
@@ -60,6 +65,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class CoffinCounterPlugin extends Plugin
 {
+	private static final String CONFIG_GROUP = "coffincounter";
+	private static final String CONFIG_STORED_KEY = "stored";
+
 	private static final String CHECK_START = "Loar ";
 	private static final Pattern CHECK_PATTERN = Pattern.compile("Loar (\\d{1,2}) / Phrin (\\d{1,2}) / Riyl (\\d{1,2}) / Asyn (\\d{1,2}) / Fiyr (\\d{1,2}) / Urium (\\d{1,2})");
 	private static final String PICK_UP_START = "You put ";
@@ -89,6 +97,7 @@ public class CoffinCounterPlugin extends Plugin
 	@Override
 	public void startUp()
 	{
+		loadCoffinState();
 		overlayManager.add(overlay);
 	}
 
@@ -96,6 +105,15 @@ public class CoffinCounterPlugin extends Plugin
 	public void shutDown()
 	{
 		overlayManager.remove(overlay);
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() == GameState.LOGGING_IN)
+		{
+			loadCoffinState();
+		}
 	}
 
 	@Subscribe
@@ -113,6 +131,7 @@ public class CoffinCounterPlugin extends Plugin
 			{
 				stored.put(s, Integer.valueOf(m.group(s.ordinal() + 1)));
 			}
+			saveCoffinState();
 		}
 		else if (message.startsWith(PICK_UP_START))
 		{
@@ -127,6 +146,7 @@ public class CoffinCounterPlugin extends Plugin
 				return;
 			}
 			stored.put(shade, stored.get(shade) + 1);
+			saveCoffinState();
 		}
 	}
 
@@ -187,12 +207,26 @@ public class CoffinCounterPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		if (!checkFill || event.getContainerId() != InventoryID.INVENTORY.getId() || inventorySnapshot == null)
+		if (event.getContainerId() != InventoryID.INVENTORY.getId())
+		{
+			return;
+		}
+		Multiset<Integer> current = createInventorySnapshot();
+		// Clear stored data if broken coffin exists, since only one coffin can be owned, making it impossible to have
+		// both a real coffin and a broken one, let alone 2 real ones.
+		if (current != null && current.contains(ItemID.BROKEN_COFFIN))
+		{
+			stored.replaceAll((s, v) -> -1);
+			saveCoffinState();
+			return;
+		}
+
+		if (!checkFill || inventorySnapshot == null)
 		{
 			return;
 		}
 		checkFill = false;
-		Multiset<Integer> current = createInventorySnapshot();
+
 		Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
 
 		delta.forEachEntry((id, change) ->
@@ -200,6 +234,7 @@ public class CoffinCounterPlugin extends Plugin
 			Shade shade = Shade.fromRemainsID(id);
 			stored.put(shade, stored.get(shade) + change);
 		});
+		saveCoffinState();
 	}
 
 	private Multiset<Integer> createInventorySnapshot()
@@ -214,5 +249,28 @@ public class CoffinCounterPlugin extends Plugin
 			return snapshot;
 		}
 		return null;
+	}
+
+	private void saveCoffinState()
+	{
+		configManager.setRSProfileConfiguration(
+			CONFIG_GROUP,
+			CONFIG_STORED_KEY,
+			Text.toCSV(stored.values().stream().map(Object::toString).collect(Collectors.toList()))
+		);
+	}
+
+	private void loadCoffinState()
+	{
+		String state = configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_STORED_KEY);
+		if (state == null)
+		{
+			return;
+		}
+		List<String> states = Text.fromCSV(state);
+		for (int i = 0; i < Shade.values().length; i++)
+		{
+			stored.put(Shade.values()[i], Integer.valueOf(states.get(i)));
+		}
 	}
 }
