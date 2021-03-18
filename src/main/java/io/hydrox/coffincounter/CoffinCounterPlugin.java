@@ -169,8 +169,8 @@ public class CoffinCounterPlugin extends Plugin
 		}
 		// Handle when the fill option is used. CC_OP is for when the coffin is equipped.
 		else if (event.getMenuOption().equals("Fill") &&
-			(event.getMenuAction() == MenuAction.ITEM_FIRST_OPTION && Coffin.getFromItem(event.getId()) != null)
-			|| (event.getMenuAction() == MenuAction.CC_OP && event.getId() == 2))
+			((event.getMenuAction() == MenuAction.ITEM_FIRST_OPTION && Coffin.getFromItem(event.getId()) != null)
+			|| (event.getMenuAction() == MenuAction.CC_OP && event.getId() == 2)))
 		{
 			inventorySnapshot = createInventorySnapshot();
 			checkFill = true;
