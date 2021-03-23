@@ -267,10 +267,10 @@ public class TransmogrificationManager
 	void loadData()
 	{
 		loadDefault();
-		clientThread.invoke(() -> loadPresets(itemManager));
+		clientThread.invoke(this::loadPresets);
 	}
 
-	void loadPresets(ItemManager itemManager)
+	void loadPresets()
 	{
 		for (int i = 0; i < config.nextIndex(); i++)
 		{
