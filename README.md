@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Star Lore
+Bring back the fluff when there isn't a star to find that was in the original RSHD release.
