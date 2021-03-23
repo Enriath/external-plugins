@@ -26,7 +26,9 @@ package io.hydrox.transmog;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.hydrox.transmog.config.PresetParser;
 import io.hydrox.transmog.config.TransmogrificationConfigManager;
+import io.hydrox.transmog.config.V1Parser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -272,6 +274,8 @@ public class TransmogrificationManager
 
 	void loadPresets()
 	{
+		migrateV1();
+		
 		for (int i = 0; i < config.nextIndex(); i++)
 		{
 			String presetData = config.getPresetData(i);
@@ -327,5 +331,27 @@ public class TransmogrificationManager
 			.type(ChatMessageType.ENGINE)
 			.value("<col=dd0000>Please set your default outfit before applying a transmog</col>")
 			.build());
+	}
+
+	private void migrateV1()
+	{
+		// If there is a preset for 1-4  but not 0, then the user previously had
+		// V1 data, and nextIndex needs to be updated
+		if (config.nextIndex() == 0 && config.getPresetData(0) == null)
+		{
+			String p4 = config.getPresetData(4);
+			if (p4 == null)
+			{
+				return;
+			}
+			PresetParser parser = PresetParser.getParser(p4);
+			if (!(parser instanceof V1Parser))
+			{
+				return;
+			}
+			// Set it to 5 so it will start putting them afterwards
+			// The crusher will move them down into the right place anyway
+			config.nextIndex(5);
+		}
 	}
 }
