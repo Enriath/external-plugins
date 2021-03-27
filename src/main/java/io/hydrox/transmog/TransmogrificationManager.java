@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.hydrox.transmog.config.PresetParser;
@@ -338,7 +339,8 @@ public class TransmogrificationManager
 			.build());
 	}
 
-	private void migrateV1()
+	@VisibleForTesting
+	void migrateV1()
 	{
 		// If there is a preset for 1-4  but not 0, then the user previously had
 		// V1 data, and nextIndex needs to be updated
