@@ -103,7 +103,7 @@ public class EquipmentOverlay extends CustomTab
 			CustomSprites.TRANSMOG_LOGO.getSpriteId(),
 			state ->
 			{
-				if ((!manager.isDefaultStateSet() && state) || plugin.isInPvpSituation())
+				if ((!manager.isDefaultStateSet() && state) || manager.isInPvpSituation())
 				{
 					stateToggle.toggle();
 					manager.hintDefaultState();
@@ -132,7 +132,7 @@ public class EquipmentOverlay extends CustomTab
 		pvpBlocker.setOnOpListener((JavaScriptCallback) e -> {});
 		pvpBlocker.setOriginalX(30);
 		pvpBlocker.setOriginalY(3);
-		pvpBlocker.setHidden(!plugin.isInPvpSituation());
+		pvpBlocker.setHidden(!manager.isInPvpSituation());
 		pvpBlocker.setAction(0, "Transmog is disabled in PvP situations");
 	}
 

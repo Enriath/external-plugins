@@ -60,7 +60,6 @@ public class TransmogrificationManager
 	private final Notifier notifier;
 	private final ItemManager itemManager;
 	private final ChatMessageManager chatMessageManager;
-	private final TransmogrificationPlugin plugin;
 	private final TransmogrificationConfigManager config;
 
 	@Getter
@@ -75,17 +74,22 @@ public class TransmogrificationManager
 	@Getter
 	private int transmogHash = 0;
 
+	@Getter
+	private boolean inPvpSituation;
+
+	@Getter
+	@Setter
+	private boolean emptyEquipment;
+
 	@Inject
 	TransmogrificationManager(Client client, ClientThread clientThread, Notifier notifier, ItemManager itemManager,
-							  ChatMessageManager chatMessageManager, TransmogrificationPlugin plugin,
-							  TransmogrificationConfigManager config)
+							  ChatMessageManager chatMessageManager, TransmogrificationConfigManager config)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
 		this.notifier = notifier;
 		this.itemManager = itemManager;
 		this.chatMessageManager = chatMessageManager;
-		this.plugin = plugin;
 		this.config = config;
 	}
 
@@ -100,6 +104,7 @@ public class TransmogrificationManager
 
 	public void onPvpChanged(boolean newValue)
 	{
+		inPvpSituation = newValue;
 		if (newValue)
 		{
 			removeTransmog();
@@ -168,7 +173,7 @@ public class TransmogrificationManager
 
 	void applyTransmog()
 	{
-		if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null || plugin.isInPvpSituation())
+		if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null || inPvpSituation)
 		{
 			return;
 		}
@@ -227,7 +232,7 @@ public class TransmogrificationManager
 
 	public boolean updateDefault(int opClicked)
 	{
-		if (plugin.isEmptyEquipment() || opClicked == 2)
+		if (emptyEquipment || opClicked == 2)
 		{
 			chatMessageManager.queue(QueuedMessage.builder()
 				.type(ChatMessageType.ENGINE)

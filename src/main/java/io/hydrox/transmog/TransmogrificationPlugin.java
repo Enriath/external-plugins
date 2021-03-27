@@ -28,7 +28,6 @@ import com.google.inject.Inject;
 import io.hydrox.transmog.config.TransmogrificationConfigManager;
 import io.hydrox.transmog.ui.CustomSprites;
 import io.hydrox.transmog.ui.UIManager;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -95,12 +94,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	private int lastWorld = 0;
 	private boolean forceRightClickFlag;
 
-	@Getter
-	private boolean inPvpSituation;
-
-	@Getter
-	private boolean emptyEquipment;
-
 	@Override
 	public void startUp()
 	{
@@ -146,9 +139,8 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	{
 		final boolean newState = client.getVar(Varbits.PVP_SPEC_ORB) == 1;
 
-		if (newState != inPvpSituation)
+		if (newState != transmogManager.isInPvpSituation())
 		{
-			inPvpSituation = newState;
 			transmogManager.onPvpChanged(newState);
 			uiManager.onPvpChanged(newState);
 		}
@@ -201,9 +193,10 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	{
 		ItemContainer ic = client.getItemContainer(InventoryID.EQUIPMENT);
 
-		emptyEquipment = ic == null ||
+		boolean emptyEquipment = ic == null ||
 			Arrays.stream(ic.getItems()).distinct().noneMatch(i -> i != null && i.getId() != -1);
 
+		transmogManager.setEmptyEquipment(emptyEquipment);
 		uiManager.updateTutorial(emptyEquipment);
 	}
 

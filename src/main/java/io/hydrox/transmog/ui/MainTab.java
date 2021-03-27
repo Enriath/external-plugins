@@ -350,7 +350,7 @@ public class MainTab extends CustomTab
 			blockerBox.setHidden(true);
 		}
 
-		updateTutorial(plugin.isEmptyEquipment());
+		updateTutorial(manager.isEmptyEquipment());
 
 		parent.revalidate();
 
