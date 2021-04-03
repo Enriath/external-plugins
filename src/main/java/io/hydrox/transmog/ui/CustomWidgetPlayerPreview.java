@@ -48,6 +48,7 @@ public class CustomWidgetPlayerPreview extends CustomWidget implements Interacti
 	@Override
 	public void layout(int x, int y)
 	{
+		super.layout(x, y);
 		layoutWidget(base, x, y + 60);
 		layoutWidget(clickbox, x, y);
 		parent.revalidate();

@@ -149,6 +149,8 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 	@Override
 	public void layout(int x, int y)
 	{
+		super.layout(x, y);
+
 		final int yOffset = mapping != null ? mapping.getYOffset() : 0;
 		layoutWidget(base, x, y);
 		layoutWidget(slotWidget, x + 2, y + 2);

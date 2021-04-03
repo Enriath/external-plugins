@@ -81,6 +81,8 @@ public class CustomWidgetBlockerBox extends CustomWidget
 	@Override
 	public void layout(int x, int y)
 	{
+		super.layout(x, y);
+
 		layoutWidget(leftBar, x, y + TOP_LEFT_CORNER_SIZE);
 		layoutWidget(middleBar, x + TOP_LEFT_CORNER_SIZE, y);
 		layoutWidget(rightBar, x + width - BOTTOM_RIGHT_CORNER_SIZE, y);

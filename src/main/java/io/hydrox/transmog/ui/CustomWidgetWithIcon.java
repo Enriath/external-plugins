@@ -54,6 +54,7 @@ public abstract class CustomWidgetWithIcon extends CustomWidget
 	@Override
 	public void layout(int x, int y)
 	{
+		super.layout(x, y);
 		layoutWidget(icon, x + iconPaddingX, y + iconPaddingY);
 
 		parent.revalidate();

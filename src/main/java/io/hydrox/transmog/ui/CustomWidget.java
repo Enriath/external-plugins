@@ -33,6 +33,9 @@ public abstract class CustomWidget
 	protected final Widget parent;
 	private final String name;
 
+
+	protected int x;
+	protected int y;
 	protected int width;
 	protected int height;
 
@@ -50,7 +53,11 @@ public abstract class CustomWidget
 		this.height = height;
 	}
 
-	public abstract void layout(int x, int y);
+	public void layout(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+	}
 
 	public abstract void create();
 
