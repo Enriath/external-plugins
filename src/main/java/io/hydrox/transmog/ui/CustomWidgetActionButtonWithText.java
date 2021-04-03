@@ -56,6 +56,11 @@ public class CustomWidgetActionButtonWithText extends CustomWidgetActionButton
 		text.setYTextAlignment(WidgetTextAlignment.BOTTOM);
 	}
 
+	public void setText(String newText)
+	{
+		text.setText(newText);
+	}
+
 	@Override
 	public void layout(int x, int y)
 	{
@@ -68,6 +73,5 @@ public class CustomWidgetActionButtonWithText extends CustomWidgetActionButton
 	{
 		// For whatever reason, the Op for an option is always 1 higher than the given index. MAGIC!
 		callback.run(scriptEvent.getOp() - 1);
-		text.setText(scriptEvent.getOp() - 1 + "");
 	}
 }
