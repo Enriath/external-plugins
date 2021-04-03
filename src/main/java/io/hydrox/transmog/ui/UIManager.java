@@ -42,6 +42,7 @@ import java.awt.event.MouseWheelEvent;
 @Slf4j
 public class UIManager
 {
+	static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";
 
 	private final ChatboxPanelManager chatboxPanelManager;
 	private final Client client;

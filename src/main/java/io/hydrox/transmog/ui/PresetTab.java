@@ -30,6 +30,7 @@ import com.google.inject.Singleton;
 import io.hydrox.transmog.TransmogPreset;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.config.TransmogrificationConfigManager;
+import static io.hydrox.transmog.ui.UIManager.FORCE_RIGHT_CLICK_WIDGET_NAME;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
@@ -42,8 +43,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
@@ -276,42 +277,39 @@ public class PresetTab extends CustomTab
 		savePresetButton.addOption(3, "Save to Preset <col=ff981f>3");
 		savePresetButton.addOption(4, "Save to Preset <col=ff981f>4");
 		savePresetButton.layout(52, 213);
-
-		deletePresetButton = new CustomWidgetActionButton(
+*/
+		CustomWidgetActionButton deletePresetButton = new CustomWidgetActionButton(
 			parent,
 			FORCE_RIGHT_CLICK_WIDGET_NAME,
 			SpriteID.BANK_RAID_SEND_TO_TRASH,
 			op ->
 			{
-				if (op == 0)
+				TransmogPreset current = manager.getCurrentPreset();
+				manager.deletePreset(current.getId());
+				for (int i = current.getId() - 1; i >= 0; i--)
 				{
-					op = config.currentPreset();
+					if (manager.getPreset(i) != null)
+					{
+						selectPreset(i);
+						return;
+					}
 				}
-				manager.setPreset(op, null);
-				manager.updateTransmog();
-				config.savePresets();
-				uiSlots.forEach((slot, widget) ->
+				for (int i = current.getId() + 1; i <= config.lastIndex(); i++)
 				{
-					if (slot.getSlotType() == SlotType.SPECIAL)
+					if (manager.getPreset(i) != null)
 					{
-						widget.setDefault();
+						selectPreset(i);
+						return;
 					}
-					else
-					{
-						widget.setEmpty();
-					}
-				});
+				}
 			}
 		);
 		deletePresetButton.setSize(40, 40);
 		deletePresetButton.setIconSize(26, 20);
 		deletePresetButton.create();
-		deletePresetButton.addOption(1, "Delete Preset <col=ff981f>1");
-		deletePresetButton.addOption(2, "Delete Preset <col=ff981f>2");
-		deletePresetButton.addOption(3, "Delete Preset <col=ff981f>3");
-		deletePresetButton.addOption(4, "Delete Preset <col=ff981f>4");
-		deletePresetButton.layout(97, 213);
-		*/
+		deletePresetButton.addOption(1, "Delete active <col=ff981f>Preset");
+		deletePresetButton.layout(52, 213);
+
 
 		parent.revalidate();
 		presets.stream().filter(b -> b.getId() == config.currentPreset()).findFirst().ifPresent(box -> scrollTo(box.y));
