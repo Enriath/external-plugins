@@ -27,20 +27,24 @@ package io.hydrox.transmog.ui;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import io.hydrox.transmog.TransmogPreset;
+import io.hydrox.transmog.TransmogrificationManager;
+import io.hydrox.transmog.config.TransmogrificationConfigManager;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetSizeMode;
-import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
 import java.awt.Rectangle;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
 public class PresetTab extends CustomTab
@@ -51,10 +55,14 @@ public class PresetTab extends CustomTab
 	private static final int SCROLLBAR_PADDING = 1;
 	private static final int SCROLLBAR_TRACK_HEIGHT = SCROLLBAR_HEIGHT - (SCROLLBAR_BUTTON_HEIGHT * 2);
 	private static final int SCROLLBAR_THUMB_CAP_HEIGHT = 5;
+	private static final int PRESETS_PER_LINE = 4;
+	private static final int PRESET_PADDING = 11;
 
 
 	private final Client client;
 	private final ClientThread clientThread;
+	private final TransmogrificationConfigManager config;
+	private final TransmogrificationManager manager;
 	private final Provider<UIManager> uiManager;
 
 	private Widget[] presetScrollbars;
@@ -62,13 +70,16 @@ public class PresetTab extends CustomTab
 	private int scrollPos = 0;
 	private int maxScrollPos = 0;
 
-	private Map<Widget, Integer> presets = new HashMap<>();
+	private List<CustomWidgetPresetTabItem> presets = new ArrayList<>();
 
 	@Inject
-	PresetTab(Client client, ClientThread clientThread, Provider<UIManager> uiManager)
+	PresetTab(Client client, ClientThread clientThread, TransmogrificationConfigManager config,
+			  TransmogrificationManager manager, Provider<UIManager> uiManager)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
+		this.config = config;
+		this.manager = manager;
 		this.uiManager = uiManager;
 	}
 
@@ -83,44 +94,35 @@ public class PresetTab extends CustomTab
 		final Widget parent = getUIManager().getContainer();
 		// Cache the bounds for scrolling code, which runs off of client thread
 		boxBounds = parent.getBounds();
-		scrollPos = 0;
-
-		int presetCount = 64;
-		int presetsPerLine = 4;
-		int presetSize = 32;
-		int presetPadding = 11;
 
 		presets.clear();
-		// Placeholder for testing purposes
-		for (int i = 0; i < presetCount; i++)
-		{
-			Widget w = parent.createChild(-1, WidgetType.GRAPHIC);
-			w.setOriginalWidth(presetSize + presetPadding);
-			w.setOriginalHeight(presetSize + presetPadding);
-			w.setName("<col=ff981f>");
-			w.setSpriteId(170);
-			w.setOriginalX((i % presetsPerLine) * (presetSize + presetPadding));
-			w.setOriginalY((i / presetsPerLine) * (presetSize + presetPadding));
-			w.revalidateScroll();
-			presets.put(w, w.getOriginalY());
+		AtomicInteger index = new AtomicInteger();
+		manager.getPresets().values().stream()
+			.sorted(Comparator.comparingInt(TransmogPreset::getId))
+			.forEach(preset ->
+			{
+				int i = index.getAndIncrement();
+				presets.add(createPresetBox(preset, parent, i));
+			}
+		);
 
-			Widget w2 = parent.createChild(-1, WidgetType.TEXT);
-			w2.setOriginalWidth(presetSize + presetPadding);
-			w2.setOriginalHeight(presetSize + presetPadding);
-			w2.setName("<col=ff981f>");
-			w2.setFontId(496);
-			w2.setTextColor(0xffffff);
-			w2.setXTextAlignment(WidgetTextAlignment.CENTER);
-			w2.setYTextAlignment(WidgetTextAlignment.CENTER);
-			w2.setText(i + "");
-			w2.setOriginalX((i % presetsPerLine) * (presetSize + presetPadding));
-			w2.setOriginalY((i / presetsPerLine) * (presetSize + presetPadding));
-			w2.revalidateScroll();
-			presets.put(w2, w2.getOriginalY());
-		}
+		// Create add button
+		CustomWidgetPresetTabItem w = new CustomWidgetAddPresetButton(parent, "Preset", this::addNewPreset);
+		w.create();
+		w.layout(
+			(index.get() % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
+			(index.get() / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
+		);
+		w.addOption(1, "Create new");
+		presets.add(w);
 
 		// MAGIC!
-		maxScrollPos = Math.max(((int)Math.ceil(presetCount / (double)presetsPerLine) - 5) * (presetSize + presetPadding) + (5 * (presetSize + presetPadding) - 203) + 1, 0);
+		maxScrollPos = Math.max(
+			((int)Math.ceil(presets.size() / (double) PRESETS_PER_LINE) - 5)
+				* (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
+				+ (5 * (CustomWidgetPresetBox.SIZE + PRESET_PADDING) - 203)
+				+ 1
+			, 0);
 
 		// Scrollbar
 		Widget scrollUp = parent.createChild(-1, WidgetType.GRAPHIC);
@@ -312,6 +314,53 @@ public class PresetTab extends CustomTab
 		*/
 
 		parent.revalidate();
+		presets.stream().filter(b -> b.getId() == config.currentPreset()).findFirst().ifPresent(box -> scrollTo(box.y));
+	}
+
+	/**
+	 * Re-create the overlay, for redoing the very precise ordering of widgets that makes the effect work
+	 */
+	void recreate()
+	{
+		final Widget parent = getUIManager().getContainer();
+		parent.deleteAllChildren();
+		create();
+	}
+
+	private CustomWidgetPresetTabItem createPresetBox(TransmogPreset preset, Widget parent, int i)
+	{
+		CustomWidgetPresetTabItem w = new CustomWidgetPresetBox(preset, parent, this::selectPreset);
+		w.create();
+		w.layout(
+			(i % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
+			(i / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
+		);
+		if (preset.getId() == config.currentPreset())
+		{
+			w.setSelected(true);
+		}
+		w.addOption(1, "Select");
+		return w;
+	}
+
+	private void selectPreset(int id)
+	{
+		presets.forEach(b -> b.setSelected(b.getId() == id));
+		config.currentPreset(id);
+		manager.updateTransmog();
+		recreate();
+	}
+
+	private void addNewPreset(int id)
+	{
+		TransmogPreset newPreset = manager.createNewPreset();
+		CustomWidgetPresetTabItem add = presets.get(presets.size() - 1);
+		add.layout(
+			(presets.size() % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
+			(presets.size() / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
+		);
+		presets.add(presets.size() - 1, createPresetBox(newPreset, getUIManager().getContainer(), presets.size() - 1));
+		selectPreset(newPreset.getId());
 	}
 
 	@Override
@@ -343,11 +392,9 @@ public class PresetTab extends CustomTab
 	{
 		scrollPos = Math.max(0, Math.min(scrollPos, maxScrollPos));
 		layoutScrollbar();
-		for (Map.Entry<Widget, Integer> p : presets.entrySet())
+		for (CustomWidgetPresetTabItem p : presets)
 		{
-			Widget w = p.getKey();
-			w.setOriginalY(p.getValue() - scrollPos);
-			w.revalidate();
+			p.scrollBy(scrollPos);
 		}
 	}
 
