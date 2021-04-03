@@ -50,7 +50,6 @@ public class TransmogPreset
 	@Setter
 	private int icon;
 	@Getter
-	@Setter
 	private String name;
 
 	public TransmogPreset(int id)
@@ -71,6 +70,35 @@ public class TransmogPreset
 		this.id = id;
 		this.icon = icon;
 		this.name = name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name.substring(0, Math.min(12, name.length()));
+	}
+
+	/**
+	 * Get the name to display in the UI.
+	 * If both the name and icon are empty, it returns a placeholder to the UI won't show as empty.
+	 *
+	 * @return the name to display, or a placeholder based on the preset's ID
+	 */
+	public String getDisplayName(boolean withColourTags)
+	{
+		if (name.isEmpty() && icon == -1)
+		{
+			if (withColourTags)
+			{
+				return "[<col=ff5555>#" + id + "</col>]";
+			}
+			return "[#" + id + "]";
+		}
+		return name;
+	}
+
+	public String getDisplayName()
+	{
+		return getDisplayName(false);
 	}
 
 	public static TransmogPreset fromConfig(int id, String configData)
