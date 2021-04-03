@@ -64,7 +64,7 @@ public class TransmogrificationConfigManager
 
 	public int currentPreset()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_CURRENT_PRESET, int.class)).orElse(nextIndex());
+		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_CURRENT_PRESET, int.class)).orElse(lastIndex());
 	}
 
 	public void currentPreset(int value)
@@ -73,19 +73,17 @@ public class TransmogrificationConfigManager
 	}
 
 	/**
-	 * Gets the next index to be used by a preset.
-	 * Could also be considered the number of presets.
+	 * Gets the last index to be used by a preset.
 	 */
-	public int nextIndex()
+	public int lastIndex()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, int.class)).orElse(0);
+		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, int.class)).orElse(1);
 	}
 
 	/**
-	 * Sets the next index to be used by a preset.
-	 * Could also be considered the number of presets.
+	 * Sets the last index to be used by a preset.
 	 */
-	public void nextIndex(int value)
+	public void lastIndex(int value)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, value);
 	}

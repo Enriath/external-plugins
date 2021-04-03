@@ -97,8 +97,8 @@ public class PresetTab extends CustomTab
 
 		presets.clear();
 		AtomicInteger index = new AtomicInteger();
-		manager.getPresets().values().stream()
-			.sorted(Comparator.comparingInt(TransmogPreset::getId))
+		manager.getPresets().stream()
+			.filter(Objects::nonNull)
 			.forEach(preset ->
 			{
 				int i = index.getAndIncrement();

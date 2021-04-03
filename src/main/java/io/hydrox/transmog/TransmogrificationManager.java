@@ -45,11 +45,10 @@ import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.Text;
 import java.awt.TrayIcon;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Singleton
 @Slf4j
@@ -64,7 +63,7 @@ public class TransmogrificationManager
 	private final TransmogrificationConfigManager config;
 
 	@Getter
-	private Map<Integer, TransmogPreset> presets = new HashMap<>();
+	private List<TransmogPreset> presets = new ArrayList<>();
 
 	@Setter
 	private int[] emptyState;
@@ -142,11 +141,43 @@ public class TransmogrificationManager
 
 	public TransmogPreset createNewPreset()
 	{
-		int presetId = config.nextIndex();
-		TransmogPreset preset = new TransmogPreset(presetId);
-		config.nextIndex(presetId + 1);
-		presets.put(presetId, preset);
+		int i;
+		for (i = 0; i < presets.size(); i++)
+		{
+			if (presets.get(i) == null)
+			{
+				break;
+			}
+		}
+		TransmogPreset preset = new TransmogPreset(i);
+
+		if (i >= presets.size())
+		{
+			while (i >= presets.size())
+			{
+				presets.add(null);
+			}
+			presets.add(preset);
+			config.lastIndex(i);
+		}
+		else
+		{
+			presets.set(i, preset);
+		}
+
 		return preset;
+	}
+
+	public void deletePreset(int i)
+	{
+		if (i < presets.size())
+		{
+			presets.set(i, null);
+		}
+		if (presets.stream().filter(Objects::nonNull).count() <= 0)
+		{
+			presets.set(0, new TransmogPreset(i));
+		}
 	}
 
 	public TransmogPreset getCurrentPreset()
@@ -158,6 +189,15 @@ public class TransmogrificationManager
 			config.currentPreset(preset.getId());
 		}
 		return preset;
+	}
+
+	public TransmogPreset getPreset(int i)
+	{
+		if (i < presets.size())
+		{
+			return presets.get(i);
+		}
+		return null;
 	}
 
 	public void updateTransmog()
@@ -281,17 +321,18 @@ public class TransmogrificationManager
 	void loadPresets()
 	{
 		migrateV1();
-		
-		for (int i = 0; i < config.nextIndex(); i++)
+		presets.clear();
+		for (int i = 0; i <= config.lastIndex(); i++)
 		{
 			String presetData = config.getPresetData(i);
 			if (presetData == null)
 			{
+				presets.add(null);
 				continue;
 			}
 			TransmogPreset preset = TransmogPreset.fromConfig(i, presetData);
 			preset.loadNames(itemManager);
-			presets.put(i, preset);
+			presets.add(preset);
 		}
 	}
 
@@ -302,32 +343,19 @@ public class TransmogrificationManager
 
 	public void savePresets()
 	{
-		int current = config.currentPreset();
-
 		int lastId = -1;
-		// Get an ordered list of presets to go through, to find any gaps in the indexing
-		List<Map.Entry<Integer, TransmogPreset>> entries = presets.entrySet().stream()
-			.sorted(Map.Entry.comparingByKey())
-			.collect(Collectors.toList());
-
-		for (Map.Entry<Integer, TransmogPreset> e : entries)
+		for (int i = 0; i < presets.size(); i++)
 		{
-			// Check if there was an empty space in the sequence
-			if (e.getKey() != lastId + 1)
+			TransmogPreset preset = presets.get(i);
+			if (preset == null)
 			{
-				// If this preset was the current one, we need to update it to point to the correct id
-				if (current == e.getKey())
-				{
-					config.currentPreset(lastId + 1);
-				}
-				// Crush the space
-				presets.remove(e.getValue().getId());
-				e.getValue().setId(lastId + 1);
-				presets.put(lastId + 1, e.getValue());
+				config.savePreset(i, null);
+				continue;
 			}
-			config.savePreset(e.getKey(), e.getValue());
+			lastId = i;
+			config.savePreset(i, preset);
 		}
-		config.nextIndex(lastId + 1);
+		config.lastIndex(lastId);
 	}
 
 	public void hintDefaultState()
@@ -344,7 +372,7 @@ public class TransmogrificationManager
 	{
 		// If there is a preset for 1-4  but not 0, then the user previously had
 		// V1 data, and nextIndex needs to be updated
-		if (config.nextIndex() == 0 && config.getPresetData(0) == null)
+		if (config.lastIndex() == 0 && config.getPresetData(0) == null)
 		{
 			String p4 = config.getPresetData(4);
 			if (p4 == null)
@@ -358,7 +386,7 @@ public class TransmogrificationManager
 			}
 			// Set it to 5 so it will start putting them afterwards
 			// The crusher will move them down into the right place anyway
-			config.nextIndex(5);
+			config.lastIndex(5);
 		}
 	}
 }

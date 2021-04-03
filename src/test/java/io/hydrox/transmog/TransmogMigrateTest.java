@@ -84,36 +84,36 @@ public class TransmogMigrateTest
 	@Test
 	public void testMigrateV1()
 	{
-		when(config.nextIndex()).thenReturn(0);
+		when(config.lastIndex()).thenReturn(0);
 		when(config.getPresetData(0)).thenReturn(null);
 		when(config.getPresetData(4)).thenReturn(V1_CONFIG);
 
 		manager.migrateV1();
 
-		verify(config).nextIndex(5);
+		verify(config).lastIndex(5);
 	}
 
 	@Test
 	public void testDontMigrate()
 	{
-		when(config.nextIndex()).thenReturn(3);
+		when(config.lastIndex()).thenReturn(3);
 		when(config.getPresetData(0)).thenReturn(V1_CONFIG);
 		when(config.getPresetData(4)).thenReturn(null);
 
 		manager.migrateV1();
 
-		verify(config, never()).nextIndex(5);
+		verify(config, never()).lastIndex(5);
 	}
 
 	@Test
 	public void testMigrated()
 	{
-		when(config.nextIndex()).thenReturn(5);
+		when(config.lastIndex()).thenReturn(5);
 		when(config.getPresetData(0)).thenReturn(null);
 		when(config.getPresetData(4)).thenReturn(V1_CONFIG);
 
 		manager.migrateV1();
 
-		verify(config, never()).nextIndex(5);
+		verify(config, never()).lastIndex(5);
 	}
 }
