@@ -58,6 +58,7 @@ public class PresetTab extends CustomTab
 	private static final int SCROLLBAR_THUMB_CAP_HEIGHT = 5;
 	private static final int PRESETS_PER_LINE = 4;
 	private static final int PRESET_PADDING = 11;
+	private static final int PRESET_EDGE_PADDING = 4;
 
 
 	private final Client client;
@@ -111,8 +112,8 @@ public class PresetTab extends CustomTab
 		CustomWidgetPresetTabItem w = new CustomWidgetAddPresetButton(parent, "Preset", this::addNewPreset);
 		w.create();
 		w.layout(
-			(index.get() % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
-			(index.get() / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
+			PRESET_EDGE_PADDING + (index.get() % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
+			PRESET_EDGE_PADDING + (index.get() / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
 		);
 		w.addOption(1, "Create new");
 		presets.add(w);
@@ -330,8 +331,8 @@ public class PresetTab extends CustomTab
 		CustomWidgetPresetTabItem w = new CustomWidgetPresetBox(preset, parent, this::selectPreset);
 		w.create();
 		w.layout(
-			(i % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
-			(i / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
+			PRESET_EDGE_PADDING + (i % PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING),
+			PRESET_EDGE_PADDING + (i / PRESETS_PER_LINE) * (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
 		);
 		if (preset.getId() == config.currentPreset())
 		{
