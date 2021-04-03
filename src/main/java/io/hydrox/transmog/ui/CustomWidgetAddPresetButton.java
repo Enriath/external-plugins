@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Hydrox6 <ikada@protonmail.ch>
+ * Copyright (c) 2021, Hydrox6 <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,26 +24,52 @@
  */
 package io.hydrox.transmog.ui;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.runelite.client.game.SpriteOverride;
+import net.runelite.api.ScriptEvent;
+import net.runelite.api.widgets.Widget;
 
-@RequiredArgsConstructor
-public enum CustomSprites implements SpriteOverride
+public class CustomWidgetAddPresetButton extends CustomWidgetPresetTabItem
 {
-	TRANSMOG_LOGO(-4365, "transmog.png"),
-	//TRANSMOG_SAVE(-4366, "save.png"),
-	//TRANSMOG_DELETE(-4367, "delete.png"),
-	TUTORIAL_ARROW(-4368, "arrow.png"),
-	SLOT_HAIR(-4369, "hair.png"),
-	SLOT_JAW(-4370, "jaw.png"),
-	SLOT_SLEEVES(-4371, "sleeves.png"),
-	QUESTION_MARK(-4372, "questionmark.png"),
-	ADD(-4373, "add.png");
+	private Widget iconWidget;
 
-	@Getter
-	private final int spriteId;
+	public CustomWidgetAddPresetButton(Widget parent, String name, WidgetIntCallback callback)
+	{
+		super(parent, name, callback);
+	}
 
-	@Getter
-	private final String fileName;
+	@Override
+	public int getId()
+	{
+		return -1;
+	}
+
+	@Override
+	public void layout(int x, int y)
+	{
+		super.layout(x, y);
+		layoutWidget(iconWidget, x + 9, y + 10);
+		parent.revalidate();
+	}
+
+	@Override
+	public void scrollBy(int y)
+	{
+		super.scrollBy(y);
+		iconWidget.setOriginalY(this.y - y + 10);
+		iconWidget.revalidate();
+	}
+
+	@Override
+	public void create()
+	{
+		super.createUnderlay();
+		iconWidget = createSpriteWidget(17, 17);
+		iconWidget.setSpriteId(CustomSprites.ADD.getSpriteId());
+		super.createOverlay();
+	}
+
+	@Override
+	public void onButtonClicked(ScriptEvent scriptEvent)
+	{
+		callback.run(-1);
+	}
 }
