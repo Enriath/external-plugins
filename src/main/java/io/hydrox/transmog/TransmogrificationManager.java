@@ -295,7 +295,7 @@ public class TransmogrificationManager
 		}
 	}
 
-	public void saveActivePreset()
+	public void saveCurrentPreset()
 	{
 		config.savePreset(getCurrentPreset());
 	}

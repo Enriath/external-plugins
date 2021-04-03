@@ -408,7 +408,7 @@ public class MainTab extends CustomTab
 						uiManager.setSearching(false);
 						preset.setSlot(slot, m.kitId(), m.prettyName());
 						manager.updateTransmog();
-						manager.saveActivePreset();
+						manager.saveCurrentPreset();
 					});
 
 					switch (slot)
@@ -438,7 +438,7 @@ public class MainTab extends CustomTab
 						uiManager.setSearching(false);
 						preset.setSlot(slot, id, name);
 						manager.updateTransmog();
-						manager.saveActivePreset();
+						manager.saveCurrentPreset();
 					});
 					i.build();
 				}
@@ -448,14 +448,14 @@ public class MainTab extends CustomTab
 				widget.setEmpty();
 				preset.clearSlot(slot);
 				manager.updateTransmog();
-				manager.saveActivePreset();
+				manager.saveCurrentPreset();
 				break;
 			case HIDE:
 				chatboxPanelManager.close();
 				widget.setDefault();
 				preset.setDefaultSlot(slot);
 				manager.updateTransmog();
-				manager.saveActivePreset();
+				manager.saveCurrentPreset();
 				break;
 		}
 	}
