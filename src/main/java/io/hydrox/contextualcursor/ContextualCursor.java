@@ -47,7 +47,7 @@ public enum ContextualCursor
 	ENTER("enter", "climb-into", "enter", "exit", "yanille", "varrock", "seers' village", "camelot",
 		"grand exchange", "watchtower", "go-through"),
 	EQUIP("equip", "wield", "wear", "equip"),
-	EXCHANGE(SpriteID.GE_GUIDE_PRICE, "exchange", "trade", "trade with"),
+	EXCHANGE(SpriteID.GE_GUIDE_PRICE, "exchange", "trade", "trade with", "collect"),
 	IMPOSSIBLE("impossible", "destroy"),
 	LADDER("ladder", "climb"),
 	LADDER_DOWN("ladder_down", "climb-down", "climb down"),
