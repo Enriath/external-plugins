@@ -57,7 +57,7 @@ public enum ContextualCursor
 	READ("read", "read", "story"),
 	SEARCH("search", "search", "lookup", "examine", "view", "look-inside"),
 	TALK("talk", "talk", "talk-to", "talk to"),
-	UNTIE("untie"),
+	UNTIE("untie", "tether"),
 	USE("use", "use"),
 	WIKI("wiki", "lookup-entity"),
 
@@ -68,11 +68,12 @@ public enum ContextualCursor
 		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across", "crawl-through"),
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
 	CONSTRUCTION(SpriteID.SKILL_CONSTRUCTION, "build", "remove"),
-	COOKING(SpriteID.SKILL_COOKING, "cook", "churn"),
+	COOKING(SpriteID.SKILL_COOKING, "cook", "churn", "cook-at"),
 	CRAFTING(SpriteID.SKILL_CRAFTING, "spin"),
 	FARMING(SpriteID.SKILL_FARMING, "check-health", "harvest", "rake"), // `pick` interferes with non-farming crops such as Wheat
 	FIREMAKING(SpriteID.SKILL_FIREMAKING, "light", "feed"),
-	FISHING(SpriteID.SKILL_FISHING, "net", "bait", "lure", "small net", "harpoon", "cage", "big net", "use-rod", "fish"),
+	FISHING(SpriteID.SKILL_FISHING, "net", "bait", "lure", "small net", "harpoon", "cage", "big net",
+		"use-rod", "fish", "take-net"),
 	HERBLORE(SpriteID.SKILL_HERBLORE, "clean"),
 	HUNTER(SpriteID.SKILL_HUNTER),
 	MAGIC(SpriteID.SKILL_MAGIC, "spellbook", "teleport", "teleport menu"), // `venerate` interferes with the Dark Altar's RC use
