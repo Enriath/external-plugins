@@ -24,8 +24,18 @@
  */
 package io.hydrox.masterscrollbook;
 
+import com.google.inject.Inject;
+import lombok.Getter;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
+import java.util.HashMap;
+import java.util.Map;
 
 @PluginDescriptor(
 	name = "Master Scroll Book",
@@ -34,4 +44,67 @@ import net.runelite.client.plugins.PluginDescriptor;
 )
 public class MasterScrollBookPlugin extends Plugin
 {
+	/**
+	 * Index of selected default teleport scroll.
+	 * 1-indexed
+	 * Left->Right, Top->Bottom, Left Page->Right Page
+	 */
+	private static final int VARBIT_SELECTED_DEFAULT_SCROLL = 5685;
+
+	@Inject
+	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
+
+	@Inject
+	private MasterScrollBookOverlay overlay;
+
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Getter
+	private Map<Scroll, Integer> counts = new HashMap<>();
+
+	@Getter
+	private Scroll selectedDefault = null;
+
+	@Override
+	public void startUp()
+	{
+		overlayManager.add(overlay);
+		if (client.getGameState() == GameState.LOGGED_IN)
+		{
+			clientThread.invoke(this::update);
+		}
+	}
+
+	@Override
+	public void shutDown()
+	{
+		overlayManager.remove(overlay);
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged e)
+	{
+		update();
+	}
+
+	private void update()
+	{
+		for (Scroll s : Scroll.values())
+		{
+			counts.put(s, client.getVarbitValue(s.getVarbit()));
+		}
+		int sel = client.getVarbitValue(VARBIT_SELECTED_DEFAULT_SCROLL);
+		if (sel == 0)
+		{
+			selectedDefault = null;
+		}
+		else
+		{
+			selectedDefault = Scroll.get(sel - 1);
+		}
+	}
 }
