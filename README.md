@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Master Scroll Book
+*See the contents of your Master Scroll Book without opening it.*
