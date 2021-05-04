@@ -35,6 +35,7 @@ import java.awt.Color;
 public class CustomWidgetPresetBox extends CustomWidgetPresetTabItem
 {
 	private static final int DEFAULT_ICON = SpriteID.TAB_EMOTES;
+	private static final int MAX_NAME_WIDTH_PX = 36;
 
 	private Widget defaultIconWidget;
 	private Widget iconWidget;
@@ -99,7 +100,7 @@ public class CustomWidgetPresetBox extends CustomWidgetPresetTabItem
 			iconWidget.setHidden(true);
 		}
 
-		nameWidget = createTextWidget(preset.getDisplayName(true));
+		nameWidget = createTextWidget(UIManager.cutStringToPxWidth(preset.getDisplayName(), MAX_NAME_WIDTH_PX));
 		nameWidget.setOriginalWidth(32);
 		nameWidget.setOriginalHeight(32);
 		nameWidget.setFontId(FontID.PLAIN_11);

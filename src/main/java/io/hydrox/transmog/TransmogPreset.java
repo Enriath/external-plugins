@@ -75,7 +75,7 @@ public class TransmogPreset
 
 	public void setName(String name)
 	{
-		this.name = name.substring(0, Math.min(12, name.length()));
+		this.name = name;
 	}
 
 	/**

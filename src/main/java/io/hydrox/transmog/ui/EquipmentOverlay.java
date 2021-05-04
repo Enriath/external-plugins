@@ -41,7 +41,6 @@ public class EquipmentOverlay extends CustomTab
 	private Widget pvpBlocker;
 
 	private final TransmogrificationConfigManager config;
-	private final TransmogrificationPlugin plugin;
 	private final TransmogrificationManager manager;
 	private final UIManager uiManager;
 
@@ -49,7 +48,6 @@ public class EquipmentOverlay extends CustomTab
 	EquipmentOverlay(TransmogrificationPlugin plugin, TransmogrificationConfigManager config, TransmogrificationManager manager)
 	{
 		this.config = config;
-		this.plugin = plugin;
 		this.manager = manager;
 		this.uiManager = plugin.getUIManager();
 	}
