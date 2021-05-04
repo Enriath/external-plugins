@@ -84,22 +84,13 @@ public class TransmogPreset
 	 *
 	 * @return the name to display, or a placeholder based on the preset's ID
 	 */
-	public String getDisplayName(boolean withColourTags)
+	public String getDisplayName()
 	{
 		if (name.isEmpty() && icon == -1)
 		{
-			if (withColourTags)
-			{
-				return "[<col=ff5555>#" + id + "</col>]";
-			}
 			return "[#" + id + "]";
 		}
 		return name;
-	}
-
-	public String getDisplayName()
-	{
-		return getDisplayName(false);
 	}
 
 	public static TransmogPreset fromConfig(int id, String configData)
