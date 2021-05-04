@@ -174,7 +174,7 @@ public class MainTab extends CustomTab
 
 		CustomWidgetActionButton selectPresetButton = new CustomWidgetActionButton(
 			parent,
-			"Presets",
+			"",
 			SpriteID.TAB_EMOTES,
 			op ->
 			{
@@ -186,10 +186,7 @@ public class MainTab extends CustomTab
 		selectPresetButton.setSize(40, 40);
 		selectPresetButton.setIconSize(36, 36);
 		selectPresetButton.create();
-		selectPresetButton.addOption(1, "Select Preset <col=ff981f>1");
-		selectPresetButton.addOption(2, "Select Preset <col=ff981f>2");
-		selectPresetButton.addOption(3, "Select Preset <col=ff981f>3");
-		selectPresetButton.addOption(4, "Select Preset <col=ff981f>4");
+		selectPresetButton.addOption(1, "Choose <col=ff981f>Preset");
 		selectPresetButton.layout(7, 213);
 
 		presetExtraDataButton = new CustomWidgetConfigButton(
@@ -242,6 +239,7 @@ public class MainTab extends CustomTab
 		presetExtraDataButton.addOption(1, "Set Name");
 		presetExtraDataButton.setItemIcon(manager.getCurrentPreset().getIcon());
 		presetExtraDataButton.layout(97, 213);
+
 		/*
 		savePresetButton = new CustomWidgetActionButton(
 			parent,

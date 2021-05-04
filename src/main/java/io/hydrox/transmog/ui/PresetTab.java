@@ -60,6 +60,8 @@ public class PresetTab extends CustomTab
 	private static final int PRESET_PADDING = 11;
 	private static final int PRESET_EDGE_PADDING = 4;
 
+	private static final int BACK_BUTTON_SPRITE = 1122;
+
 
 	private final Client client;
 	private final ClientThread clientThread;
@@ -212,8 +214,8 @@ public class PresetTab extends CustomTab
 
 		CustomWidgetActionButtonWithText selectPresetButton = new CustomWidgetActionButtonWithText(
 			parent,
-			"Presets",
-			SpriteID.TAB_EMOTES,
+			"",
+			BACK_BUTTON_SPRITE,
 			"",
 			op ->
 			{
@@ -224,12 +226,9 @@ public class PresetTab extends CustomTab
 			}
 		);
 		selectPresetButton.setSize(40, 40);
-		selectPresetButton.setIconSize(36, 36);
+		selectPresetButton.setIconSize(25, 20);
 		selectPresetButton.create();
-		selectPresetButton.addOption(1, "Select Preset <col=ff981f>1");
-		selectPresetButton.addOption(2, "Select Preset <col=ff981f>2");
-		selectPresetButton.addOption(3, "Select Preset <col=ff981f>3");
-		selectPresetButton.addOption(4, "Select Preset <col=ff981f>4");
+		selectPresetButton.addOption(1, "Back");
 		selectPresetButton.layout(7, 213);
 
 		Widget separator = parent.createChild(-1, WidgetType.LINE);
