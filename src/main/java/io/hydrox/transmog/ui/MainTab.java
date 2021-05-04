@@ -24,6 +24,7 @@
  */
 package io.hydrox.transmog.ui;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -47,7 +48,9 @@ import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.chatbox.ChatboxItemSearch;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
+import net.runelite.client.util.Text;
 import org.apache.commons.lang3.tuple.Pair;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -61,16 +64,16 @@ public class MainTab extends CustomTab
 	private static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";
 	private static final Point BASE_POSITION = new Point(148, 4);
 	private static final ImmutableMap<TransmogSlot, Point> SLOT_POSITIONS = ImmutableMap.<TransmogSlot, Point>builder()
-		.put(TransmogSlot.JAW, new Point(-82, 0))
-		.put(TransmogSlot.HAIR, new Point(-41, 0))
+		.put(TransmogSlot.JAW, new Point(-76, 0))
+		.put(TransmogSlot.HAIR, new Point(-38, 0))
 		.put(TransmogSlot.HEAD, new Point(0, 0))
-		.put(TransmogSlot.CAPE, new Point(-41, 39))
-		.put(TransmogSlot.NECK, new Point(0, 39))
-		.put(TransmogSlot.SLEEVES, new Point(-56, 78))
-		.put(TransmogSlot.TORSO, new Point(0, 78))
-		.put(TransmogSlot.LEGS, new Point(0, 118))
-		.put(TransmogSlot.HANDS, new Point(-56, 158))
-		.put(TransmogSlot.BOOTS, new Point(0, 158))
+		.put(TransmogSlot.CAPE, new Point(-38, 38))
+		.put(TransmogSlot.NECK, new Point(0, 38))
+		.put(TransmogSlot.SLEEVES, new Point(-56, 76))
+		.put(TransmogSlot.TORSO, new Point(0, 76))
+		.put(TransmogSlot.LEGS, new Point(0, 115))
+		.put(TransmogSlot.HANDS, new Point(-56, 154))
+		.put(TransmogSlot.BOOTS, new Point(0, 154))
 		.build();
 
 	private static final List<Pair<Rectangle, Integer>> INTER_SLOT_BRACERS = ImmutableList.<Pair<Rectangle, Integer>>builder()
@@ -83,11 +86,11 @@ public class MainTab extends CustomTab
 
 
 	private final ChatboxPanelManager chatboxPanelManager;
-	private final CustomItemSearch itemSearch;
+	private final ChatboxItemSearch allItemSearch;
+	private final CustomItemSearch slotItemSearch;
 	private final CustomSpriteSearch spriteSearch;
 	private final ItemManager itemManager;
 	private final TransmogrificationManager manager;
-	private final TransmogrificationPlugin plugin;
 	private final UIManager uiManager;
 
 	@Getter
@@ -97,17 +100,20 @@ public class MainTab extends CustomTab
 	private CustomWidgetPlayerPreview playerPreview;
 	private CustomWidgetActionButton saveDefaultStateButton;
 	private CustomWidgetBlockerBox blockerBox;
+	private CustomWidgetConfigButton presetExtraDataButton;
+	private CustomWidgetNamePlate nameplate;
 
 	@Inject
-	MainTab(ChatboxPanelManager chatboxPanelManager, CustomItemSearch itemSearch, CustomSpriteSearch spriteSearch,
-			ItemManager itemManager, TransmogrificationPlugin plugin, TransmogrificationManager manager)
+	MainTab(ChatboxPanelManager chatboxPanelManager, ChatboxItemSearch allItemSearch, CustomItemSearch slotItemSearch,
+			CustomSpriteSearch spriteSearch, ItemManager itemManager, TransmogrificationPlugin plugin,
+			TransmogrificationManager manager)
 	{
 		this.chatboxPanelManager = chatboxPanelManager;
-		this.itemSearch = itemSearch;
+		this.allItemSearch = allItemSearch;
+		this.slotItemSearch = slotItemSearch;
 		this.spriteSearch = spriteSearch;
 		this.itemManager = itemManager;
 		this.manager = manager;
-		this.plugin = plugin;
 		this.uiManager = plugin.getUIManager();
 	}
 
@@ -186,6 +192,56 @@ public class MainTab extends CustomTab
 		selectPresetButton.addOption(4, "Select Preset <col=ff981f>4");
 		selectPresetButton.layout(7, 213);
 
+		presetExtraDataButton = new CustomWidgetConfigButton(
+			parent,
+			FORCE_RIGHT_CLICK_WIDGET_NAME,
+			op ->
+			{
+				switch (op)
+				{
+					case 1:
+						chatboxPanelManager.openTextInput("Set name for this preset")
+							.value(Strings.nullToEmpty(manager.getCurrentPreset().getName()))
+							.onDone((content) ->
+							{
+								if (content == null)
+								{
+									return;
+								}
+
+								content = Text.removeTags(content).trim();
+								manager.getCurrentPreset().setName(content);
+								manager.saveCurrentPreset();
+								nameplate.setText(manager.getCurrentPreset().getDisplayName());
+
+							}).build();
+						break;
+					case 2:
+						allItemSearch
+							.tooltipText("Select")
+							.onItemSelected((itemId) ->
+							{
+								manager.getCurrentPreset().setIcon(itemId);
+								manager.saveCurrentPreset();
+								presetExtraDataButton.setItemIcon(itemId);
+							})
+							.prompt("Select icon for this preset")
+							.build();
+						break;
+					case 3:
+						manager.getCurrentPreset().setIcon(-1);
+						manager.saveCurrentPreset();
+						presetExtraDataButton.setItemIcon(-1);
+						break;
+				}
+			}
+		);
+		presetExtraDataButton.setSize(40, 40);
+		presetExtraDataButton.create();
+		presetExtraDataButton.addOption(0, "<col=ff8800>Preset Config:");
+		presetExtraDataButton.addOption(1, "Set Name");
+		presetExtraDataButton.setItemIcon(manager.getCurrentPreset().getIcon());
+		presetExtraDataButton.layout(97, 213);
 		/*
 		savePresetButton = new CustomWidgetActionButton(
 			parent,
@@ -246,17 +302,6 @@ public class MainTab extends CustomTab
 		deletePresetButton.addOption(4, "Delete Preset <col=ff981f>4");
 		deletePresetButton.layout(97, 213);
 		*/
-
-		Widget remembrance = parent.createChild(-1, WidgetType.TEXT);
-		remembrance.setTextColor(CustomWidget.fromRGB(Color.YELLOW));
-		remembrance.setTextShadowed(true);
-		remembrance.setFontId(FontID.PLAIN_11);
-		remembrance.setOriginalWidth(92);
-		remembrance.setOriginalHeight(40);
-		remembrance.setOriginalX(52);
-		remembrance.setOriginalY(213);
-		remembrance.setText("Save and delete did nothing.     They will return when fixed.");
-		remembrance.revalidate();
 
 		saveDefaultStateButton = new CustomWidgetActionButton(
 			parent,
@@ -350,6 +395,11 @@ public class MainTab extends CustomTab
 			blockerBox.setHidden(true);
 		}
 
+		nameplate = new CustomWidgetNamePlate(parent, 92);
+		nameplate.create();
+		nameplate.setText(manager.getCurrentPreset().getDisplayName());
+		nameplate.layout(92, 196);
+
 		updateTutorial(manager.isEmptyEquipment());
 
 		parent.revalidate();
@@ -428,7 +478,7 @@ public class MainTab extends CustomTab
 				}
 				else
 				{
-					CustomItemSearch i = itemSearch;
+					CustomItemSearch i = slotItemSearch;
 					i.setTooltipText("Set as " + slot.getName());
 					i.setPrompt("Choose for " + slot.getName() + " slot");
 					i.setSlot(slot);
