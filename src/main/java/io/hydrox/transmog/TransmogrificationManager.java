@@ -153,7 +153,7 @@ public class TransmogrificationManager
 
 		if (i >= presets.size())
 		{
-			while (i >= presets.size())
+			while (i > presets.size())
 			{
 				presets.add(null);
 			}
