@@ -81,7 +81,6 @@ public class CustomWidgetToggleButton extends CustomWidgetWithIcon implements In
 		icon = createSpriteWidget(iconWidth, iconHeight);
 		icon.setSpriteId(iconSpriteID);
 
-
 		clickbox = createSpriteWidget(width, height);
 		clickbox.setOnOpListener((JavaScriptCallback) this::onButtonClicked);
 		clickbox.setOnMouseRepeatListener((JavaScriptCallback) e -> icon.setOpacity(120));

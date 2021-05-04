@@ -73,15 +73,6 @@ public class UIManager
 		return presetTab.get();
 	}
 
-
-
-	/*
-	@Getter
-	private CustomWidgetActionButton savePresetButton;
-	@Getter
-	private CustomWidgetActionButton deletePresetButton;
-	*/
-
 	@Getter
 	@Setter
 	private boolean uiCreated = false;
