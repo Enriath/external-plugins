@@ -25,6 +25,7 @@
 package io.hydrox.transmog;
 
 import io.hydrox.transmog.config.PresetParser;
+import io.hydrox.transmog.config.V2Parser;
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.client.game.ItemManager;
@@ -200,11 +201,12 @@ public class TransmogPreset
 		final Map<TransmogSlot, Integer> merged = new HashMap<>();
 		Arrays.asList(TransmogSlot.values()).forEach(tk -> merged.put(tk, null));
 		merged.putAll(overrides);
-		return merged.entrySet().stream()
+		String slots = merged.entrySet().stream()
 			.sorted(Map.Entry.comparingByKey())
 			.map(Map.Entry::getValue)
 			.map(v -> v == null ? "null" : String.valueOf(v))
 			.collect(Collectors.joining(","));
+		return V2Parser.VERSION_FLAG + icon + "," + name + "," + slots;
 	}
 
 	void loadNames(final ItemManager itemManager)

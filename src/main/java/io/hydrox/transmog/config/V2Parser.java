@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 public class V2Parser extends PresetParser
 {
-	static final String VERSION_FLAG = "\"";
+	public static final String VERSION_FLAG = "\"";
 	private static final Pattern PARSER = Pattern.compile("^\"(-1|\\d+),([\\w ]*),((?:null|-1|\\d+|,)+)$");
 
 	public void parse(String configData)
