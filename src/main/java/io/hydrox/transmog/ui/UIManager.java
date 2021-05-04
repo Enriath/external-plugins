@@ -36,6 +36,9 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
+import net.runelite.client.ui.FontManager;
+import java.awt.FontMetrics;
+import java.awt.Toolkit;
 import java.awt.event.MouseWheelEvent;
 
 @Singleton
@@ -43,6 +46,7 @@ import java.awt.event.MouseWheelEvent;
 public class UIManager
 {
 	static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";
+	static final FontMetrics FONT_METRICS = Toolkit.getDefaultToolkit().getFontMetrics(FontManager.getRunescapeSmallFont());
 
 	private final ChatboxPanelManager chatboxPanelManager;
 	private final Client client;
@@ -195,5 +199,22 @@ public class UIManager
 		{
 			currentTab.mouseWheelMoved(event);
 		}
+	}
+
+	public static String cutStringToPxWidth(String str, int targetWidth)
+	{
+		return cutStringToPxWidth(str, targetWidth, false);
+	}
+
+	public static String cutStringToPxWidth(String str, int targetWidth, boolean withEllipsis)
+	{
+		int width = UIManager.FONT_METRICS.stringWidth(str);
+		String newStr = str;
+		while(width > targetWidth)
+		{
+			newStr = newStr.substring(0, newStr.length() - 1);
+			width = UIManager.FONT_METRICS.stringWidth(newStr + (withEllipsis ? "..." : ""));
+		}
+		return newStr + (withEllipsis ? "..." : "");
 	}
 }
