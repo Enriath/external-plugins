@@ -124,7 +124,7 @@ public class PresetTab extends CustomTab
 		maxScrollPos = Math.max(
 			((int)Math.ceil(presets.size() / (double) PRESETS_PER_LINE) - 5)
 				* (CustomWidgetPresetBox.SIZE + PRESET_PADDING)
-				+ (5 * (CustomWidgetPresetBox.SIZE + PRESET_PADDING) - 203)
+				+ (5 * (CustomWidgetPresetBox.SIZE + PRESET_PADDING) - SCROLLBAR_HEIGHT)
 				+ 1
 			, 0);
 
@@ -205,9 +205,9 @@ public class PresetTab extends CustomTab
 		cover.setSpriteId(897);
 		cover.setSpriteTiling(true);
 		cover.setOriginalX(0);
-		cover.setOriginalY(204);
+		cover.setOriginalY(SCROLLBAR_HEIGHT + 1);
 		cover.setOriginalWidth(parent.getOriginalWidth());
-		cover.setOriginalHeight(parent.getOriginalHeight() - 204);
+		cover.setOriginalHeight(parent.getOriginalHeight() - (SCROLLBAR_HEIGHT + 1));
 		cover.revalidate();
 
 		// Create bottom buttons
@@ -233,7 +233,7 @@ public class PresetTab extends CustomTab
 
 		Widget separator = parent.createChild(-1, WidgetType.LINE);
 		separator.setOriginalX(-1);
-		separator.setOriginalY(203);
+		separator.setOriginalY(SCROLLBAR_HEIGHT);
 		separator.setXPositionMode(WidgetPositionMode.ABSOLUTE_CENTER);
 		separator.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);
 		separator.setOriginalHeight(0);
