@@ -66,7 +66,7 @@ public enum ContextualCursor
 	AGILITY(SpriteID.SKILL_AGILITY, "balance", "balance-across", "climb-across", "climb-on", "climb-over",
 		"cross", "grab", "grapple", "hurdle", "jump", "jump-up", "jump-to", "jump-off", "jump-in", "jump-on", "kick",
 		"leap", "shoot", "squeeze-past", "squeeze-through", "swing", "swing across", "swing-across", "swing-on", "tap",
-		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across", "crawl-through"),
+		"tag", "teeth-grip", "tread-softly", "vault", "walk-on", "walk-across", "crawl-through", "jump-over"),
 	ATTACK(SpriteID.SKILL_ATTACK, "attack"),
 	CONSTRUCTION(SpriteID.SKILL_CONSTRUCTION, "build", "remove"),
 	COOKING(SpriteID.SKILL_COOKING, "cook", "churn", "cook-at", "prepare-fish"),
@@ -78,7 +78,7 @@ public enum ContextualCursor
 	HERBLORE(SpriteID.SKILL_HERBLORE, "clean"),
 	HUNTER(SpriteID.SKILL_HUNTER, "catch", "lay", "dismantle", "reset", "check"),
 	MAGIC(SpriteID.SKILL_MAGIC, "spellbook", "teleport", "teleport menu"), // `venerate` interferes with the Dark Altar's RC use
-	MINING(SpriteID.SKILL_MINING, "mine"),
+	MINING(SpriteID.SKILL_MINING, "mine", "smash-to-bits"),
 	PRAYER(SpriteID.SKILL_PRAYER, "pray", "bury", "pray-at", "offer-fish"),
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune", "imbue"),
 	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith", "hammer", "refine"),
