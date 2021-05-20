@@ -25,11 +25,18 @@
 package io.hydrox.masterscrollbook;
 
 import com.google.inject.Inject;
+import com.google.inject.Provides;
 import lombok.Getter;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.chat.ChatColorType;
+import net.runelite.client.chat.ChatMessageBuilder;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -58,6 +65,12 @@ public class MasterScrollBookPlugin extends Plugin
 	private ClientThread clientThread;
 
 	@Inject
+	private ChatMessageManager chatMessageManager;
+
+	@Inject
+	private MasterScrollBookConfig config;
+
+	@Inject
 	private MasterScrollBookOverlay overlay;
 
 	@Inject
@@ -68,6 +81,12 @@ public class MasterScrollBookPlugin extends Plugin
 
 	@Getter
 	private Scroll selectedDefault = null;
+
+	@Provides
+	MasterScrollBookConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(MasterScrollBookConfig.class);
+	}
 
 	@Override
 	public void startUp()
@@ -93,10 +112,39 @@ public class MasterScrollBookPlugin extends Plugin
 
 	private void update()
 	{
+		Scroll used = null;
 		for (Scroll s : Scroll.values())
 		{
-			counts.put(s, client.getVarbitValue(s.getVarbit()));
+			int newValue = client.getVarbitValue(s.getVarbit());
+			Integer oldValue = counts.put(s, newValue);
+			if (oldValue != null && oldValue == newValue + 1)
+			{
+				used = s;
+			}
 		}
+		if (used != null && config.showTeleportMessages())
+		{
+			int value = counts.get(used);
+			ChatMessageBuilder sb = new ChatMessageBuilder();
+			sb.append(ChatColorType.HIGHLIGHT);
+			sb.append("You have ");
+			sb.append(Integer.toString(value));
+			sb.append(" ");
+			sb.append(used.getName());
+			sb.append(" teleport scroll");
+			if (value > 1)
+			{
+				sb.append("s");
+			}
+			sb.append(" left.");
+
+			chatMessageManager.queue(QueuedMessage.builder()
+				.type(ChatMessageType.CONSOLE)
+				.runeLiteFormattedMessage(sb.build())
+				.build()
+			);
+		}
+
 		int sel = client.getVarbitValue(VARBIT_SELECTED_DEFAULT_SCROLL);
 		if (sel == 0)
 		{
