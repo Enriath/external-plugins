@@ -132,7 +132,7 @@ public class MasterScrollBookPlugin extends Plugin
 			sb.append(" ");
 			sb.append(used.getName());
 			sb.append(" teleport scroll");
-			if (value > 1)
+			if (value != 1)
 			{
 				sb.append("s");
 			}
