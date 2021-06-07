@@ -163,6 +163,7 @@ public class TransmogrificationManager
 		{
 			presets.set(i, preset);
 		}
+		config.savePreset(preset);
 
 		return preset;
 	}
