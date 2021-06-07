@@ -42,6 +42,18 @@ public abstract class PresetParser
 
 	public abstract void migrate(PresetParser other);
 
+	public void clear()
+	{
+		this.name = "";
+		this.icon = -1;
+		this.slotValues = null;
+	}
+
+	public static PresetParser getLatest()
+	{
+		return new V2Parser();
+	}
+
 	public static PresetParser getParser(String configData)
 	{
 		String flag = configData.substring(0, 1);

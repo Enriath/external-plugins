@@ -98,6 +98,11 @@ public class TransmogPreset
 		PresetParser parser = PresetParser.getParser(configData);
 		parser.parse(configData);
 
+		return fromParser(id, parser);
+	}
+
+	public static TransmogPreset fromParser(int id, PresetParser parser)
+	{
 		TransmogPreset preset = new TransmogPreset(id, parser.getIcon(), parser.getName());
 
 		for (int i = 0; i < parser.getSlotValues().size(); i++)

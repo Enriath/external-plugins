@@ -77,7 +77,7 @@ public class TransmogrificationConfigManager
 	 */
 	public int lastIndex()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, int.class)).orElse(1);
+		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, int.class)).orElse(0);
 	}
 
 	/**

@@ -371,22 +371,33 @@ public class TransmogrificationManager
 	void migrateV1()
 	{
 		// If there is a preset for 1-4  but not 0, then the user previously had
-		// V1 data, and nextIndex needs to be updated
+		// V1 data, and lastIndex needs to be updated
 		if (config.lastIndex() == 0 && config.getPresetData(0) == null)
 		{
-			String p4 = config.getPresetData(4);
-			if (p4 == null)
+			// Convert existing entries
+			PresetParser parser;
+			PresetParser latest = PresetParser.getLatest();
+			for (int i = 1; i <= 4; i++)
 			{
-				return;
+				String data = config.getPresetData(i);
+				if (data == null)
+				{
+					continue;
+				}
+				parser = PresetParser.getParser(data);
+				if (!(parser instanceof V1Parser))
+				{
+					continue;
+				}
+				parser.parse(data);
+				latest.migrate(parser);
+				TransmogPreset preset = TransmogPreset.fromParser(i, latest);
+				config.savePreset(i, preset);
+				config.lastIndex(i);
+
+				parser.clear();
+				latest.clear();
 			}
-			PresetParser parser = PresetParser.getParser(p4);
-			if (!(parser instanceof V1Parser))
-			{
-				return;
-			}
-			// Set it to 5 so it will start putting them afterwards
-			// The crusher will move them down into the right place anyway
-			config.lastIndex(5);
 		}
 	}
 }

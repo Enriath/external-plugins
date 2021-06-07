@@ -37,8 +37,11 @@ import net.runelite.client.game.ItemManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -85,35 +88,24 @@ public class TransmogMigrateTest
 	public void testMigrateV1()
 	{
 		when(config.lastIndex()).thenReturn(0);
-		when(config.getPresetData(0)).thenReturn(null);
+		// config.getPresetData(0) == null
+		when(config.getPresetData(2)).thenReturn(V1_CONFIG);
 		when(config.getPresetData(4)).thenReturn(V1_CONFIG);
 
 		manager.migrateV1();
 
 		verify(config).lastIndex(5);
+		verify(config, times(2)).savePreset(anyInt(), any());
 	}
 
 	@Test
 	public void testDontMigrate()
 	{
 		when(config.lastIndex()).thenReturn(3);
-		when(config.getPresetData(0)).thenReturn(V1_CONFIG);
-		when(config.getPresetData(4)).thenReturn(null);
 
 		manager.migrateV1();
 
 		verify(config, never()).lastIndex(5);
-	}
-
-	@Test
-	public void testMigrated()
-	{
-		when(config.lastIndex()).thenReturn(5);
-		when(config.getPresetData(0)).thenReturn(null);
-		when(config.getPresetData(4)).thenReturn(V1_CONFIG);
-
-		manager.migrateV1();
-
-		verify(config, never()).lastIndex(5);
+		verify(config, never()).savePreset(anyInt(), any());
 	}
 }
