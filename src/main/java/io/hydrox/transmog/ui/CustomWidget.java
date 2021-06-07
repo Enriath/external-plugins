@@ -33,7 +33,6 @@ public abstract class CustomWidget
 	protected final Widget parent;
 	private final String name;
 
-
 	protected int x;
 	protected int y;
 	protected int width;
@@ -66,7 +65,7 @@ public abstract class CustomWidget
 		final Widget w = parent.createChild(-1, WidgetType.GRAPHIC);
 		w.setOriginalWidth(width);
 		w.setOriginalHeight(height);
-		w.setName("<col=ff981f>" + this.name);
+		w.setName(UIManager.ORANGE_COLOUR_WIDGET_NAME + this.name);
 		return w;
 	}
 
@@ -75,7 +74,7 @@ public abstract class CustomWidget
 		final Widget w = parent.createChild(-1, WidgetType.MODEL);
 		w.setOriginalWidth(width);
 		w.setOriginalHeight(height);
-		w.setName("<col=ff981f>" + this.name);
+		w.setName(UIManager.ORANGE_COLOUR_WIDGET_NAME + this.name);
 		return w;
 	}
 

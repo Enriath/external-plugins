@@ -32,8 +32,6 @@ import net.runelite.client.game.SpriteOverride;
 public enum CustomSprites implements SpriteOverride
 {
 	TRANSMOG_LOGO(-4365, "transmog.png"),
-	//TRANSMOG_SAVE(-4366, "save.png"),
-	//TRANSMOG_DELETE(-4367, "delete.png"),
 	TUTORIAL_ARROW(-4368, "arrow.png"),
 	SLOT_HAIR(-4369, "hair.png"),
 	SLOT_JAW(-4370, "jaw.png"),

@@ -30,7 +30,6 @@ import com.google.inject.Singleton;
 import io.hydrox.transmog.TransmogPreset;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.config.TransmogrificationConfigManager;
-import static io.hydrox.transmog.ui.UIManager.FORCE_RIGHT_CLICK_WIDGET_NAME;
 import net.runelite.api.Client;
 import net.runelite.api.SpriteID;
 import net.runelite.api.widgets.JavaScriptCallback;
@@ -242,45 +241,9 @@ public class PresetTab extends CustomTab
 		separator.setTextColor(0xaa9f75);
 		separator.revalidate();
 
-		/*
-		Widget presetContainer = parent.createChild(-1, WidgetType.LAYER);
-		presetContainer.setOriginalWidth(parent.getOriginalWidth());
-		presetContainer.setOriginalHeight(203);
-		presetContainer.setOriginalX(0);
-		presetContainer.setOriginalY(0);
-		presetContainer.setScrollHeight(Math.max(203, (int) (Math.ceil(presetCount / presetsPerLine) * (presetSize + presetPadding) - presetPadding)));
-		presetContainer.revalidate();
-		*/
-
-
-		/*
-		savePresetButton = new CustomWidgetActionButton(
-			parent,
-			FORCE_RIGHT_CLICK_WIDGET_NAME,
-			SpriteID.DUEL_ARENA_SAVE_PRESET,
-			op ->
-			{
-				if (op == 0)
-				{
-					op = config.currentPreset();
-				}
-				manager.copyCurrentPresetTo(op);
-				manager.save();
-				manager.selectTransmog(op);
-			}
-		);
-		savePresetButton.setSize(40, 40);
-		savePresetButton.setIconSize(16, 16);
-		savePresetButton.create();
-		savePresetButton.addOption(1, "Save to Preset <col=ff981f>1");
-		savePresetButton.addOption(2, "Save to Preset <col=ff981f>2");
-		savePresetButton.addOption(3, "Save to Preset <col=ff981f>3");
-		savePresetButton.addOption(4, "Save to Preset <col=ff981f>4");
-		savePresetButton.layout(52, 213);
-*/
 		CustomWidgetActionButton deletePresetButton = new CustomWidgetActionButton(
 			parent,
-			FORCE_RIGHT_CLICK_WIDGET_NAME,
+			UIManager.FORCE_RIGHT_CLICK_WIDGET_NAME,
 			SpriteID.BANK_RAID_SEND_TO_TRASH,
 			op ->
 			{
@@ -307,7 +270,7 @@ public class PresetTab extends CustomTab
 		deletePresetButton.setSize(40, 40);
 		deletePresetButton.setIconSize(26, 20);
 		deletePresetButton.create();
-		deletePresetButton.addOption(1, "Delete active <col=ff981f>Preset");
+		deletePresetButton.addOption(1, "Delete active " + UIManager.ORANGE_COLOUR_WIDGET_NAME + "Preset");
 		deletePresetButton.layout(52, 213);
 
 

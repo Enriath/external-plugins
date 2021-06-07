@@ -31,6 +31,9 @@ import net.runelite.api.widgets.Widget;
 
 public class CustomWidgetConfigButton extends CustomWidget implements InteractibleWidget
 {
+	static final int BORDER_SIZE = 9;
+	private static final int LARGE_ICON_SIZE = 32;
+	private static final int SMALL_ICON_SIZE = 20;
 	private static final int COG_SMALL = 2410;
 
 	private Widget overlay;
@@ -60,19 +63,19 @@ public class CustomWidgetConfigButton extends CustomWidget implements Interactib
 	@Override
 	public void create()
 	{
-		topLeftBrace = createSpriteWidget(9, 9);
-		topRightBrace = createSpriteWidget(9, 9);
-		bottomLeftBrace = createSpriteWidget(9, 9);
-		bottomRightBrace = createSpriteWidget(9, 9);
+		topLeftBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
+		topRightBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
+		bottomLeftBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
+		bottomRightBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
 
-		leftSide = createSpriteWidget(9, height - 9 * 2);
-		topSide = createSpriteWidget(width - 9 * 2, 9);
-		rightSide = createSpriteWidget(9, height - 9 * 2);
-		bottomSide = createSpriteWidget(width - 9 * 2, 9);
+		leftSide = createSpriteWidget(BORDER_SIZE, height - BORDER_SIZE * 2);
+		topSide = createSpriteWidget(width - BORDER_SIZE * 2, BORDER_SIZE);
+		rightSide = createSpriteWidget(BORDER_SIZE, height - BORDER_SIZE * 2);
+		bottomSide = createSpriteWidget(width - BORDER_SIZE * 2, BORDER_SIZE);
 
 		onLeave();
 
-		largeIcon = createSpriteWidget(32, 32);
+		largeIcon = createSpriteWidget(LARGE_ICON_SIZE, LARGE_ICON_SIZE);
 		largeIcon.setSpriteId(COG_SMALL);
 
 		itemIcon = createSpriteWidget(36, 32);
@@ -80,7 +83,7 @@ public class CustomWidgetConfigButton extends CustomWidget implements Interactib
 		itemIcon.setItemQuantityMode(2);
 		itemIcon.setBorderType(1);
 
-		smallIcon = createSpriteWidget(20, 20);
+		smallIcon = createSpriteWidget(SMALL_ICON_SIZE, SMALL_ICON_SIZE);
 		smallIcon.setSpriteId(COG_SMALL);
 		smallIcon.setHidden(true);
 
@@ -145,18 +148,18 @@ public class CustomWidgetConfigButton extends CustomWidget implements Interactib
 		layoutWidget(overlay, x, y);
 
 		layoutWidget(largeIcon, x + 3, y + 3);
-		layoutWidget(smallIcon, x + width - 22, y + height - 22);
+		layoutWidget(smallIcon, x + width - SMALL_ICON_SIZE - 2, y + height - SMALL_ICON_SIZE - 2);
 		layoutWidget(itemIcon, x + 4, y + 3);
 
 		layoutWidget(topLeftBrace, x, y);
-		layoutWidget(topRightBrace, x + width - 9, y);
-		layoutWidget(bottomLeftBrace, x, y + height - 9);
-		layoutWidget(bottomRightBrace, x + width - 9, y + height - 9);
+		layoutWidget(topRightBrace, x + width - BORDER_SIZE, y);
+		layoutWidget(bottomLeftBrace, x, y + height - BORDER_SIZE);
+		layoutWidget(bottomRightBrace, x + width - BORDER_SIZE, y + height - BORDER_SIZE);
 
-		layoutWidget(leftSide, x, y + 9);
-		layoutWidget(topSide, x + 9, y);
-		layoutWidget(rightSide, x + width - 9, y + 9);
-		layoutWidget(bottomSide, x + 9, y + height - 9);
+		layoutWidget(leftSide, x, y + BORDER_SIZE);
+		layoutWidget(topSide, x + BORDER_SIZE, y);
+		layoutWidget(rightSide, x + width - BORDER_SIZE, y + BORDER_SIZE);
+		layoutWidget(bottomSide, x + BORDER_SIZE, y + height - BORDER_SIZE);
 
 		super.layout(x, y);
 	}

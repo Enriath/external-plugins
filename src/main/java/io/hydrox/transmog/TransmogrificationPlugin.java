@@ -59,12 +59,11 @@ import java.util.Arrays;
 	name = "Transmogrification",
 	description = "Wear the armour you want, no matter what you're doing.",
 	tags = {"transmog", "transmogrification", "fashion", "armour", "armor", "equipment"}
-
 )
 @Slf4j
 public class TransmogrificationPlugin extends Plugin implements MouseWheelListener
 {
-	private static final String FORCE_RIGHT_CLICK_MENU_FLAG = "<col=ff981f><col=004356>";
+	private static final String FORCE_RIGHT_CLICK_MENU_FLAG = UIManager.ORANGE_COLOUR_WIDGET_NAME + UIManager.FORCE_RIGHT_CLICK_WIDGET_NAME;
 	private static final int SCRIPT_ID_EQUIPMENT_TAB_CREATED = 914;
 
 	@Inject

@@ -97,8 +97,7 @@ public class TransmogrificationManager
 	{
 		savePresets();
 		removeTransmog();
-		currentActualState = null;
-		emptyState = null;
+		clearUserStates();
 		presets.clear();
 	}
 

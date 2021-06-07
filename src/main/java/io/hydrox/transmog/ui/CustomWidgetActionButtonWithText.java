@@ -64,7 +64,7 @@ public class CustomWidgetActionButtonWithText extends CustomWidgetActionButton
 	@Override
 	public void layout(int x, int y)
 	{
-		layoutWidget(text, x + width - 14, y + 9);
+		layoutWidget(text, x + width - 14, y + BORDER_SIZE);
 		super.layout(x, y);
 	}
 

@@ -31,6 +31,8 @@ import net.runelite.api.widgets.Widget;
 
 public class CustomWidgetActionButton extends CustomWidgetWithIcon implements InteractibleWidget
 {
+	static final int BORDER_SIZE = 9;
+
 	private Widget overlay;
 
 	private Widget topLeftBrace;
@@ -54,15 +56,15 @@ public class CustomWidgetActionButton extends CustomWidgetWithIcon implements In
 	@Override
 	public void create()
 	{
-		topLeftBrace = createSpriteWidget(9, 9);
-		topRightBrace = createSpriteWidget(9, 9);
-		bottomLeftBrace = createSpriteWidget(9, 9);
-		bottomRightBrace = createSpriteWidget(9, 9);
+		topLeftBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
+		topRightBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
+		bottomLeftBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
+		bottomRightBrace = createSpriteWidget(BORDER_SIZE, BORDER_SIZE);
 
-		leftSide = createSpriteWidget(9, height - 9 * 2);
-		topSide = createSpriteWidget(width - 9 * 2, 9);
-		rightSide = createSpriteWidget(9, height - 9 * 2);
-		bottomSide = createSpriteWidget(width - 9 * 2, 9);
+		leftSide = createSpriteWidget(BORDER_SIZE, height - BORDER_SIZE * 2);
+		topSide = createSpriteWidget(width - BORDER_SIZE * 2, BORDER_SIZE);
+		rightSide = createSpriteWidget(BORDER_SIZE, height - BORDER_SIZE * 2);
+		bottomSide = createSpriteWidget(width - BORDER_SIZE * 2, BORDER_SIZE);
 
 		onLeave();
 
@@ -116,14 +118,14 @@ public class CustomWidgetActionButton extends CustomWidgetWithIcon implements In
 		layoutWidget(overlay, x, y);
 
 		layoutWidget(topLeftBrace, x, y);
-		layoutWidget(topRightBrace, x + width - 9, y);
-		layoutWidget(bottomLeftBrace, x, y + height - 9);
-		layoutWidget(bottomRightBrace, x + width - 9, y + height - 9);
+		layoutWidget(topRightBrace, x + width - BORDER_SIZE, y);
+		layoutWidget(bottomLeftBrace, x, y + height - BORDER_SIZE);
+		layoutWidget(bottomRightBrace, x + width - BORDER_SIZE, y + height - BORDER_SIZE);
 
-		layoutWidget(leftSide, x, y + 9);
-		layoutWidget(topSide, x + 9, y);
-		layoutWidget(rightSide, x + width - 9, y + 9);
-		layoutWidget(bottomSide, x + 9, y + height - 9);
+		layoutWidget(leftSide, x, y + BORDER_SIZE);
+		layoutWidget(topSide, x + BORDER_SIZE, y);
+		layoutWidget(rightSide, x + width - BORDER_SIZE, y + BORDER_SIZE);
+		layoutWidget(bottomSide, x + BORDER_SIZE, y + height - BORDER_SIZE);
 
 		super.layout(x, y);
 	}

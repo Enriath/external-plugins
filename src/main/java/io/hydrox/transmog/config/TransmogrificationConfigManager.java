@@ -40,7 +40,7 @@ public class TransmogrificationConfigManager
 	private static final String CONFIG_DEFAULT = "default";
 	private static final String CONFIG_OVERRIDE = "override";
 	private static final String CONFIG_PRESET = "preset_";
-	private static final String CONFIG_MAX_PRESET = "max_index";
+	private static final String CONFIG_LAST_PRESET_IDX = "lastIndex";
 	private static final String CONFIG_TRANSMOG_ACTIVE = "transmogActive";
 	private static final String CONFIG_CURRENT_PRESET = "currentPreset";
 
@@ -77,7 +77,7 @@ public class TransmogrificationConfigManager
 	 */
 	public int lastIndex()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, int.class)).orElse(0);
+		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_LAST_PRESET_IDX, int.class)).orElse(0);
 	}
 
 	/**
@@ -85,7 +85,12 @@ public class TransmogrificationConfigManager
 	 */
 	public void lastIndex(int value)
 	{
-		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_MAX_PRESET, value);
+		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_LAST_PRESET_IDX, value);
+	}
+
+	public String getPresetData(int index)
+	{
+		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_OVERRIDE + "." + CONFIG_PRESET + index);
 	}
 
 	public void savePreset(TransmogPreset preset)
@@ -113,21 +118,16 @@ public class TransmogrificationConfigManager
 		configManager.unsetRSProfileConfiguration(CONFIG_GROUP, key);
 	}
 
+	public String getDefaultStateData()
+	{
+		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
+	}
+
 	public void saveDefaultState(int[] state)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT, Arrays.stream(state)
 			.mapToObj(String::valueOf)
 			.collect(Collectors.joining(","))
 		);
-	}
-
-	public String getPresetData(int index)
-	{
-		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_OVERRIDE + "." + CONFIG_PRESET + index);
-	}
-
-	public String getDefaultStateData()
-	{
-		return configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_DEFAULT);
 	}
 }

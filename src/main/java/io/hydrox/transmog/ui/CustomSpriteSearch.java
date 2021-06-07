@@ -25,10 +25,10 @@
 package io.hydrox.transmog.ui;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.hydrox.transmog.Mapping;
 import io.hydrox.transmog.MappingMapping;
 import io.hydrox.transmog.TransmogSlot;
-import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.TransmogrificationPlugin;
 import lombok.Setter;
 import net.runelite.api.Client;
@@ -38,7 +38,6 @@ import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
-import com.google.inject.Singleton;
 import java.util.function.Consumer;
 
 @Singleton
@@ -93,7 +92,7 @@ public class CustomSpriteSearch extends CustomSearch
 			clickBox.setOriginalY(y + FONT_SIZE * 2);
 			clickBox.setOriginalHeight(ICON_HEIGHT);
 			clickBox.setOriginalWidth(ICON_WIDTH);
-			clickBox.setName("<col=ff9040>" + mapping.prettyName());
+			clickBox.setName(UIManager.ORANGE_COLOUR_WIDGET_NAME + mapping.prettyName());
 			clickBox.setAction(0, tooltipText);
 			clickBox.setHasListener(true);
 

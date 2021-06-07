@@ -92,7 +92,7 @@ public class CustomItemSearch extends CustomSearch
 			item.setOriginalY(y + FONT_SIZE * 2);
 			item.setOriginalHeight(ICON_HEIGHT);
 			item.setOriginalWidth(ICON_WIDTH);
-			item.setName("<col=ff9040>" + itemComposition.getName());
+			item.setName(UIManager.ORANGE_COLOUR_WIDGET_NAME + itemComposition.getName());
 			item.setItemId(itemComposition.getId());
 			item.setItemQuantity(10000);
 			item.setItemQuantityMode(ItemQuantityMode.NEVER);

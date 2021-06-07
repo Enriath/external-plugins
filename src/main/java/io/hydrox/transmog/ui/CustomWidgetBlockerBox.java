@@ -35,6 +35,7 @@ public class CustomWidgetBlockerBox extends CustomWidget
 {
 	private static final int TOP_LEFT_CORNER_SIZE = 31;
 	private static final int BOTTOM_RIGHT_CORNER_SIZE = 51;
+	private static final int OPACITY = 120;
 
 	private Widget leftBar;
 	private Widget middleBar;
@@ -102,28 +103,28 @@ public class CustomWidgetBlockerBox extends CustomWidget
 
 		leftBar = createRectangleWidget(TOP_LEFT_CORNER_SIZE, height - TOP_LEFT_CORNER_SIZE);
 		leftBar.setFilled(true);
-		leftBar.setOpacity(120);
+		leftBar.setOpacity(OPACITY);
 		leftBar.setHasListener(true);
 		leftBar.setNoClickThrough(true);
 		leftBar.setOnOpListener(empty);
 
 		middleBar = createRectangleWidget(width - (TOP_LEFT_CORNER_SIZE + BOTTOM_RIGHT_CORNER_SIZE), height);
 		middleBar.setFilled(true);
-		middleBar.setOpacity(120);
+		middleBar.setOpacity(OPACITY);
 		middleBar.setHasListener(true);
 		middleBar.setNoClickThrough(true);
 		middleBar.setOnOpListener(empty);
 
 		rightBar = createRectangleWidget(BOTTOM_RIGHT_CORNER_SIZE, height - BOTTOM_RIGHT_CORNER_SIZE);
 		rightBar.setFilled(true);
-		rightBar.setOpacity(120);
+		rightBar.setOpacity(OPACITY);
 		rightBar.setHasListener(true);
 		rightBar.setNoClickThrough(true);
 		rightBar.setOnOpListener(empty);
 
 		cornerBlocker = createRectangleWidget(BOTTOM_RIGHT_CORNER_SIZE, BOTTOM_RIGHT_CORNER_SIZE);
 		cornerBlocker.setFilled(true);
-		cornerBlocker.setOpacity(120);
+		cornerBlocker.setOpacity(OPACITY);
 		cornerBlocker.setHasListener(true);
 		cornerBlocker.setNoClickThrough(true);
 		cornerBlocker.setOnOpListener(empty);

@@ -116,7 +116,7 @@ public class CustomWidgetTransmogBox extends CustomWidget implements Interactibl
 			contentsWidget.setModelId(id);
 		}
 
-		overlayWidget.setAction(SET_ITEM, "Replace <col=ff981f>" + name + "</col> for");
+		overlayWidget.setAction(SET_ITEM, "Replace " + UIManager.ORANGE_COLOUR_WIDGET_NAME + name + "</col> for");
 
 		if (slot.getSlotType() == SlotType.SPECIAL)
 		{

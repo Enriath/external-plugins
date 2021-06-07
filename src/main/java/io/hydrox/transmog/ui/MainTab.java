@@ -61,7 +61,6 @@ import java.util.Map;
 @Singleton
 public class MainTab extends CustomTab
 {
-	private static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";
 	private static final Point BASE_POSITION = new Point(148, 4);
 	private static final ImmutableMap<TransmogSlot, Point> SLOT_POSITIONS = ImmutableMap.<TransmogSlot, Point>builder()
 		.put(TransmogSlot.JAW, new Point(-76, 0))
@@ -186,12 +185,12 @@ public class MainTab extends CustomTab
 		selectPresetButton.setSize(40, 40);
 		selectPresetButton.setIconSize(36, 36);
 		selectPresetButton.create();
-		selectPresetButton.addOption(1, "Choose <col=ff981f>Preset");
+		selectPresetButton.addOption(1, "Choose " + UIManager.ORANGE_COLOUR_WIDGET_NAME + "Preset");
 		selectPresetButton.layout(7, 213);
 
 		presetExtraDataButton = new CustomWidgetConfigButton(
 			parent,
-			FORCE_RIGHT_CLICK_WIDGET_NAME,
+			UIManager.FORCE_RIGHT_CLICK_WIDGET_NAME,
 			op ->
 			{
 				switch (op)
@@ -235,71 +234,10 @@ public class MainTab extends CustomTab
 		);
 		presetExtraDataButton.setSize(40, 40);
 		presetExtraDataButton.create();
-		presetExtraDataButton.addOption(0, "<col=ff8800>Preset Config:");
+		presetExtraDataButton.addOption(0, UIManager.ORANGE_COLOUR_WIDGET_NAME + "Preset Config:");
 		presetExtraDataButton.addOption(1, "Set Name");
 		presetExtraDataButton.setItemIcon(manager.getCurrentPreset().getIcon());
 		presetExtraDataButton.layout(97, 213);
-
-		/*
-		savePresetButton = new CustomWidgetActionButton(
-			parent,
-			FORCE_RIGHT_CLICK_WIDGET_NAME,
-			SpriteID.DUEL_ARENA_SAVE_PRESET,
-			op ->
-			{
-				if (op == 0)
-				{
-					op = config.currentPreset();
-				}
-				manager.copyCurrentPresetTo(op);
-				manager.save();
-				manager.selectTransmog(op);
-			}
-		);
-		savePresetButton.setSize(40, 40);
-		savePresetButton.setIconSize(16, 16);
-		savePresetButton.create();
-		savePresetButton.addOption(1, "Save to Preset <col=ff981f>1");
-		savePresetButton.addOption(2, "Save to Preset <col=ff981f>2");
-		savePresetButton.addOption(3, "Save to Preset <col=ff981f>3");
-		savePresetButton.addOption(4, "Save to Preset <col=ff981f>4");
-		savePresetButton.layout(52, 213);
-
-		deletePresetButton = new CustomWidgetActionButton(
-			parent,
-			FORCE_RIGHT_CLICK_WIDGET_NAME,
-			SpriteID.BANK_RAID_SEND_TO_TRASH,
-			op ->
-			{
-				if (op == 0)
-				{
-					op = config.currentPreset();
-				}
-				manager.setPreset(op, null);
-				manager.updateTransmog();
-				config.savePresets();
-				uiSlots.forEach((slot, widget) ->
-				{
-					if (slot.getSlotType() == SlotType.SPECIAL)
-					{
-						widget.setDefault();
-					}
-					else
-					{
-						widget.setEmpty();
-					}
-				});
-			}
-		);
-		deletePresetButton.setSize(40, 40);
-		deletePresetButton.setIconSize(26, 20);
-		deletePresetButton.create();
-		deletePresetButton.addOption(1, "Delete Preset <col=ff981f>1");
-		deletePresetButton.addOption(2, "Delete Preset <col=ff981f>2");
-		deletePresetButton.addOption(3, "Delete Preset <col=ff981f>3");
-		deletePresetButton.addOption(4, "Delete Preset <col=ff981f>4");
-		deletePresetButton.layout(97, 213);
-		*/
 
 		saveDefaultStateButton = new CustomWidgetActionButton(
 			parent,

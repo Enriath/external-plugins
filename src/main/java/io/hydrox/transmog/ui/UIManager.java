@@ -45,7 +45,8 @@ import java.awt.event.MouseWheelEvent;
 @Slf4j
 public class UIManager
 {
-	static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";
+	public static final String FORCE_RIGHT_CLICK_WIDGET_NAME = "<col=004356>";
+	public static final String ORANGE_COLOUR_WIDGET_NAME = "<col=ff981f>";
 	static final FontMetrics FONT_METRICS = Toolkit.getDefaultToolkit().getFontMetrics(FontManager.getRunescapeSmallFont());
 
 	private final ChatboxPanelManager chatboxPanelManager;
