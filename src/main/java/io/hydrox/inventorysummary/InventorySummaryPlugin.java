@@ -33,6 +33,7 @@ import net.runelite.api.Item;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.events.ItemContainerChanged;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -58,6 +59,9 @@ public class InventorySummaryPlugin extends Plugin
 {
 	@Inject
 	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
 
 	@Inject
 	private InventorySummaryOverlay overlay;
@@ -86,7 +90,7 @@ public class InventorySummaryPlugin extends Plugin
 		overlayManager.add(overlay);
 		whitelist = Text.fromCSV(config.whitelist());
 		blacklist = Text.fromCSV(config.blacklist());
-		groupItems();
+		clientThread.invoke((Runnable) this::groupItems);
 	}
 
 	@Override
@@ -102,7 +106,7 @@ public class InventorySummaryPlugin extends Plugin
 		{
 			whitelist = Text.fromCSV(config.whitelist());
 			blacklist = Text.fromCSV(config.blacklist());
-			groupItems();
+			clientThread.invoke((Runnable) this::groupItems);
 		}
 	}
 
@@ -142,7 +146,6 @@ public class InventorySummaryPlugin extends Plugin
 
 	private void groupItems(Item[] items)
 	{
-
 		Map<Integer, Integer> groupedItems = Arrays.stream(items)
 			.filter(p -> p.getId() != -1)
 			.filter(this::shouldItemBeShown)
