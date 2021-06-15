@@ -32,8 +32,10 @@ import lombok.Getter;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.InventoryID;
+import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
+import net.runelite.api.MenuAction;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
@@ -100,11 +102,50 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
+		// Interact in inventory
+		// Right click use in bank
 		if ((event.getId() == ItemID.PLANK_SACK && (event.getMenuOption().equals("Fill") || event.getMenuOption().equals("Empty")))
 		|| (event.getMenuTarget().equals("<col=ff9040>Plank sack</col>") && event.getMenuOption().equals("Use")))
 		{
 			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 			checkForUpdate = true;
+		}
+		// Shift click use in bank
+		else if (event.getMenuOption().equals("Use") && event.getId() == 9 && event.getMenuAction() == MenuAction.CC_OP)
+		{
+			ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
+			if (inventory != null)
+			{
+				Item[] items = inventory.getItems();
+				int idx = event.getActionParam();
+				if (idx < items.length && items[idx].getId() == ItemID.PLANK_SACK)
+				{
+					inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+					checkForUpdate = true;
+				}
+			}
+		}
+		// Use plank on sack or sack on plank
+		else if (event.getMenuOption().equals("Use") && event.getMenuAction() == MenuAction.ITEM_USE_ON_WIDGET_ITEM &&
+			(event.getId() == ItemID.PLANK_SACK || PLANKS.contains(event.getId())))
+		{
+			ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
+			if (inventory != null)
+			{
+				Item[] items = inventory.getItems();
+				int idx = event.getSelectedItemIndex();
+				if (idx < items.length)
+				{
+					int selectedItemID = items[idx].getId();
+					if ((selectedItemID == ItemID.PLANK_SACK && PLANKS.contains(event.getId()))
+						|| (PLANKS.contains(selectedItemID) && event.getId() == ItemID.PLANK_SACK))
+					{
+						inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+						checkForUpdate = true;
+					}
+				}
+
+			}
 		}
 	}
 
