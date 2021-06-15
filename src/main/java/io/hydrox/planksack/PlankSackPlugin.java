@@ -28,6 +28,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.common.primitives.Ints;
+import lombok.Data;
 import lombok.Getter;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -37,14 +38,20 @@ import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 import net.runelite.api.MenuAction;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.events.ScriptPostFired;
+import net.runelite.api.events.ScriptPreFired;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,6 +63,18 @@ import java.util.List;
 public class PlankSackPlugin extends Plugin
 {
 	private static final List<Integer> PLANKS = Arrays.asList(ItemID.PLANK, ItemID.OAK_PLANK, ItemID.TEAK_PLANK, ItemID.MAHOGANY_PLANK);
+	private static final List<String> PLANK_NAMES = Arrays.asList("Plank", "Oak plank", "Teak plank", "Mahogany plank");
+	private static final int CONSTRUCTION_WIDGET_GROUP = 458;
+	private static final int CONSTRUCTION_WIDGET_BUILD_IDX_START = 4;
+	private static final int CONSTRUCTION_SUBWIDGET_MATERIALS = 3;
+	private static final int CONSTRUCTION_SUBWIDGET_CANT_BUILD = 5;
+
+	@Data
+	private static class BuildMenuItem
+	{
+		private final Item[] planks;
+		private final boolean canBuild;
+	}
 
 	@Inject
 	private Client client;
@@ -71,6 +90,9 @@ public class PlankSackPlugin extends Plugin
 
 	private Multiset<Integer> inventorySnapshot;
 	private boolean checkForUpdate = false;
+
+	private int menuItemsToCheck = 0;
+	private final List<BuildMenuItem> buildMenuItems = new ArrayList<>();
 
 	@Override
 	public void startUp()
@@ -146,6 +168,91 @@ public class PlankSackPlugin extends Plugin
 				}
 
 			}
+		}
+	}
+
+	@Subscribe
+	public void onScriptPreFired(ScriptPreFired event)
+	{
+		// Construction menu option selected
+		// Consutrction menu option selected with keybind
+		if (event.getScriptId() != 1405 && event.getScriptId() != 1632)
+		{
+			return;
+		}
+
+		Widget widget = event.getScriptEvent().getSource();
+		int idx = WidgetInfo.TO_CHILD(widget.getId()) - CONSTRUCTION_WIDGET_BUILD_IDX_START;
+		if (idx >= buildMenuItems.size())
+		{
+			return;
+		}
+		BuildMenuItem item = buildMenuItems.get(idx);
+		if (item != null && item.canBuild)
+		{
+			Multiset<Integer> snapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+			if (snapshot != null)
+			{
+				for (Item i : item.planks)
+				{
+					if (!snapshot.contains(i.getId()))
+					{
+						plankCount -= i.getQuantity();
+					}
+					else if (snapshot.count(i.getId()) < i.getQuantity())
+					{
+						plankCount -= i.getQuantity() - snapshot.count(i.getId());
+					}
+				}
+			}
+		}
+
+		buildMenuItems.clear();
+	}
+
+	@Subscribe
+	public void onScriptPostFired(ScriptPostFired event)
+	{
+		if (event.getScriptId() != 1404)
+		{
+			return;
+		}
+		// Construction menu add object
+		menuItemsToCheck += 1;
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		if (menuItemsToCheck > 0)
+		{
+			for (int i = 0; i < menuItemsToCheck; i++)
+			{
+				int idx = CONSTRUCTION_WIDGET_BUILD_IDX_START + i;
+				Widget widget = client.getWidget(CONSTRUCTION_WIDGET_GROUP, idx);
+				if (widget != null)
+				{
+					boolean canBuild = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_CANT_BUILD].isHidden();
+					Widget materialWidget = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_MATERIALS];
+					if (materialWidget != null)
+					{
+						String[] materialLines = materialWidget.getText().split("<br>");
+						List<Item> materials = new ArrayList<>();
+						for (String line : materialLines)
+						{
+							String[] data = line.split(": ");
+							String name = data[0];
+							int count = Integer.parseInt(data[1]);
+							if (PLANK_NAMES.contains(name))
+							{
+								materials.add(new Item(PLANKS.get(PLANK_NAMES.indexOf(name)), count));
+							}
+						}
+						buildMenuItems.add(new BuildMenuItem(materials.toArray(new Item[0]), canBuild));
+					}
+				}
+			}
+			menuItemsToCheck = 0;
 		}
 	}
 
