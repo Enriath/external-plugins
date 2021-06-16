@@ -27,9 +27,11 @@ package io.hydrox.planksack;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import lombok.Data;
 import lombok.Getter;
+import net.runelite.api.AnimationID;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.InventoryID;
@@ -37,6 +39,7 @@ import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 import net.runelite.api.MenuAction;
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
@@ -54,6 +57,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @PluginDescriptor(
 	name = "Plank Sack",
@@ -64,10 +68,13 @@ public class PlankSackPlugin extends Plugin
 {
 	private static final List<Integer> PLANKS = Arrays.asList(ItemID.PLANK, ItemID.OAK_PLANK, ItemID.TEAK_PLANK, ItemID.MAHOGANY_PLANK);
 	private static final List<String> PLANK_NAMES = Arrays.asList("Plank", "Oak plank", "Teak plank", "Mahogany plank");
+	private static final Set<Integer> MAHOGANY_HOMES_REPAIRS = Sets.newHashSet(
+		39982, 39995, 40011, 40089, 40099, 40158, 40159, 40163, 40168, 40170, 40177, 40295, 40298);
 	private static final int CONSTRUCTION_WIDGET_GROUP = 458;
 	private static final int CONSTRUCTION_WIDGET_BUILD_IDX_START = 4;
 	private static final int CONSTRUCTION_SUBWIDGET_MATERIALS = 3;
 	private static final int CONSTRUCTION_SUBWIDGET_CANT_BUILD = 5;
+	private static final int CONSTRUCTION_IMCANDO_MAHOGANY_HOMES = 8912;
 
 	@Data
 	private static class BuildMenuItem
@@ -93,6 +100,8 @@ public class PlankSackPlugin extends Plugin
 
 	private int menuItemsToCheck = 0;
 	private final List<BuildMenuItem> buildMenuItems = new ArrayList<>();
+
+	private boolean watchForAnimations = false;
 
 	@Override
 	public void startUp()
@@ -169,6 +178,10 @@ public class PlankSackPlugin extends Plugin
 
 			}
 		}
+		else if (event.getMenuOption().equals("Repair"))
+		{
+			watchForAnimations = MAHOGANY_HOMES_REPAIRS.contains(event.getId());
+		}
 	}
 
 	@Subscribe
@@ -219,6 +232,8 @@ public class PlankSackPlugin extends Plugin
 		}
 		// Construction menu add object
 		menuItemsToCheck += 1;
+		// Cancel repair-based animation checking
+		watchForAnimations = false;
 	}
 
 	@Subscribe
@@ -253,6 +268,16 @@ public class PlankSackPlugin extends Plugin
 				}
 			}
 			menuItemsToCheck = 0;
+		}
+	}
+
+	@Subscribe
+	public void onAnimationChanged(AnimationChanged event)
+	{
+		if (watchForAnimations && (event.getActor().getAnimation() == AnimationID.CONSTRUCTION || event.getActor().getAnimation() == CONSTRUCTION_IMCANDO_MAHOGANY_HOMES))
+		{
+			plankCount -= 1;
+			watchForAnimations = false;
 		}
 	}
 
