@@ -24,42 +24,22 @@
  */
 package io.hydrox.planksack;
 
-import net.runelite.api.ItemID;
-import net.runelite.api.widgets.WidgetItem;
-import net.runelite.client.ui.overlay.WidgetItemOverlay;
-import javax.inject.Inject;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
 
-public class PlankSackOverlay extends WidgetItemOverlay
+@ConfigGroup(PlankSackConfig.CONFIG_GROUP)
+public interface PlankSackConfig extends Config
 {
-	private final PlankSackPlugin plugin;
+	String CONFIG_GROUP = "planksack";
 
-	@Inject
-	PlankSackOverlay(PlankSackPlugin plugin)
+	@ConfigItem(
+		keyName = "showInfobox",
+		name = "Show Infobox",
+		description = "Show the plank sack's contents in an infobox as well"
+	)
+	default boolean showInfobox()
 	{
-		this.plugin = plugin;
-		showOnInventory();
-	}
-
-	@Override
-	public void renderItemOverlay(Graphics2D graphics, int itemId, WidgetItem widgetItem)
-	{
-		if (itemId != ItemID.PLANK_SACK)
-		{
-			return;
-		}
-
-		String text = plugin.getPlankCount() == -1 ? "?" : plugin.getPlankCount() + "";
-
-		drawString(graphics, text, widgetItem.getCanvasBounds().x, widgetItem.getCanvasBounds().y + 10);
-	}
-
-	private void drawString(Graphics2D graphics, String text, int drawX, int drawY)
-	{
-		graphics.setColor(Color.BLACK);
-		graphics.drawString(text, drawX + 1, drawY + 1);
-		graphics.setColor(plugin.getColour());
-		graphics.drawString(text, drawX, drawY);
+		return true;
 	}
 }

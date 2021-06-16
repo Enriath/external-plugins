@@ -29,6 +29,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
+import com.google.inject.Provides;
 import lombok.Data;
 import lombok.Getter;
 import net.runelite.api.AnimationID;
@@ -48,12 +49,18 @@ import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,13 +94,33 @@ public class PlankSackPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ClientThread clientThread;
+
+	@Inject
+	private InfoBoxManager infoBoxManager;
+
+	@Inject
+	private ItemManager itemManager;
+
+	@Inject
 	private OverlayManager overlayManager;
+
+	@Inject
+	private PlankSackConfig config;
 
 	@Inject
 	private PlankSackOverlay overlay;
 
+	@Provides
+	PlankSackConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(PlankSackConfig.class);
+	}
+
 	@Getter
 	private int plankCount = -1;
+
+	private PlankSackCounter plankSackCounter;
 
 	private Multiset<Integer> inventorySnapshot;
 	private boolean checkForUpdate = false;
@@ -107,17 +134,26 @@ public class PlankSackPlugin extends Plugin
 	public void startUp()
 	{
 		overlayManager.add(overlay);
+
+		plankSackCounter = new PlankSackCounter(itemManager.getImage(ItemID.PLANK_SACK), this);
+		clientThread.invoke(() -> updateInfobox(client.getItemContainer(InventoryID.INVENTORY)));
 	}
 
 	@Override
 	public void shutDown()
 	{
 		overlayManager.remove(overlay);
+		infoBoxManager.removeInfoBox(plankSackCounter);
 	}
 
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
+		if (event.getContainerId() != InventoryID.INVENTORY.getId())
+		{
+			return;
+		}
+
 		if (checkForUpdate)
 		{
 			checkForUpdate = false;
@@ -127,6 +163,17 @@ public class PlankSackPlugin extends Plugin
 			deltaPlus.forEachEntry((id, c) -> plankCount += c);
 			deltaMinus.forEachEntry((id, c) -> plankCount -= c);
 			plankCount = Ints.constrainToRange(plankCount, 0, 28);
+		}
+
+		updateInfobox(event.getItemContainer());
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals(PlankSackConfig.CONFIG_GROUP))
+		{
+			clientThread.invoke(() -> updateInfobox(client.getItemContainer(InventoryID.INVENTORY)));
 		}
 	}
 
@@ -320,5 +367,39 @@ public class PlankSackPlugin extends Plugin
 			.filter(item -> PLANKS.contains(item.getId()))
 			.forEach(i -> snapshot.add(i.getId(), i.getQuantity()));
 		return snapshot;
+	}
+
+	private void updateInfobox(ItemContainer container)
+	{
+		if (container == null)
+		{
+			infoBoxManager.removeInfoBox(plankSackCounter);
+			return;
+		}
+		boolean val = container.contains(ItemID.PLANK_SACK);
+		if (val && config.showInfobox())
+		{
+			infoBoxManager.addInfoBox(plankSackCounter);
+		}
+		else
+		{
+			infoBoxManager.removeInfoBox(plankSackCounter);
+		}
+	}
+
+	Color getColour()
+	{
+		if (plankCount <= 0)
+		{
+			return Color.RED;
+		}
+		else if (plankCount < 14)
+		{
+			return Color.YELLOW;
+		}
+		else
+		{
+			return Color.WHITE;
+		}
 	}
 }
