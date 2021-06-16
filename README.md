@@ -1,2 +1,2 @@
-# Master Scroll Book
-*See the contents of your Master Scroll Book without opening it.*
+# Plank Sack
+*See the contents of your Plank Sack at a glance*
