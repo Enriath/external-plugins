@@ -35,6 +35,7 @@ import lombok.Getter;
 import net.runelite.api.AnimationID;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
@@ -42,6 +43,7 @@ import net.runelite.api.ItemID;
 import net.runelite.api.MenuAction;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
@@ -64,6 +66,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @PluginDescriptor(
@@ -95,6 +98,9 @@ public class PlankSackPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
+
+	@Inject
+	private ConfigManager configManager;
 
 	@Inject
 	private InfoBoxManager infoBoxManager;
@@ -147,6 +153,15 @@ public class PlankSackPlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() == GameState.LOGGED_IN)
+		{
+			plankCount = Optional.ofNullable(configManager.getRSProfileConfiguration(PlankSackConfig.CONFIG_GROUP, PlankSackConfig.CONFIG_SACK_KEY, int.class)).orElse(-1);
+		}
+	}
+
+	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
 		if (event.getContainerId() != InventoryID.INVENTORY.getId())
@@ -162,7 +177,7 @@ public class PlankSackPlugin extends Plugin
 			Multiset<Integer> deltaPlus = Multisets.difference(inventorySnapshot, currentInventory);
 			deltaPlus.forEachEntry((id, c) -> plankCount += c);
 			deltaMinus.forEachEntry((id, c) -> plankCount -= c);
-			plankCount = Ints.constrainToRange(plankCount, 0, 28);
+			setPlankCount(plankCount);
 		}
 
 		updateInfobox(event.getItemContainer());
@@ -264,6 +279,7 @@ public class PlankSackPlugin extends Plugin
 						plankCount -= i.getQuantity() - snapshot.count(i.getId());
 					}
 				}
+				setPlankCount(plankCount);
 			}
 		}
 
@@ -323,7 +339,7 @@ public class PlankSackPlugin extends Plugin
 	{
 		if (watchForAnimations && (event.getActor().getAnimation() == AnimationID.CONSTRUCTION || event.getActor().getAnimation() == CONSTRUCTION_IMCANDO_MAHOGANY_HOMES))
 		{
-			plankCount -= 1;
+			setPlankCount(-1);
 			watchForAnimations = false;
 		}
 	}
@@ -338,7 +354,7 @@ public class PlankSackPlugin extends Plugin
 		if (event.getMessage().startsWith("Basic\u00A0planks:"))
 		{
 			String message = Text.removeTags(event.getMessage());
-			plankCount = Arrays.stream(message.split(",")).mapToInt(s -> Integer.parseInt(s.split(":\u00A0")[1])).sum();
+			setPlankCount(Arrays.stream(message.split(",")).mapToInt(s -> Integer.parseInt(s.split(":\u00A0")[1])).sum());
 		}
 		else if (event.getMessage().equals("You haven't got any planks that can go in the sack."))
 		{
@@ -346,14 +362,20 @@ public class PlankSackPlugin extends Plugin
 		}
 		else if (event.getMessage().equals("Your sack is full."))
 		{
-			plankCount = 28;
+			setPlankCount(28);
 			checkForUpdate = false;
 		}
 		else if (event.getMessage().equals("Your sack is empty."))
 		{
-			plankCount = 0;
+			setPlankCount(0);
 			checkForUpdate = false;
 		}
+	}
+
+	private void setPlankCount(int count)
+	{
+		plankCount = Ints.constrainToRange(count, 0, 28);
+		configManager.setRSProfileConfiguration(PlankSackConfig.CONFIG_GROUP, PlankSackConfig.CONFIG_SACK_KEY, plankCount);
 	}
 
 	private Multiset<Integer> createSnapshot(ItemContainer container)
