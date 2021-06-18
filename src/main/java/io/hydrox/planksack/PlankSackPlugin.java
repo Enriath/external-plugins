@@ -339,7 +339,7 @@ public class PlankSackPlugin extends Plugin
 	{
 		if (watchForAnimations && (event.getActor().getAnimation() == AnimationID.CONSTRUCTION || event.getActor().getAnimation() == CONSTRUCTION_IMCANDO_MAHOGANY_HOMES))
 		{
-			setPlankCount(-1);
+			setPlankCount(plankCount - 1);
 			watchForAnimations = false;
 		}
 	}
