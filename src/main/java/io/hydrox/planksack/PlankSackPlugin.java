@@ -393,19 +393,15 @@ public class PlankSackPlugin extends Plugin
 
 	private void updateInfobox(ItemContainer container)
 	{
+		infoBoxManager.removeInfoBox(plankSackCounter);
 		if (container == null)
 		{
-			infoBoxManager.removeInfoBox(plankSackCounter);
 			return;
 		}
 		boolean val = container.contains(ItemID.PLANK_SACK);
 		if (val && config.showInfobox())
 		{
 			infoBoxManager.addInfoBox(plankSackCounter);
-		}
-		else
-		{
-			infoBoxManager.removeInfoBox(plankSackCounter);
 		}
 	}
 
