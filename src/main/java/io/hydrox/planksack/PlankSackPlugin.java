@@ -135,6 +135,7 @@ public class PlankSackPlugin extends Plugin
 	private final List<BuildMenuItem> buildMenuItems = new ArrayList<>();
 
 	private boolean watchForAnimations = false;
+	private int lastAnimation = -1;
 
 	@Override
 	public void startUp()
@@ -243,6 +244,7 @@ public class PlankSackPlugin extends Plugin
 		else if (event.getMenuOption().equals("Repair"))
 		{
 			watchForAnimations = MAHOGANY_HOMES_REPAIRS.contains(event.getId());
+			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 		}
 	}
 
@@ -337,10 +339,29 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged event)
 	{
-		if (watchForAnimations && (event.getActor().getAnimation() == AnimationID.CONSTRUCTION || event.getActor().getAnimation() == CONSTRUCTION_IMCANDO_MAHOGANY_HOMES))
+		if (event.getActor() != client.getLocalPlayer() || client.getLocalPlayer() == null)
 		{
-			setPlankCount(plankCount - 1);
-			watchForAnimations = false;
+			return;
+		}
+
+		if (watchForAnimations)
+		{
+			int anim = client.getLocalPlayer().getAnimation();
+			if ((lastAnimation == AnimationID.CONSTRUCTION || lastAnimation == CONSTRUCTION_IMCANDO_MAHOGANY_HOMES) && anim != lastAnimation)
+			{
+				Multiset<Integer> current = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+				Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
+				if (delta.size() == 0)
+				{
+					setPlankCount(plankCount - 1);
+				}
+				watchForAnimations = false;
+				lastAnimation = -1;
+			}
+			else
+			{
+				lastAnimation = anim;
+			}
 		}
 	}
 
