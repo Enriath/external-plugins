@@ -3,7 +3,7 @@ package io.hydrox.contextualcursor;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class ContextualCursorPluginTest
+public class ContextualCursorPluginLauncher
 {
 	public static void main(String[] args) throws Exception
 	{
