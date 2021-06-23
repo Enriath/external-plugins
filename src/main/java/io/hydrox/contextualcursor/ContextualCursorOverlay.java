@@ -198,7 +198,7 @@ public class ContextualCursorOverlay extends Overlay
 
 	private void processEntry(Graphics2D graphics, String option, String target)
 	{
-		if (option.toLowerCase().equals("cast") && target.contains("->"))
+		if ((option.equals("Cast") || option.equals("Reanimate") || option.equals("Resurrect")) && target.contains("->"))
 		{
 			final Matcher spellFinder = SPELL_FINDER.matcher(target);
 
