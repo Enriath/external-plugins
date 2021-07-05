@@ -79,7 +79,7 @@ public enum ContextualCursor
 	HUNTER(SpriteID.SKILL_HUNTER, "catch", "lay", "dismantle", "reset", "check"),
 	MAGIC(SpriteID.SKILL_MAGIC, "spellbook", "teleport", "teleport menu"), // `venerate` interferes with the Dark Altar's RC use
 	MINING(SpriteID.SKILL_MINING, "mine", "smash-to-bits"),
-	PRAYER(SpriteID.SKILL_PRAYER, "pray", "bury", "pray-at", "offer-fish"),
+	PRAYER(SpriteID.SKILL_PRAYER, "pray", "bury", "pray-at", "offer-fish", "scatter"),
 	RUNECRAFTING(SpriteID.SKILL_RUNECRAFT, "craft-rune", "imbue"),
 	SMITHING(SpriteID.SKILL_SMITHING, "smelt", "smith", "hammer", "refine"),
 	SLAYER(SpriteID.SKILL_SLAYER, "assignment"),
