@@ -73,6 +73,24 @@ public class CrateLimiterPlugin extends Plugin
 		ItemID.MASTER_SCROLL_BOOK_EMPTY
 	);
 
+	private static final Set<Integer> BIRD_NESTS = ImmutableSet.of(
+		// Eggs
+		ItemID.BIRD_NEST,
+		ItemID.BIRD_NEST_5071,
+		ItemID.BIRD_NEST_5072,
+		// Old seed nest
+		ItemID.BIRD_NEST_5073,
+		// Rings
+		ItemID.BIRD_NEST_5074,
+		// Old Wyson seed nest
+		ItemID.BIRD_NEST_7413,
+		// Slightly less old Wyson seed nest
+		ItemID.BIRD_NEST_13653,
+		// Modern seed nests
+		ItemID.BIRD_NEST_22798,
+		ItemID.BIRD_NEST_22800
+	);
+
 	@Inject
 	private Client client;
 
@@ -101,6 +119,14 @@ public class CrateLimiterPlugin extends Plugin
 		if (event.getMenuOption().equals("Take"))
 		{
 			if (event.getId() != ItemID.SEED_PACK)
+			{
+				return;
+			}
+		}
+		// Nests
+		else if (event.getMenuOption().equals("Search"))
+		{
+			if (!BIRD_NESTS.contains(event.getId()))
 			{
 				return;
 			}
