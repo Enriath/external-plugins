@@ -182,7 +182,13 @@ public class TransmogrificationManager
 
 	public TransmogPreset getCurrentPreset()
 	{
-		TransmogPreset preset = presets.get(config.currentPreset());
+		int presetIdx = config.currentPreset();
+		TransmogPreset preset = null;
+		if (presetIdx >= 0 && presetIdx < presets.size())
+		{
+			preset = presets.get(presetIdx);
+		}
+
 		if (preset == null)
 		{
 			preset = createNewPreset();
