@@ -24,6 +24,7 @@
  */
 package io.hydrox.coffincounter;
 
+import static io.hydrox.coffincounter.UIUtil.drawString;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.infobox.InfoBox;
 import java.awt.Color;
@@ -33,11 +34,6 @@ import java.util.Map;
 
 public class CoffinContentsInfobox extends InfoBox
 {
-	private static final int GAP_X = 20;
-	private static final int GAP_Y = 12;
-	private static final int OFFSET_TOP = 10;
-	private static final int LABELS_PER_COLUMN = 3;
-
 	private final CoffinCounterPlugin plugin;
 
 	public CoffinContentsInfobox(BufferedImage baseCoffin, CoffinCounterPlugin plugin)
@@ -85,11 +81,11 @@ public class CoffinContentsInfobox extends InfoBox
 			}
 			final Shade shade = entry.getKey();
 			final Integer value = entry.getValue();
-			final int drawX = GAP_X * (idx / LABELS_PER_COLUMN);
-			final int drawY = OFFSET_TOP + GAP_Y * (idx % LABELS_PER_COLUMN);
+			final int drawX = UIUtil.GAP_X * (idx / UIUtil.LABELS_PER_COLUMN);
+			final int drawY = UIUtil.GAP_Y * (idx % UIUtil.LABELS_PER_COLUMN);
 			if (entry.getValue() == -1)
 			{
-				drawString(graphics, shade, "?", drawX, drawY);
+				drawString(graphics, shade, UIUtil.UNKNOWN, drawX, drawY);
 			}
 			else
 			{
@@ -99,24 +95,5 @@ public class CoffinContentsInfobox extends InfoBox
 		}
 
 		return coffin;
-	}
-
-	private static void drawString(Graphics graphics, Shade shade, String text, int drawX, int drawY)
-	{
-		if (shade.getOutline() != null)
-		{
-			graphics.setColor(shade.getOutline());
-			graphics.drawString(text, drawX + 1, drawY);
-			graphics.drawString(text, drawX - 1, drawY);
-			graphics.drawString(text, drawX, drawY + 1);
-			graphics.drawString(text, drawX, drawY - 1);
-		}
-		else
-		{
-			graphics.setColor(Color.BLACK);
-			graphics.drawString(text, drawX + 1, drawY + 1);
-		}
-		graphics.setColor(shade.getColour());
-		graphics.drawString(text, drawX, drawY);
 	}
 }
