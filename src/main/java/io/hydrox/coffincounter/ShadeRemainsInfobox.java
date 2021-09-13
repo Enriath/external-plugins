@@ -30,14 +30,17 @@ import java.awt.image.BufferedImage;
 
 public class ShadeRemainsInfobox extends InfoBox
 {
-	private final CoffinCounterPlugin plugin;
 	private final Shade shade;
+	private final CoffinCounterPlugin plugin;
+	private final CoffinCounterConfig config;
 
-	public ShadeRemainsInfobox(BufferedImage image, Shade shade, CoffinCounterPlugin plugin)
+
+	public ShadeRemainsInfobox(BufferedImage image, Shade shade, CoffinCounterPlugin plugin, CoffinCounterConfig config)
 	{
 		super(image, plugin);
 		this.shade = shade;
 		this.plugin = plugin;
+		this.config = config;
 		setTooltip(shade.getName() + " remains in your Coffin");
 	}
 
@@ -57,6 +60,7 @@ public class ShadeRemainsInfobox extends InfoBox
 	@Override
 	public boolean render()
 	{
-		return plugin.getStored().get(shade) >= 0;
+		final int threshold = config.infoboxZero() ? -1 : 0;
+		return plugin.getStored().get(shade) > threshold;
 	}
 }

@@ -35,11 +35,13 @@ import java.util.Map;
 public class CoffinContentsInfobox extends InfoBox
 {
 	private final CoffinCounterPlugin plugin;
+	private final CoffinCounterConfig config;
 
-	public CoffinContentsInfobox(BufferedImage baseCoffin, CoffinCounterPlugin plugin)
+	public CoffinContentsInfobox(BufferedImage baseCoffin, CoffinCounterPlugin plugin, CoffinCounterConfig config)
 	{
-		super(createImage(baseCoffin, plugin), plugin);
+		super(createImage(baseCoffin, plugin, config), plugin);
 		this.plugin = plugin;
+		this.config = config;
 		setTooltip("Coffin contents");
 	}
 
@@ -58,10 +60,11 @@ public class CoffinContentsInfobox extends InfoBox
 	@Override
 	public boolean render()
 	{
-		return plugin.getStored().values().stream().anyMatch(v -> v != 0);
+		final int threshold = config.infoboxZero() ? -1 : 0;
+		return plugin.getStored().values().stream().anyMatch(v -> v > threshold);
 	}
 
-	private static BufferedImage createImage(BufferedImage baseCoffin, CoffinCounterPlugin plugin)
+	private static BufferedImage createImage(BufferedImage baseCoffin, CoffinCounterPlugin plugin, CoffinCounterConfig config)
 	{
 		final BufferedImage coffin = new BufferedImage(
 			baseCoffin.getColorModel(),
@@ -75,7 +78,7 @@ public class CoffinContentsInfobox extends InfoBox
 		int idx = 0;
 		for (Map.Entry<Shade, Integer> entry : plugin.getStored().entrySet())
 		{
-			if (entry.getValue() == 0)
+			if (!config.infoboxZero() && entry.getValue() == 0)
 			{
 				continue;
 			}

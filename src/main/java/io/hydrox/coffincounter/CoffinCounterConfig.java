@@ -51,4 +51,14 @@ public interface CoffinCounterConfig extends Config
 	{
 		return InfoboxStyle.NONE;
 	}
+
+	@ConfigItem(
+		keyName = "infoboxZero",
+		name = "Show 0s in Infoboxes",
+		description = "Whether to show a shade if it has a value of 0 i nthe infoboxes"
+	)
+	default boolean infoboxZero()
+	{
+		return false;
+	}
 }

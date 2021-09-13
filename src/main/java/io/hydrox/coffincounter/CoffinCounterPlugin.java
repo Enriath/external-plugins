@@ -320,12 +320,12 @@ public class CoffinCounterPlugin extends Plugin
 		{
 			for (Shade s : Shade.values())
 			{
-				infoBoxManager.addInfoBox(new ShadeRemainsInfobox(itemManager.getImage(s.getRemainsID()), s, this));
+				infoBoxManager.addInfoBox(new ShadeRemainsInfobox(itemManager.getImage(s.getRemainsID()), s, this, config));
 			}
 		}
 		else if (config.infoboxStyle() == CoffinCounterConfig.InfoboxStyle.COMBINED)
 		{
-			infoBoxManager.addInfoBox(new CoffinContentsInfobox(itemManager.getImage(ItemID.GOLD_COFFIN), this));
+			infoBoxManager.addInfoBox(new CoffinContentsInfobox(itemManager.getImage(ItemID.GOLD_COFFIN), this, config));
 		}
 	}
 }
