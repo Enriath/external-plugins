@@ -27,6 +27,7 @@ package io.hydrox.coffincounter;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import com.google.inject.Provides;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -42,8 +43,10 @@ import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -67,9 +70,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CoffinCounterPlugin extends Plugin
 {
-	private static final String CONFIG_GROUP = "coffincounter";
-	private static final String CONFIG_STORED_KEY = "stored";
-
 	private static final String CHECK_START = "Loar ";
 	private static final Pattern CHECK_PATTERN = Pattern.compile("Loar (\\d{1,2}) / Phrin (\\d{1,2}) / Riyl (\\d{1,2}) / Asyn (\\d{1,2}) / Fiyr (\\d{1,2}) / Urium (\\d{1,2})");
 	private static final String PICK_UP_START = "You put ";
@@ -77,6 +77,9 @@ public class CoffinCounterPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
 
 	@Inject
 	private CoffinCounterOverlay overlay;
@@ -93,6 +96,9 @@ public class CoffinCounterPlugin extends Plugin
 	@Inject
 	private ItemManager itemManager;
 
+	@Inject
+	private CoffinCounterConfig config;
+
 	@Getter
 	private final Map<Shade, Integer> stored = Arrays.stream(Shade.values())
 		.collect(LinkedHashMap::new, (map, shade) -> map.put(shade, -1), Map::putAll);
@@ -101,6 +107,12 @@ public class CoffinCounterPlugin extends Plugin
 	private boolean checkFill;
 	private boolean usingRemains;
 	private boolean usingCoffin;
+
+	@Provides
+	CoffinCounterConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(CoffinCounterConfig.class);
+	}
 
 	@Override
 	public void startUp()
@@ -113,6 +125,15 @@ public class CoffinCounterPlugin extends Plugin
 	public void shutDown()
 	{
 		overlayManager.remove(overlay);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (CoffinCounterConfig.GROUP.equals(event.getGroup()) && !CoffinCounterConfig.STORED_KEY.equals(event.getKey()))
+		{
+			clientThread.invoke(this::updateInfoboxes);
+		}
 	}
 
 	@Subscribe
@@ -262,15 +283,15 @@ public class CoffinCounterPlugin extends Plugin
 	private void saveCoffinState()
 	{
 		configManager.setRSProfileConfiguration(
-			CONFIG_GROUP,
-			CONFIG_STORED_KEY,
+			CoffinCounterConfig.GROUP,
+			CoffinCounterConfig.STORED_KEY,
 			Text.toCSV(stored.values().stream().map(Object::toString).collect(Collectors.toList()))
 		);
 	}
 
 	private void loadCoffinState()
 	{
-		String state = configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_STORED_KEY);
+		String state = configManager.getRSProfileConfiguration(CoffinCounterConfig.GROUP, CoffinCounterConfig.STORED_KEY);
 		if (state == null)
 		{
 			return;
@@ -291,10 +312,16 @@ public class CoffinCounterPlugin extends Plugin
 	private void updateInfoboxes()
 	{
 		infoBoxManager.removeIf(i -> i instanceof ShadeRemainsInfobox || i instanceof CoffinContentsInfobox);
-		for (Shade s : Shade.values())
+		if (config.infoboxStyle() == CoffinCounterConfig.InfoboxStyle.SPLIT)
 		{
-			infoBoxManager.addInfoBox(new ShadeRemainsInfobox(itemManager.getImage(s.getRemainsID()), s, this));
+			for (Shade s : Shade.values())
+			{
+				infoBoxManager.addInfoBox(new ShadeRemainsInfobox(itemManager.getImage(s.getRemainsID()), s, this));
+			}
 		}
-		infoBoxManager.addInfoBox(new CoffinContentsInfobox(itemManager.getImage(ItemID.GOLD_COFFIN), this));
+		else if (config.infoboxStyle() == CoffinCounterConfig.InfoboxStyle.COMBINED)
+		{
+			infoBoxManager.addInfoBox(new CoffinContentsInfobox(itemManager.getImage(ItemID.GOLD_COFFIN), this));
+		}
 	}
 }
