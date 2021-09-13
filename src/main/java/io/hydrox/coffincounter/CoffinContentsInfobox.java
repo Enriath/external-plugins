@@ -78,14 +78,14 @@ public class CoffinContentsInfobox extends InfoBox
 		int idx = 0;
 		for (Map.Entry<Shade, Integer> entry : plugin.getStored().entrySet())
 		{
-			if (!config.infoboxZero() && entry.getValue() == 0)
+			final Integer value = entry.getValue();
+			if (!config.infoboxZero() && value == 0)
 			{
 				continue;
 			}
 			final Shade shade = entry.getKey();
-			final Integer value = entry.getValue();
 			final int drawX = UIUtil.GAP_X * (idx / UIUtil.LABELS_PER_COLUMN);
-			final int drawY = UIUtil.GAP_Y * (idx % UIUtil.LABELS_PER_COLUMN);
+			final int drawY = UIUtil.OFFSET_TOP + UIUtil.GAP_Y * (idx % UIUtil.LABELS_PER_COLUMN);
 			if (entry.getValue() == -1)
 			{
 				drawString(graphics, shade, UIUtil.UNKNOWN, drawX, drawY);
