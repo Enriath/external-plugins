@@ -290,10 +290,11 @@ public class CoffinCounterPlugin extends Plugin
 
 	private void updateInfoboxes()
 	{
-		infoBoxManager.removeIf(i -> i instanceof ShadeRemainsInfobox);
+		infoBoxManager.removeIf(i -> i instanceof ShadeRemainsInfobox || i instanceof CoffinContentsInfobox);
 		for (Shade s : Shade.values())
 		{
 			infoBoxManager.addInfoBox(new ShadeRemainsInfobox(itemManager.getImage(s.getRemainsID()), s, this));
 		}
+		infoBoxManager.addInfoBox(new CoffinContentsInfobox(itemManager.getImage(ItemID.GOLD_COFFIN), this));
 	}
 }
