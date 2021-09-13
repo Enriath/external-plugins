@@ -160,6 +160,7 @@ public class CoffinCounterPlugin extends Plugin
 			{
 				store(s, Integer.parseInt(m.group(s.ordinal() + 1)));
 			}
+			updateInfoboxes();
 			saveCoffinState();
 		}
 		else if (message.startsWith(PICK_UP_START))
@@ -175,6 +176,7 @@ public class CoffinCounterPlugin extends Plugin
 				return;
 			}
 			store(shade, stored.get(shade) + 1);
+			updateInfoboxes();
 			saveCoffinState();
 		}
 	}
@@ -246,6 +248,7 @@ public class CoffinCounterPlugin extends Plugin
 		if (current != null && current.contains(ItemID.BROKEN_COFFIN))
 		{
 			stored.replaceAll((s, v) -> -1);
+			updateInfoboxes();
 			saveCoffinState();
 			return;
 		}
@@ -263,6 +266,7 @@ public class CoffinCounterPlugin extends Plugin
 			Shade shade = Shade.fromRemainsID(id);
 			store(shade, stored.get(shade) + change);
 		});
+		updateInfoboxes();
 		saveCoffinState();
 	}
 
@@ -301,12 +305,12 @@ public class CoffinCounterPlugin extends Plugin
 		{
 			store(Shade.values()[i], Integer.parseInt(states.get(i)));
 		}
+		updateInfoboxes();
 	}
 
 	private void store(Shade shade, int value)
 	{
 		stored.put(shade, value);
-		updateInfoboxes();
 	}
 
 	private void updateInfoboxes()
