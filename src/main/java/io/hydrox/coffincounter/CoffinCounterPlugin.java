@@ -129,7 +129,7 @@ public class CoffinCounterPlugin extends Plugin
 			}
 			for (Shade s : Shade.values())
 			{
-				stored.put(s, Integer.valueOf(m.group(s.ordinal() + 1)));
+				store(s, Integer.parseInt(m.group(s.ordinal() + 1)));
 			}
 			saveCoffinState();
 		}
@@ -145,7 +145,7 @@ public class CoffinCounterPlugin extends Plugin
 			{
 				return;
 			}
-			stored.put(shade, stored.get(shade) + 1);
+			store(shade, stored.get(shade) + 1);
 			saveCoffinState();
 		}
 	}
@@ -232,7 +232,7 @@ public class CoffinCounterPlugin extends Plugin
 		delta.forEachEntry((id, change) ->
 		{
 			Shade shade = Shade.fromRemainsID(id);
-			stored.put(shade, stored.get(shade) + change);
+			store(shade, stored.get(shade) + change);
 		});
 		saveCoffinState();
 	}
@@ -270,7 +270,12 @@ public class CoffinCounterPlugin extends Plugin
 		List<String> states = Text.fromCSV(state);
 		for (int i = 0; i < Shade.values().length; i++)
 		{
-			stored.put(Shade.values()[i], Integer.valueOf(states.get(i)));
+			store(Shade.values()[i], Integer.parseInt(states.get(i)));
 		}
+	}
+
+	private void store(Shade shade, int value)
+	{
+		stored.put(shade, value);
 	}
 }
