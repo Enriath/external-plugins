@@ -44,9 +44,11 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -84,6 +86,12 @@ public class CoffinCounterPlugin extends Plugin
 
 	@Inject
 	private OverlayManager overlayManager;
+
+	@Inject
+	private InfoBoxManager infoBoxManager;
+
+	@Inject
+	private ItemManager itemManager;
 
 	@Getter
 	private final Map<Shade, Integer> stored = Arrays.stream(Shade.values())
@@ -277,5 +285,15 @@ public class CoffinCounterPlugin extends Plugin
 	private void store(Shade shade, int value)
 	{
 		stored.put(shade, value);
+		updateInfoboxes();
+	}
+
+	private void updateInfoboxes()
+	{
+		infoBoxManager.removeIf(i -> i instanceof ShadeRemainsInfobox);
+		for (Shade s : Shade.values())
+		{
+			infoBoxManager.addInfoBox(new ShadeRemainsInfobox(itemManager.getImage(s.getRemainsID()), s, this));
+		}
 	}
 }
