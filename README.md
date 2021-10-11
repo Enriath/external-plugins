@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Subtle Virtual Levels
+*View your virtual levels in a more subtle way that doesn't mess with your stats.*
