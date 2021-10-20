@@ -36,7 +36,8 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 
 @PluginDescriptor(
-	name = "Contextual Cursor"
+	name = "Contextual Cursor",
+	description = "RSHD-style image cursors"
 )
 @Slf4j
 public class ContextualCursorPlugin extends Plugin
