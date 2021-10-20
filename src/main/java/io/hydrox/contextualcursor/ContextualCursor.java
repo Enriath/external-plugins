@@ -96,7 +96,7 @@ public enum ContextualCursor
 
 	ContextualCursor(String cursor_path, String ... actions)
 	{
-		this.cursor = ImageUtil.getResourceStreamFromClass(ContextualCursorPlugin.class, String.format("cursors/%s.png", cursor_path));
+		this.cursor = ImageUtil.loadImageResource(ContextualCursorPlugin.class, String.format("cursors/%s.png", cursor_path));
 		this.actions = actions;
 	}
 

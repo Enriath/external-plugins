@@ -47,12 +47,6 @@ public class ContextualCursorPlugin extends Plugin
 	@Inject
 	private OverlayManager overlayManager;
 
-	@Inject
-	private ConfigManager configManager;
-
-	@Inject
-	private ClientUI clientUI;
-
 	protected void startUp()
 	{
 		overlayManager.add(contextualCursorOverlay);
