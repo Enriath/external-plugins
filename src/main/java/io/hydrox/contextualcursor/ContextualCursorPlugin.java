@@ -24,33 +24,44 @@
  */
 package io.hydrox.contextualcursor;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
-import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.input.KeyListener;
+import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
+import java.awt.event.KeyEvent;
 
 @PluginDescriptor(
 	name = "Contextual Cursor",
 	description = "RSHD-style image cursors"
 )
 @Slf4j
-public class ContextualCursorPlugin extends Plugin
+public class ContextualCursorPlugin extends Plugin implements KeyListener
 {
+	private static final int ALT_KEY = KeyEvent.VK_ALT;
+
 	@Inject
 	private ContextualCursorOverlay contextualCursorOverlay;
 
 	@Inject
 	private OverlayManager overlayManager;
 
+	@Inject
+	private KeyManager keyManager;
+
+	@Getter
+	private boolean altPressed;
+
 	protected void startUp()
 	{
 		overlayManager.add(contextualCursorOverlay);
+		keyManager.registerKeyListener(this);
 	}
 
 	@Override
@@ -58,6 +69,7 @@ public class ContextualCursorPlugin extends Plugin
 	{
 		overlayManager.remove(contextualCursorOverlay);
 		contextualCursorOverlay.resetCursor();
+		keyManager.unregisterKeyListener(this);
 	}
 
 	@Subscribe
@@ -67,5 +79,29 @@ public class ContextualCursorPlugin extends Plugin
 		{
 			contextualCursorOverlay.resetCursor();
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == ALT_KEY)
+		{
+			altPressed = true;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		if (e.getKeyCode() == ALT_KEY)
+		{
+			altPressed = false;
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e)
+	{
+
 	}
 }

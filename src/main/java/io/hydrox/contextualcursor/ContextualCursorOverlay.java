@@ -67,6 +67,7 @@ public class ContextualCursorOverlay extends Overlay
 
 	private final Client client;
 	private final ClientUI clientUI;
+	private final ContextualCursorPlugin plugin;
 	private final SpriteManager spriteManager;
 
 	private Point menuOpenPoint;
@@ -75,13 +76,14 @@ public class ContextualCursorOverlay extends Overlay
 	private Cursor originalCursor;
 
 	@Inject
-	ContextualCursorOverlay(Client client, ClientUI clientUI, SpriteManager spriteManager)
+	ContextualCursorOverlay(Client client, ClientUI clientUI, ContextualCursorPlugin plugin, SpriteManager spriteManager)
 	{
 		setPosition(OverlayPosition.TOOLTIP);
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 		setPriority(OverlayPriority.LOW);
 		this.client = client;
 		this.clientUI = clientUI;
+		this.plugin = plugin;
 		this.spriteManager = spriteManager;
 	}
 
@@ -127,6 +129,12 @@ public class ContextualCursorOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
+		if (plugin.isAltPressed())
+		{
+			resetCursor();
+			return null;
+		}
+
 		// TODO: Stop tooltips from overlapping the cursor
 
 		final MenuEntry menuEntry;
