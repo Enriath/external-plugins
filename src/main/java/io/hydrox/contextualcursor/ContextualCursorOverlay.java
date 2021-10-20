@@ -167,7 +167,8 @@ public class ContextualCursorOverlay extends Overlay
 			|| menuEntry.getType() == MenuAction.CC_OP.getId()
 			|| menuEntry.getType() == MenuAction.CANCEL.getId()
 			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_2.getId()
-			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_6.getId())
+			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_6.getId()
+			|| menuEntry.getType() == MenuAction.CC_OP_LOW_PRIORITY.getId())
 		{
 			resetCursor();
 			return null;
