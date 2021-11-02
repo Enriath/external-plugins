@@ -57,11 +57,24 @@ enum SkillData
 	COOKING(Skill.COOKING, VarPlayer.COOKING_GOAL_START, VarPlayer.COOKING_GOAL_END),
 	FIREMAKING(Skill.FIREMAKING, VarPlayer.FIREMAKING_GOAL_START, VarPlayer.FIREMAKING_GOAL_END),
 	WOODCUTTING(Skill.WOODCUTTING, VarPlayer.WOODCUTTING_GOAL_START, VarPlayer.WOODCUTTING_GOAL_END),
-	FARMING(Skill.FARMING, VarPlayer.FARMING_GOAL_START, VarPlayer.FARMING_GOAL_END);
+	FARMING(Skill.FARMING, VarPlayer.FARMING_GOAL_START, VarPlayer.FARMING_GOAL_END),
+	OVERALL(Skill.OVERALL, 1228, 1252)
+	{
+		@Override
+		String getName()
+		{
+			return "Total";
+		}
+	};
 
 	private final Skill skill;
-	private final VarPlayer goalStartVarp;
-	private final VarPlayer goalEndVarp;
+	private final int goalStartVarp;
+	private final int goalEndVarp;
+
+	SkillData(Skill skill, VarPlayer goalStartVarp, VarPlayer goalEndVarp)
+	{
+		this(skill, goalStartVarp.getId(), goalEndVarp.getId());
+	}
 
 	String getName()
 	{
@@ -86,5 +99,10 @@ enum SkillData
 	static SkillData fromName(String name)
 	{
 		return NAME_MAP.getOrDefault(name, null);
+	}
+
+	static int count()
+	{
+		return values().length - 1;
 	}
 }

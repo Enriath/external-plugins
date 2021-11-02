@@ -69,7 +69,7 @@ public class BetterSkillTooltipsPlugin extends Plugin
 	private static final int WIDTH_PADDING = 4;
 	private static final int HEIGHT_PADDING = 7;
 
-	private static final NumberFormat DECIMAL_FORMATTER = new DecimalFormat("##0.00",DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+	private static final NumberFormat DECIMAL_FORMATTER = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 	@Inject
 	private Client client;
@@ -125,9 +125,19 @@ public class BetterSkillTooltipsPlugin extends Plugin
 	{
 		final int skillExperience = client.getSkillExperience(skillData.getSkill());
 		// There's no point in adding next level or goal text if the skill has maximum experience
-		if (skillExperience == Experience.MAX_SKILL_XP)
+		if (skillData == SkillData.OVERALL)
 		{
-			return;
+			if (skillExperience == Experience.MAX_SKILL_XP * SkillData.count())
+			{
+				return;
+			}
+		}
+		else
+		{
+			if (skillExperience == Experience.MAX_SKILL_XP)
+			{
+				return;
+			}
 		}
 
 		int lines = getLinesInTooltip(tooltip.getHeight());
@@ -138,7 +148,7 @@ public class BetterSkillTooltipsPlugin extends Plugin
 		Widget rightText = tooltip.getChild(3);
 
 		// Add missing text for virtual levels
-		if (lines == 1 && config.virtualLevels())
+		if (lines == 1 && config.virtualLevels() && skillData != SkillData.OVERALL)
 		{
 			final int skillLevel = Experience.getLevelForXp(skillExperience);
 			final int nextExperience;
@@ -160,8 +170,14 @@ public class BetterSkillTooltipsPlugin extends Plugin
 			);
 		}
 
-		final int goalStartXP = client.getVar(skillData.getGoalStartVarp());
-		int goalEndXP = client.getVar(skillData.getGoalEndVarp());
+		long goalStartXP = client.getVarpValue(skillData.getGoalStartVarp());
+		long goalEndXP = client.getVarpValue(skillData.getGoalEndVarp());
+		// Overall goals are stored as a multiple of 1000, because the max number of 4.6b is too big for a 32 bit int
+		if (skillData == SkillData.OVERALL)
+		{
+			goalStartXP *= 1000;
+			goalEndXP *= 1000;
+		}
 		boolean hasGoal = goalEndXP != 0;
 		Widget barLeft = null;
 		Widget barRight = null;
