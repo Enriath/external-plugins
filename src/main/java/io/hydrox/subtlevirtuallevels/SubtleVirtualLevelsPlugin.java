@@ -24,10 +24,12 @@
  */
 package io.hydrox.subtlevirtuallevels;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import net.runelite.api.Client;
 import net.runelite.api.Experience;
 import net.runelite.api.FontID;
+import net.runelite.api.GameState;
 import net.runelite.api.Skill;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.ScriptPreFired;
@@ -36,6 +38,7 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -44,6 +47,9 @@ import net.runelite.client.ui.FontManager;
 import javax.inject.Inject;
 import java.awt.FontMetrics;
 import java.awt.Toolkit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @PluginDescriptor(
 	name = "Subtle Virtual Levels",
@@ -76,7 +82,12 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ClientThread clientThread;
+
+	@Inject
 	private SubtleVirtualLevelsConfig config;
+
+	private final Map<Skill, Set<Widget>> trackedWidgets = new HashMap<>();
 
 	private Widget currentWidget;
 
@@ -84,6 +95,21 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 	SubtleVirtualLevelsConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(SubtleVirtualLevelsConfig.class);
+	}
+
+	@Override
+	public void startUp()
+	{
+		if (client.getGameState() == GameState.LOGGED_IN)
+		{
+			clientThread.invoke(this::createWidgets);
+		}
+	}
+
+	@Override
+	public void shutDown()
+	{
+		clientThread.invoke(this::removeWidgets);
 	}
 
 	@Subscribe
@@ -103,31 +129,86 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 		{
 			return;
 		}
+		buildWidget(currentWidget);
+	}
 
-		Skill skill = SKILLS[WidgetInfo.TO_CHILD(currentWidget.getId()) - 1];
+	private void createWidgets()
+	{
+		Widget skillsContainer = client.getWidget(WidgetInfo.SKILLS_CONTAINER);
+		if (skillsContainer == null)
+		{
+			return;
+		}
+
+		for (int i = 0; i < SKILLS.length; i++)
+		{
+			Widget current = skillsContainer.getStaticChildren()[i];
+			if (current == null)
+			{
+				continue;
+			}
+			buildWidget(current);
+		}
+	}
+
+	private void removeWidgets()
+	{
+		Widget skillsContainer = client.getWidget(WidgetInfo.SKILLS_CONTAINER);
+		if (skillsContainer == null)
+		{
+			return;
+		}
+
+		for (int i = 0; i < SKILLS.length; i++)
+		{
+			Widget current = skillsContainer.getStaticChildren()[i];
+			Skill skill = SKILLS[i];
+			Set<Widget> tracked = trackedWidgets.getOrDefault(skill, null);
+			if (current == null || tracked == null)
+			{
+				continue;
+			}
+
+			Widget[] children = current.getChildren();
+			for (int j = 0; j < children.length; j++)
+			{
+				Widget child = children[j];
+				if (child == null || !tracked.contains(child))
+				{
+					continue;
+				}
+				children[j] = null;
+			}
+		}
+		trackedWidgets.clear();
+	}
+
+	private void buildWidget(Widget parent)
+	{
+		Skill skill = SKILLS[WidgetInfo.TO_CHILD(parent.getId()) - 1];
 
 		int bgY = ICON_POSITION + ICON_SIZE + TEXT_OFFSET_Y - BACKGROUND_PADDING - BACKGROUND_HEIGHT;
 
-		Widget bgCapLeft = currentWidget.createChild(-1, WidgetType.GRAPHIC);
+		Widget bgCapLeft = parent.createChild(-1, WidgetType.GRAPHIC);
 		bgCapLeft.setSpriteId(SPRITE_BACKGROUND_CAP_LEFT);
 		bgCapLeft.setOriginalWidth(BACKGROUND_CAP_WIDTH);
 		bgCapLeft.setOriginalHeight(BACKGROUND_HEIGHT);
 		bgCapLeft.setOriginalY(bgY);
 
-		Widget bgCapRight = currentWidget.createChild(-1, WidgetType.GRAPHIC);
+		Widget bgCapRight = parent.createChild(-1, WidgetType.GRAPHIC);
 		bgCapRight.setSpriteId(SPRITE_BACKGROUND_CAP_RIGHT);
 		bgCapRight.setOriginalWidth(BACKGROUND_CAP_WIDTH);
 		bgCapRight.setOriginalHeight(BACKGROUND_HEIGHT);
 		bgCapRight.setOriginalX(ICON_POSITION + ICON_SIZE + TEXT_OFFSET_X + BACKGROUND_PADDING - BACKGROUND_CAP_WIDTH);
 		bgCapRight.setOriginalY(bgY);
 
-		Widget bgTile = currentWidget.createChild(-1, WidgetType.GRAPHIC);
+		Widget bgTile = parent.createChild(-1, WidgetType.GRAPHIC);
 		bgTile.setSpriteId(SPRITE_BACKGROUND_TILE);
 		bgTile.setSpriteTiling(true);
 		bgTile.setOriginalHeight(BACKGROUND_HEIGHT);
 		bgTile.setOriginalY(bgY);
 
-		Widget virtualLevel = currentWidget.createChild(-1, WidgetType.TEXT);
+		Widget virtualLevel = parent.createChild(-1, WidgetType.TEXT);
 		virtualLevel.setFontId(FontID.PLAIN_11);
 		virtualLevel.setTextShadowed(true);
 
@@ -149,7 +230,9 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 		bgCapRight.revalidate();
 		bgTile.revalidate();
 		virtualLevel.revalidate();
-		currentWidget.revalidate();
+		parent.revalidate();
+
+		trackedWidgets.put(skill, Sets.newHashSet(bgCapLeft, bgCapRight, bgTile, virtualLevel));
 	}
 
 	private String getVirtualLevelText(Skill skill)
