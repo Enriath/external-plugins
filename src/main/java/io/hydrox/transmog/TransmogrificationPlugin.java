@@ -107,12 +107,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
-			lastWorld = client.getWorld();
-			transmogManager.saveCurrent();
-			transmogManager.loadData();
-			transmogManager.updateTransmog();
 			clientThread.invoke(() ->
 				{
+					lastWorld = client.getWorld();
+					transmogManager.saveCurrent();
+					transmogManager.loadData();
+					transmogManager.updateTransmog();
 					uiManager.createTab(uiManager.getEquipmentOverlay());
 					updatePvpState();
 					updateEquipmentState();
@@ -125,9 +125,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	{
 		spriteManager.removeSpriteOverrides(CustomSprites.values());
 		mouseManager.unregisterMouseWheelListener(this);
-		transmogManager.shutDown();
-		uiManager.shutDown();
 		lastWorld = 0;
+		clientThread.invoke(() ->
+		{
+			transmogManager.shutDown();
+			uiManager.shutDown();
+		});
 	}
 
 	/**

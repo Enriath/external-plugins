@@ -39,7 +39,6 @@ import net.runelite.api.GameState;
 import net.runelite.api.Player;
 import net.runelite.api.PlayerComposition;
 import net.runelite.client.Notifier;
-import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
@@ -56,7 +55,6 @@ public class TransmogrificationManager
 {
 
 	private final Client client;
-	private final ClientThread clientThread;
 	private final Notifier notifier;
 	private final ItemManager itemManager;
 	private final ChatMessageManager chatMessageManager;
@@ -82,11 +80,10 @@ public class TransmogrificationManager
 	private boolean emptyEquipment;
 
 	@Inject
-	TransmogrificationManager(Client client, ClientThread clientThread, Notifier notifier, ItemManager itemManager,
+	TransmogrificationManager(Client client, Notifier notifier, ItemManager itemManager,
 							  ChatMessageManager chatMessageManager, TransmogrificationConfigManager config)
 	{
 		this.client = client;
-		this.clientThread = clientThread;
 		this.notifier = notifier;
 		this.itemManager = itemManager;
 		this.chatMessageManager = chatMessageManager;
@@ -262,7 +259,7 @@ public class TransmogrificationManager
 
 	void removeTransmog()
 	{
-		if (currentActualState == null)
+		if (currentActualState == null || client.getLocalPlayer() == null)
 		{
 			return;
 		}
@@ -321,7 +318,7 @@ public class TransmogrificationManager
 	void loadData()
 	{
 		loadDefault();
-		clientThread.invoke(this::loadPresets);
+		loadPresets();
 	}
 
 	void loadPresets()
