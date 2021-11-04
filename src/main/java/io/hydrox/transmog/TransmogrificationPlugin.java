@@ -93,6 +93,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 	private int lastWorld = 0;
 	private boolean forceRightClickFlag;
+	private boolean firstContainerChangeFlag;
 
 	@Override
 	public void startUp()
@@ -104,9 +105,11 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		spriteManager.addSpriteOverrides(CustomSprites.values());
 		mouseManager.registerMouseWheelListener(this);
+		firstContainerChangeFlag = true;
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
+
 			clientThread.invoke(() ->
 				{
 					lastWorld = client.getWorld();
@@ -189,6 +192,11 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			return;
 		}
 
+		if (firstContainerChangeFlag)
+		{
+			firstContainerChangeFlag = false;
+			return;
+		}
 		transmogManager.reapplyTransmog();
 	}
 
