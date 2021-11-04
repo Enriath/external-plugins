@@ -37,10 +37,10 @@ import net.runelite.api.MenuEntry;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuShouldLeftClick;
+import net.runelite.api.events.PlayerChanged;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.VarbitChanged;
@@ -206,17 +206,13 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	}
 
 	@Subscribe
-	public void onGameTick(GameTick e)
+	public void onPlayerChanged(PlayerChanged e)
 	{
-		if (client.getLocalPlayer() == null)
+		if (client.getLocalPlayer() == null || e.getPlayer() != client.getLocalPlayer() || !config.transmogActive())
 		{
 			return;
 		}
 
-		if (!config.transmogActive())
-		{
-			return;
-		}
 		// On most teleports, the player kits are reset. This will reapply the transmog if needed.
 		final int currentHash = Arrays.hashCode(client.getLocalPlayer().getPlayerComposition().getEquipmentIds());
 		if (currentHash != transmogManager.getTransmogHash())
