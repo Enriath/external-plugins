@@ -109,7 +109,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
-
 			clientThread.invoke(() ->
 				{
 					lastWorld = client.getWorld();
@@ -166,6 +165,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
 		{
+			firstContainerChangeFlag = true;
 			lastWorld = 0;
 			uiManager.setUiCreated(false);
 			transmogManager.clearUserStates();
