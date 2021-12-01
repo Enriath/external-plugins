@@ -54,7 +54,7 @@ public class TransmogrificationConfigManager
 
 	public boolean transmogActive()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_TRANSMOG_ACTIVE, boolean.class)).orElse(false);
+		return Optional.ofNullable((Boolean)configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_TRANSMOG_ACTIVE, Boolean.class)).orElse(false);
 	}
 
 	public void transmogActive(boolean value)
@@ -64,7 +64,7 @@ public class TransmogrificationConfigManager
 
 	public int currentPreset()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_CURRENT_PRESET, int.class)).orElse(lastIndex());
+		return Optional.ofNullable((Integer)configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_CURRENT_PRESET, Integer.class)).orElse(lastIndex());
 	}
 
 	public void currentPreset(int value)
@@ -77,7 +77,7 @@ public class TransmogrificationConfigManager
 	 */
 	public int lastIndex()
 	{
-		return Optional.ofNullable(configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_LAST_PRESET_IDX, int.class)).orElse(0);
+		return Optional.ofNullable((Integer)configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_LAST_PRESET_IDX, Integer.class)).orElse(0);
 	}
 
 	/**
