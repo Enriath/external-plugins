@@ -158,7 +158,7 @@ public class PlankSackPlugin extends Plugin
 	{
 		if (event.getGameState() == GameState.LOGGED_IN)
 		{
-			plankCount = Optional.ofNullable(configManager.getRSProfileConfiguration(PlankSackConfig.CONFIG_GROUP, PlankSackConfig.CONFIG_SACK_KEY, int.class)).orElse(-1);
+			plankCount = Optional.ofNullable((Integer)configManager.getRSProfileConfiguration(PlankSackConfig.CONFIG_GROUP, PlankSackConfig.CONFIG_SACK_KEY, Integer.class)).orElse(-1);
 		}
 	}
 
