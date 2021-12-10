@@ -24,6 +24,7 @@
  */
 package io.hydrox.contextualcursor;
 
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
@@ -44,6 +45,7 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +66,10 @@ public class ContextualCursorOverlay extends Overlay
 	private static final int MENU_EXTRA_TOP = 4;
 	private static final int MENU_EXTRA_BOTTOM = 3;
 	private static final int MENU_BORDERS_TOTAL = MENU_EXTRA_TOP + MENU_OPTION_HEIGHT + MENU_EXTRA_BOTTOM;
+	private static final Set<MenuAction> IGNORED_ACTIONS = Sets.newHashSet(
+		MenuAction.WALK, MenuAction.CC_OP, MenuAction.CANCEL,
+		MenuAction.WIDGET_TYPE_2, MenuAction.WIDGET_TYPE_6, MenuAction.CC_OP_LOW_PRIORITY
+	);
 
 	private final Client client;
 	private final ClientUI clientUI;
@@ -157,13 +163,7 @@ public class ContextualCursorOverlay extends Overlay
 			menuEntry = menuEntries[last];
 		}
 
-		if (menuEntry == null
-			|| menuEntry.getType() == MenuAction.WALK.getId()
-			|| menuEntry.getType() == MenuAction.CC_OP.getId()
-			|| menuEntry.getType() == MenuAction.CANCEL.getId()
-			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_2.getId()
-			|| menuEntry.getType() == MenuAction.WIDGET_TYPE_6.getId()
-			|| menuEntry.getType() == MenuAction.CC_OP_LOW_PRIORITY.getId())
+		if (menuEntry == null || IGNORED_ACTIONS.contains(menuEntry.getType()))
 		{
 			resetCursor();
 			return null;
