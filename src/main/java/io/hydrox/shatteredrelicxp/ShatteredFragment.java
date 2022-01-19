@@ -82,7 +82,7 @@ public enum ShatteredFragment
 	ROGUES_CHOMPY_FARM,
 	MOTHERS_MAGIC_FOSSILS;
 
-	static final int VARBIT_BASE = 13403;
+	private static final int VARBIT_BASE = 13403;
 
 	int getVarb()
 	{
@@ -97,15 +97,5 @@ public enum ShatteredFragment
 	static ShatteredFragment byOrdinal(int value)
 	{
 		return values()[value - 1];
-	}
-
-	static int getUpperBound(int xp)
-	{
-		return xp >= 2000 ? 8000 : 2000;
-	}
-
-	static int getLowerBound(int xp)
-	{
-		return xp < 2000 ? 0 : 2000;
 	}
 }
