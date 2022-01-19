@@ -30,6 +30,7 @@ import net.runelite.api.FontID;
 import net.runelite.api.events.CommandExecuted;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.ScriptPreFired;
+import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetPositionMode;
@@ -60,13 +61,13 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final FontMetrics FONT_METRICS = Toolkit.getDefaultToolkit().getFontMetrics(FontManager.getRunescapeFont());
 	private static final NumberFormat DECIMAL_FORMATTER = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
-
 	private static final int SHATTERED_GROUP_ID = 651;
-	private static final int SHATTERED_ICONS_CHILD = 2;
+	private static final int SHATTERED_ICONS_CHILD = 4;
 	private static final int SHATTERED_TOOLTIP_CHILD = 3;
 
 	private static final int SCRIPT_TOOLTIP_REPEAT = 526;
 	private static final int SCRIPT_TOOLTIP_BUILD = 2701;
+	private static final int SCRIPT_BUILD_FRAGMENT_OVERLAY = 3166;
 
 	private static final int BAR_PADDING_X = 6;
 	private static final int BAR_PADDING_Y = 3;
@@ -75,7 +76,13 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int WIDTH_PADDING = 4;
 	private static final int HEIGHT_PADDING = 7;
 
-	private static final int FRAGMENT_SLOT_BASE = 13395;
+	private static final int VARBIT_FRAGMENT_SLOT_BASE = 13395;
+	private static final int VAR_FRAGMENT_FIRST = 3282;
+	private static final int VAR_FRAGMENT_LAST = 3309;
+
+	private static final int WIDGET_OFFSET_TEXT_TOP = 8;
+	private static final int WIDGET_OFFSET_TEXT_BOTTOM = 7;
+	private static final int SLOT_COUNT = 7;
 
 	@Inject
 	private Client client;
@@ -126,10 +133,98 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Subscribe
 	public void onScriptPostFired(ScriptPostFired event)
 	{
-		if (event.getScriptId() == SCRIPT_TOOLTIP_BUILD && config.shouldModifyTooltips()
+		if (event.getScriptId() == SCRIPT_TOOLTIP_BUILD && shouldModifyTooltips()
 			&& shouldBuildTooltip && args != null && args.length >= 3)
 		{
 			buildTooltip();
+		}
+		else if (event.getScriptId() == SCRIPT_BUILD_FRAGMENT_OVERLAY)
+		{
+			buildOverlay();
+		}
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if (event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
+		{
+			buildOverlay();
+		}
+	}
+
+	private void buildOverlay()
+	{
+		if (!shouldModifyOverlay())
+		{
+			return;
+		}
+
+		Widget overlay = client.getWidget(SHATTERED_GROUP_ID, SHATTERED_ICONS_CHILD);
+		if (overlay == null || overlay.getDynamicChildren().length == 0)
+		{
+			return;
+		}
+		int barWidgetIndex = 70;
+		// If a slot is currently not occupied, widgets for it don't exist in the overlay, so we need to be able to skip
+		// the missing ones.
+		int currentSlot = 0;
+
+		for (int i = 0; i < SLOT_COUNT; i++)
+		{
+			int currentIndex = barWidgetIndex + currentSlot * 2;
+			ShatteredFragment fragment = getFragmentInSlot(i);
+			if (fragment == null)
+			{
+				continue;
+			}
+			int xp = fragment.getXp(client);
+			int upperBound = ShatteredFragment.getUpperBound(xp);
+			int lowerBound = ShatteredFragment.getLowerBound(xp);
+			double percentage = Math.min(1.0, (xp - lowerBound) / (double)(upperBound - lowerBound));
+
+			if (config.overlayTextMode() != ShatteredRelicXPConfig.OverlayTextMode.NONE)
+			{
+				int textWidgetOffset = config.overlayTextPosition() == ShatteredRelicXPConfig.OverlayTextPosition.TOP
+					? WIDGET_OFFSET_TEXT_TOP : WIDGET_OFFSET_TEXT_BOTTOM;
+				Widget textWidget = overlay.getChild(currentSlot * 10 + textWidgetOffset);
+				if (config.overlayTextMode() == ShatteredRelicXPConfig.OverlayTextMode.XP)
+				{
+					textWidget.setText(Integer.toString(xp));
+				}
+				else
+				{
+					textWidget.setText(DECIMAL_FORMATTER.format(percentage) + "%");
+				}
+				textWidget.setTextColor(config.overlayTextColour().getRGB());
+				textWidget.revalidate();
+			}
+
+			if (config.overlayShowBar())
+			{
+				Widget background = overlay.getChild(currentSlot * 10);
+				Widget barRight = overlay.createChild(currentIndex, WidgetType.RECTANGLE);
+				barRight.setOriginalX(background.getOriginalX());
+				barRight.setOriginalY(background.getOriginalY());
+				barRight.setOriginalWidth(background.getOriginalWidth());
+				barRight.setOriginalHeight(config.overlayBarHeight());
+				barRight.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+				barRight.setTextColor(Color.RED.getRGB());
+				barRight.setFilled(true);
+				barRight.revalidate();
+
+				Widget barLeft = overlay.createChild(currentIndex + 1, WidgetType.RECTANGLE);
+				barLeft.setOriginalX(background.getOriginalX());
+				barLeft.setOriginalY(background.getOriginalY());
+				barLeft.setOriginalWidth((int) (background.getOriginalWidth() * percentage));
+				barLeft.setOriginalHeight(config.overlayBarHeight());
+				barLeft.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+				barLeft.setTextColor(Color.GREEN.getRGB());
+				barLeft.setFilled(true);
+				barLeft.revalidate();
+			}
+
+			currentSlot += 1;
 		}
 	}
 
@@ -141,6 +236,10 @@ public class ShatteredRelicXPPlugin extends Plugin
 			return;
 		}
 		ShatteredFragment fragment = getFragmentInSlot(getFragmentSlotFromTrigger((Integer) args[2]));
+		if (fragment == null)
+		{
+			return;
+		}
 		int xp = fragment.getXp(client);
 		int upperBound = ShatteredFragment.getUpperBound(xp);
 		int lowerBound = ShatteredFragment.getLowerBound(xp);
@@ -231,7 +330,18 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private ShatteredFragment getFragmentInSlot(int slot)
 	{
-		return ShatteredFragment.byOrdinal(client.getVarbitValue(FRAGMENT_SLOT_BASE + slot));
+		int slotValue = client.getVarbitValue(VARBIT_FRAGMENT_SLOT_BASE + slot);
+		return slotValue == 0 ? null : ShatteredFragment.byOrdinal(slotValue);
+	}
+
+	private boolean shouldModifyTooltips()
+	{
+		return config.tooltipShowBar() || config.tooltipShowBar();
+	}
+
+	private boolean shouldModifyOverlay()
+	{
+		return config.overlayShowBar() || config.overlayTextMode() != ShatteredRelicXPConfig.OverlayTextMode.NONE;
 	}
 	/*
 	0 - Background

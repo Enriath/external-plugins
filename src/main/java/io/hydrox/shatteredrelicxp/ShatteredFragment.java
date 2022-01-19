@@ -96,7 +96,7 @@ public enum ShatteredFragment
 
 	static ShatteredFragment byOrdinal(int value)
 	{
-		return values()[value];
+		return values()[value - 1];
 	}
 
 	static int getUpperBound(int xp)

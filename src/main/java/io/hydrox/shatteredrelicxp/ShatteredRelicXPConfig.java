@@ -28,11 +28,25 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import java.awt.Color;
 
 @ConfigGroup(ShatteredRelicXPConfig.GROUP)
 public interface ShatteredRelicXPConfig extends Config
 {
 	String GROUP = "shatteredrelicxp";
+
+	enum OverlayTextMode
+	{
+		NONE,
+		XP,
+		PERCENT
+	}
+
+	enum OverlayTextPosition
+	{
+		TOP,
+		BOTTOM
+	}
 
 	@ConfigSection(
 		name = "Tooltip",
@@ -40,6 +54,13 @@ public interface ShatteredRelicXPConfig extends Config
 		position = 1
 	)
 	String tooltipSection = "tooltipSection";
+
+	@ConfigSection(
+		name = "Overlay",
+		description = "Settings for the overlay",
+		position = 2
+	)
+	String overlaySection = "overlaySection";
 
 	@ConfigItem(
 		keyName = "tooltipShowXP",
@@ -63,8 +84,58 @@ public interface ShatteredRelicXPConfig extends Config
 		return true;
 	}
 
-	default boolean shouldModifyTooltips()
+	@ConfigItem(
+		keyName = "overlayTextMode",
+		name = "Text Mode",
+		description = "What text to show on each of the icons in the overlay",
+		section = overlaySection
+	)
+	default OverlayTextMode overlayTextMode()
 	{
-		return tooltipShowBar() || tooltipShowBar();
+		return OverlayTextMode.NONE;
+	}
+
+	@ConfigItem(
+		keyName = "overlayTextPosition",
+		name = "Text Position",
+		description = "Where to put the text.",
+		section = overlaySection
+	)
+	default OverlayTextPosition overlayTextPosition()
+	{
+		return OverlayTextPosition.TOP;
+	}
+
+	@ConfigItem(
+		keyName = "overlayShowBar",
+		name = "Show Progress Bar",
+		description = "Show progress bar on each of the icons in the overlay",
+		section = overlaySection
+	)
+	default boolean overlayShowBar()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "overlayBarHeight",
+		name = "Bar Height",
+		description = "How big the bars should be in the overlay",
+		section = overlaySection
+	)
+	default int overlayBarHeight()
+	{
+		return 2;
+	}
+
+	@ConfigItem(
+		keyName = "overlayTextColour",
+		name = "Text Colour",
+		description = "What colour to use for the text in the overlay",
+		section = overlaySection
+	)
+	default Color overlayTextColour()
+	{
+		return Color.WHITE;
 	}
 }
