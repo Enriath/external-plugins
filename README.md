@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Shattered Relic XP
+*View your relic fragment XP on the vanilla overlay*
