@@ -24,6 +24,7 @@
  */
 package io.hydrox.shatteredrelicxp;
 
+import com.google.inject.Provides;
 import net.runelite.api.Client;
 import net.runelite.api.FontID;
 import net.runelite.api.events.CommandExecuted;
@@ -35,6 +36,7 @@ import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetSizeMode;
 import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -78,9 +80,19 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Inject
 	private Client client;
 
+	@Inject
+	private ShatteredRelicXPConfig config;
+
 	private Widget source = null;
 	private Object[] args = null;
 	private boolean shouldBuildTooltip = false;
+
+	@Provides
+	ShatteredRelicXPConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(ShatteredRelicXPConfig.class);
+	}
+
 
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted event)
@@ -114,7 +126,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Subscribe
 	public void onScriptPostFired(ScriptPostFired event)
 	{
-		if (event.getScriptId() == SCRIPT_TOOLTIP_BUILD && shouldBuildTooltip && args != null && args.length >= 3)
+		if (event.getScriptId() == SCRIPT_TOOLTIP_BUILD && config.shouldModifyTooltips()
+			&& shouldBuildTooltip && args != null && args.length >= 3)
 		{
 			buildTooltip();
 		}
@@ -132,44 +145,51 @@ public class ShatteredRelicXPPlugin extends Plugin
 		int upperBound = ShatteredFragment.getUpperBound(xp);
 		int lowerBound = ShatteredFragment.getLowerBound(xp);
 		int bonusHeight = 0;
+
 		Widget text = tooltip.getDynamicChildren()[2];
-		text.setText(text.getText() + "<br>XP: " + xp + "/" + upperBound);
+		if (config.tooltipShowXP())
+		{
+			text.setText(text.getText() + "<br>XP: " + xp + "/" + upperBound);
+		}
 
-		double percentage = Math.min(1.0, (xp - lowerBound) / (double)(upperBound - lowerBound));
-		Widget barRight = tooltip.createChild(-1, WidgetType.RECTANGLE);
-		barRight.setOriginalX(BAR_PADDING_X);
-		barRight.setOriginalY(BAR_PADDING_Y);
-		barRight.setWidthMode(WidgetSizeMode.MINUS);
-		barRight.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
-		barRight.setOriginalWidth(BAR_PADDING_X * 2);
-		barRight.setOriginalHeight(BAR_HEIGHT);
-		barRight.setTextColor(Color.RED.getRGB());
-		barRight.setFilled(true);
+		if (config.tooltipShowBar())
+		{
+			double percentage = Math.min(1.0, (xp - lowerBound) / (double)(upperBound - lowerBound));
+			Widget barRight = tooltip.createChild(-1, WidgetType.RECTANGLE);
+			barRight.setOriginalX(BAR_PADDING_X);
+			barRight.setOriginalY(BAR_PADDING_Y);
+			barRight.setWidthMode(WidgetSizeMode.MINUS);
+			barRight.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+			barRight.setOriginalWidth(BAR_PADDING_X * 2);
+			barRight.setOriginalHeight(BAR_HEIGHT);
+			barRight.setTextColor(Color.RED.getRGB());
+			barRight.setFilled(true);
 
-		Widget barLeft = tooltip.createChild(-1, WidgetType.RECTANGLE);
-		barLeft.setOriginalX(BAR_PADDING_X);
-		barLeft.setOriginalY(BAR_PADDING_Y);
-		barLeft.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
-		barLeft.setOriginalWidth((int) ((tooltip.getOriginalWidth() - barRight.getOriginalWidth()) * percentage));
-		barLeft.setOriginalHeight(BAR_HEIGHT);
-		barLeft.setTextColor(Color.GREEN.darker().getRGB());
-		barLeft.setFilled(true);
+			Widget barLeft = tooltip.createChild(-1, WidgetType.RECTANGLE);
+			barLeft.setOriginalX(BAR_PADDING_X);
+			barLeft.setOriginalY(BAR_PADDING_Y);
+			barLeft.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+			barLeft.setOriginalWidth((int) ((tooltip.getOriginalWidth() - barRight.getOriginalWidth()) * percentage));
+			barLeft.setOriginalHeight(BAR_HEIGHT);
+			barLeft.setTextColor(Color.GREEN.darker().getRGB());
+			barLeft.setFilled(true);
 
-		Widget barText = tooltip.createChild(-1, WidgetType.TEXT);
-		barText.setOriginalX(BAR_PADDING_X);
-		barText.setOriginalY(BAR_PADDING_Y + 1);
-		barText.setOriginalWidth(BAR_PADDING_X * 2);
-		barText.setOriginalHeight(BAR_HEIGHT);
-		barText.setWidthMode(WidgetSizeMode.MINUS);
-		barText.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
-		barText.setXTextAlignment(WidgetTextAlignment.CENTER);
-		barText.setYTextAlignment(WidgetTextAlignment.BOTTOM);
-		barText.setFontId(FontID.PLAIN_11);
-		barText.setText(DECIMAL_FORMATTER.format(percentage * 100) + "%");
-		barText.setTextColor(Color.WHITE.getRGB());
-		barText.setTextShadowed(true);
+			Widget barText = tooltip.createChild(-1, WidgetType.TEXT);
+			barText.setOriginalX(BAR_PADDING_X);
+			barText.setOriginalY(BAR_PADDING_Y + 1);
+			barText.setOriginalWidth(BAR_PADDING_X * 2);
+			barText.setOriginalHeight(BAR_HEIGHT);
+			barText.setWidthMode(WidgetSizeMode.MINUS);
+			barText.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+			barText.setXTextAlignment(WidgetTextAlignment.CENTER);
+			barText.setYTextAlignment(WidgetTextAlignment.BOTTOM);
+			barText.setFontId(FontID.PLAIN_11);
+			barText.setText(DECIMAL_FORMATTER.format(percentage * 100) + "%");
+			barText.setTextColor(Color.WHITE.getRGB());
+			barText.setTextShadowed(true);
 
-		bonusHeight += BAR_HEIGHT + BAR_PADDING_Y;
+			bonusHeight += BAR_HEIGHT + BAR_PADDING_Y;
+		}
 
 		int width = calculateTooltipWidth(text.getText());
 		int height = calculateTooltipTextHeight(text.getText()) + bonusHeight;
@@ -177,17 +197,12 @@ public class ShatteredRelicXPPlugin extends Plugin
 		tooltip.setOriginalWidth(width);
 		tooltip.setOriginalHeight(height);
 		tooltip.revalidate();
-		for(Widget child : tooltip.getDynamicChildren())
+		for (Widget child : tooltip.getDynamicChildren())
 		{
 			child.revalidate();
 		}
 	}
 
-	/**
-	 * Calculate how tall the tooltip should be.
-	 * @param text
-	 * @return the width for the tooltip.
-	 */
 	private int calculateTooltipTextHeight(String text)
 	{
 		int lines = text.split("<br>").length;
