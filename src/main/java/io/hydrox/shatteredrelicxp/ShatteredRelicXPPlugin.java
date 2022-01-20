@@ -27,6 +27,10 @@ package io.hydrox.shatteredrelicxp;
 import com.google.inject.Provides;
 import net.runelite.api.Client;
 import net.runelite.api.FontID;
+import net.runelite.api.GameState;
+import net.runelite.api.WorldType;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.VarbitChanged;
@@ -36,8 +40,10 @@ import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetSizeMode;
 import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.FontManager;
@@ -89,9 +95,11 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int TIER_2_XP = 2000;
 	private static final int TIER_3_XP = 8000;
 
-
 	@Inject
 	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
 
 	@Inject
 	private ShatteredRelicXPConfig config;
@@ -99,6 +107,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private Widget tooltipScriptSource = null;
 	private Object[] tooltipScriptArgs = null;
 	private boolean shouldBuildTooltip = false;
+	private boolean builtOverlayFirstLogin = false;
 
 	@Provides
 	ShatteredRelicXPConfig provideConfig(ConfigManager configManager)
@@ -106,9 +115,68 @@ public class ShatteredRelicXPPlugin extends Plugin
 		return configManager.getConfig(ShatteredRelicXPConfig.class);
 	}
 
+	@Override
+	public void startUp()
+	{
+		if (client.getGameState() == GameState.LOGGED_IN && isLeaguesWorld())
+		{
+			clientThread.invoke(this::buildOverlay);
+		}
+	}
+
+	@Override
+	public void shutDown()
+	{
+		if (client.getGameState() == GameState.LOGGED_IN)
+		{
+			clientThread.invoke(this::cleanOverlay);
+		}
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() == GameState.LOGIN_SCREEN || event.getGameState() == GameState.HOPPING)
+		{
+			builtOverlayFirstLogin = false;
+		}
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		if (!isLeaguesWorld())
+		{
+			return;
+		}
+
+		if (!builtOverlayFirstLogin && client.getGameState() == GameState.LOGGED_IN)
+		{
+			buildOverlay();
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!isLeaguesWorld())
+		{
+			return;
+		}
+
+		if (event.getGroup().equals(ShatteredRelicXPConfig.GROUP))
+		{
+			clientThread.invoke(this::buildOverlay);
+		}
+	}
+
 	@Subscribe
 	public void onScriptPreFired(ScriptPreFired event)
 	{
+		if (!isLeaguesWorld())
+		{
+			return;
+		}
 		if (event.getScriptId() == SCRIPT_TOOLTIP_REPEAT)
 		{
 			tooltipScriptSource = event.getScriptEvent().getSource();
@@ -123,6 +191,11 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Subscribe
 	public void onScriptPostFired(ScriptPostFired event)
 	{
+		if (!isLeaguesWorld())
+		{
+			return;
+		}
+
 		if (event.getScriptId() == SCRIPT_TOOLTIP_BUILD && shouldModifyTooltips()
 			&& shouldBuildTooltip && tooltipScriptArgs != null && tooltipScriptArgs.length >= 3)
 		{
@@ -137,7 +210,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
-		if (event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
+		if (isLeaguesWorld() && event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
 		{
 			buildOverlay();
 		}
@@ -215,6 +288,38 @@ public class ShatteredRelicXPPlugin extends Plugin
 			}
 
 			currentSlot += 1;
+		}
+		builtOverlayFirstLogin = true;
+	}
+
+	private void cleanOverlay()
+	{
+		Widget overlay = client.getWidget(SHATTERED_GROUP_ID, OVERLAY_CHILD_ID);
+		if (overlay == null || overlay.getDynamicChildren().length == 0 || overlay.getChildren() == null)
+		{
+			return;
+		}
+
+		for (int i = 0; i < SLOT_COUNT; i++)
+		{
+			Widget topText = overlay.getChild(i * OVERLAY_WIDGETS_PER_ICON + OVERLAY_WIDGET_OFFSET_TEXT_TOP);
+			if (topText != null)
+			{
+				topText.setText("");
+			}
+			Widget bottomText = overlay.getChild(i * OVERLAY_WIDGETS_PER_ICON + OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM);
+			if (bottomText != null)
+			{
+				bottomText.setText("");
+			}
+		}
+
+		if (overlay.getChildren().length > OVERLAY_BAR_WIDGETS_START_INDEX)
+		{
+			for (int i = OVERLAY_BAR_WIDGETS_START_INDEX; i < overlay.getChildren().length; i++)
+			{
+				overlay.getChildren()[i] = null;
+			}
 		}
 	}
 
@@ -342,5 +447,10 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private boolean shouldModifyOverlay()
 	{
 		return config.overlayShowBar() || config.overlayTextMode() != ShatteredRelicXPConfig.OverlayTextMode.NONE;
+	}
+
+	private boolean isLeaguesWorld()
+	{
+		return client.getWorldType().contains(WorldType.SEASONAL);
 	}
 }
