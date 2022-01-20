@@ -89,6 +89,7 @@ public interface ShatteredRelicXPConfig extends Config
 		keyName = "overlayTextMode",
 		name = "Text Mode",
 		description = "What text to show on each of the icons in the overlay",
+		position = 1,
 		section = overlaySection
 	)
 	default OverlayTextMode overlayTextMode()
@@ -100,6 +101,7 @@ public interface ShatteredRelicXPConfig extends Config
 		keyName = "overlayTextPosition",
 		name = "Text Position",
 		description = "Where to put the text.",
+		position = 2,
 		section = overlaySection
 	)
 	default OverlayTextPosition overlayTextPosition()
@@ -111,6 +113,7 @@ public interface ShatteredRelicXPConfig extends Config
 		keyName = "overlayShowBar",
 		name = "Show Progress Bar",
 		description = "Show progress bar on each of the icons in the overlay",
+		position = 4,
 		section = overlaySection
 	)
 	default boolean overlayShowBar()
@@ -122,6 +125,7 @@ public interface ShatteredRelicXPConfig extends Config
 		keyName = "overlayBarHeight",
 		name = "Bar Height",
 		description = "How big the bars should be in the overlay",
+		position = 5,
 		section = overlaySection
 	)
 	@Range(
@@ -137,6 +141,7 @@ public interface ShatteredRelicXPConfig extends Config
 		keyName = "overlayTextColour",
 		name = "Text Colour",
 		description = "What colour to use for the text in the overlay",
+		position = 3,
 		section = overlaySection
 	)
 	default Color overlayTextColour()
