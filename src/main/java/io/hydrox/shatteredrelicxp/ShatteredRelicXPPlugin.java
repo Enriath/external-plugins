@@ -65,6 +65,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 {
 	private static final FontMetrics FONT_METRICS = Toolkit.getDefaultToolkit().getFontMetrics(FontManager.getRunescapeFont());
 	private static final NumberFormat DECIMAL_FORMATTER = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+	private static final NumberFormat SHORT_DECIMAL_FORMATTER = new DecimalFormat("##0.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 	private static final int SHATTERED_GROUP_ID = 651;
 
@@ -248,19 +249,41 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 			if (config.overlayTextMode() != ShatteredRelicXPConfig.OverlayTextMode.NONE)
 			{
-				int textWidgetOffset = config.overlayTextPosition() == ShatteredRelicXPConfig.OverlayTextPosition.TOP
-					? OVERLAY_WIDGET_OFFSET_TEXT_TOP : OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM;
-				Widget textWidget = overlay.getChild(currentSlot * OVERLAY_WIDGETS_PER_ICON + textWidgetOffset);
+				int mainOffset;
+				int otherOffset;
+				if (config.overlayTextPosition() == ShatteredRelicXPConfig.OverlayTextPosition.TOP)
+				{
+					mainOffset = OVERLAY_WIDGET_OFFSET_TEXT_TOP;
+					otherOffset = OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM;
+				}
+				else
+				{
+					mainOffset = OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM;
+					otherOffset = OVERLAY_WIDGET_OFFSET_TEXT_TOP;
+				}
+				Widget textWidget = overlay.getChild(currentSlot * OVERLAY_WIDGETS_PER_ICON + mainOffset);
+				Widget otherTextWidget = overlay.getChild(currentSlot * OVERLAY_WIDGETS_PER_ICON + otherOffset);
 				if (config.overlayTextMode() == ShatteredRelicXPConfig.OverlayTextMode.XP)
 				{
 					textWidget.setText(Integer.toString(xp));
 				}
 				else
 				{
-					textWidget.setText(DECIMAL_FORMATTER.format(percentage) + "%");
+					textWidget.setText(SHORT_DECIMAL_FORMATTER.format(percentage * 100) + "%");
 				}
+				otherTextWidget.setText("");
 				textWidget.setTextColor(config.overlayTextColour().getRGB());
 				textWidget.revalidate();
+				otherTextWidget.revalidate();
+			}
+			else
+			{
+				Widget topText = overlay.getChild(currentSlot * OVERLAY_WIDGETS_PER_ICON + OVERLAY_WIDGET_OFFSET_TEXT_TOP);
+				Widget bottomText = overlay.getChild(currentSlot * OVERLAY_WIDGETS_PER_ICON + OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM);
+				topText.setText("");
+				bottomText.setText("");
+				topText.revalidate();
+				bottomText.revalidate();
 			}
 
 			if (config.overlayShowBar())
@@ -285,6 +308,20 @@ public class ShatteredRelicXPPlugin extends Plugin
 				barLeft.setTextColor(Color.GREEN.getRGB());
 				barLeft.setFilled(true);
 				barLeft.revalidate();
+			}
+			else
+			{
+				Widget barLeft = overlay.getChild(currentIndex);
+				if (barLeft != null)
+				{
+					barLeft.setHidden(true);
+				}
+
+				Widget barRight = overlay.getChild(currentIndex + 1);
+				if (barRight != null)
+				{
+					barRight.setHidden(true);
+				}
 			}
 
 			currentSlot += 1;
@@ -441,7 +478,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private boolean shouldModifyTooltips()
 	{
-		return config.tooltipShowBar() || config.tooltipShowBar();
+		return config.tooltipShowBar() || config.tooltipShowXP();
 	}
 
 	private boolean shouldModifyOverlay()

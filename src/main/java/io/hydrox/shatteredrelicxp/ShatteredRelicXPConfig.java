@@ -28,6 +28,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Range;
 import java.awt.Color;
 
 @ConfigGroup(ShatteredRelicXPConfig.GROUP)
@@ -122,6 +123,10 @@ public interface ShatteredRelicXPConfig extends Config
 		name = "Bar Height",
 		description = "How big the bars should be in the overlay",
 		section = overlaySection
+	)
+	@Range(
+		min = 1,
+		max = 32
 	)
 	default int overlayBarHeight()
 	{
