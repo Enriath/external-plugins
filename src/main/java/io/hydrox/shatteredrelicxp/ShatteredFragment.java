@@ -91,7 +91,7 @@ public enum ShatteredFragment
 
 	int getXp(Client client)
 	{
-		return client.getVarbitValue(getVarb());
+		return Math.min(client.getVarbitValue(getVarb()), ShatteredRelicXPPlugin.TIER_3_XP);
 	}
 
 	static ShatteredFragment byOrdinal(int value)

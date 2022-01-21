@@ -94,7 +94,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private static final int SLOT_COUNT = 7;
 	private static final int TIER_2_XP = 2000;
-	private static final int TIER_3_XP = 8000;
+	static final int TIER_3_XP = 8000;
 
 	@Inject
 	private Client client;
