@@ -86,6 +86,17 @@ public interface ShatteredRelicXPConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "tooltipDescriptiveDescriptions",
+		name = "Descriptive descriptions",
+		description = "Use more descriptive descriptions for tooltips (Warning! Some are very long!)",
+		section = tooltipSection
+	)
+	default boolean tooltipDescriptiveDescriptions()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "overlayTextMode",
 		name = "Text Mode",
 		description = "What text to show on each of the icons in the overlay",

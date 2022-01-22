@@ -377,10 +377,18 @@ public class ShatteredRelicXPPlugin extends Plugin
 		int lowerBound = getLowerBound(xp);
 		int bonusHeight = 0;
 
-		Widget text = tooltip.getDynamicChildren()[TOOLTIP_TEXT_INDEX];
+		Widget textWidget = tooltip.getDynamicChildren()[TOOLTIP_TEXT_INDEX];
+		if (config.tooltipDescriptiveDescriptions() && fragment.getNumberOfSubstitutions() > 0)
+		{
+			int tier = getTier(xp);
+			String text = textWidget.getText();
+			text = text.substring(0, text.indexOf("<br>")) + "<br>" + fragment.buildTooltip(tier);
+			textWidget.setText(text);
+		}
+
 		if (config.tooltipShowXP())
 		{
-			text.setText(text.getText() + "<br>XP: " + xp + "/" + upperBound);
+			textWidget.setText(textWidget.getText() + "<br>XP: " + xp + "/" + upperBound);
 		}
 
 		if (config.tooltipShowBar())
@@ -422,8 +430,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 			bonusHeight += TOOLTIP_BAR_HEIGHT + TOOLTIP_BAR_PADDING_Y;
 		}
 
-		int width = calculateTooltipWidth(text.getText());
-		int height = calculateTooltipTextHeight(text.getText()) + bonusHeight;
+		int width = calculateTooltipWidth(textWidget.getText());
+		int height = calculateTooltipTextHeight(textWidget.getText()) + bonusHeight;
 
 		tooltip.setOriginalWidth(width);
 		tooltip.setOriginalHeight(height);
@@ -474,6 +482,14 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private int getLowerBound(int xp)
 	{
 		return xp < TIER_2_XP ? 0 : TIER_2_XP;
+	}
+
+	/**
+	 * @return The tier, indexed from 0
+	 */
+	private int getTier(int xp)
+	{
+		return xp >= TIER_3_XP ? 2 : xp >= TIER_2_XP ? 1 : 0;
 	}
 
 	private boolean shouldModifyTooltips()
