@@ -391,6 +391,11 @@ public class ShatteredRelicXPPlugin extends Plugin
 			textWidget.setText(textWidget.getText() + "<br>XP: " + xp + "/" + upperBound);
 		}
 
+		int width = calculateTooltipWidth(textWidget.getText());
+
+		tooltip.setOriginalWidth(width);
+		tooltip.revalidate();
+
 		if (config.tooltipShowBar())
 		{
 			double percentage = Math.min(1.0, (xp - lowerBound) / (double)(upperBound - lowerBound));
@@ -429,11 +434,9 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 			bonusHeight += TOOLTIP_BAR_HEIGHT + TOOLTIP_BAR_PADDING_Y;
 		}
-
-		int width = calculateTooltipWidth(textWidget.getText());
+		
 		int height = calculateTooltipTextHeight(textWidget.getText()) + bonusHeight;
 
-		tooltip.setOriginalWidth(width);
 		tooltip.setOriginalHeight(height);
 		tooltip.revalidate();
 		for (Widget child : tooltip.getDynamicChildren())
