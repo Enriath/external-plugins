@@ -432,9 +432,40 @@ public class ShatteredRelicXPPlugin extends Plugin
 			barText.setTextColor(Color.WHITE.getRGB());
 			barText.setTextShadowed(true);
 
+			int tier = getTier(xp) + 1;
+			tier = tier == 3 ? 2 : tier;
+
+			Widget barTextLeft = tooltip.createChild(-1, WidgetType.TEXT);
+			barTextLeft.setOriginalX(TOOLTIP_BAR_PADDING_X + 1);
+			barTextLeft.setOriginalY(TOOLTIP_BAR_PADDING_Y + 1);
+			barTextLeft.setOriginalWidth(TOOLTIP_BAR_PADDING_X * 2);
+			barTextLeft.setOriginalHeight(TOOLTIP_BAR_HEIGHT);
+			barTextLeft.setWidthMode(WidgetSizeMode.MINUS);
+			barTextLeft.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+			barTextLeft.setXTextAlignment(WidgetTextAlignment.LEFT);
+			barTextLeft.setYTextAlignment(WidgetTextAlignment.BOTTOM);
+			barTextLeft.setFontId(FontID.PLAIN_11);
+			barTextLeft.setText(Integer.toString(tier));
+			barTextLeft.setTextColor(Color.WHITE.getRGB());
+			barTextLeft.setTextShadowed(true);
+
+			Widget barTextRight = tooltip.createChild(-1, WidgetType.TEXT);
+			barTextRight.setOriginalX(TOOLTIP_BAR_PADDING_X - 1);
+			barTextRight.setOriginalY(TOOLTIP_BAR_PADDING_Y + 1);
+			barTextRight.setOriginalWidth(TOOLTIP_BAR_PADDING_X * 2);
+			barTextRight.setOriginalHeight(TOOLTIP_BAR_HEIGHT);
+			barTextRight.setWidthMode(WidgetSizeMode.MINUS);
+			barTextRight.setYPositionMode(WidgetPositionMode.ABSOLUTE_BOTTOM);
+			barTextRight.setXTextAlignment(WidgetTextAlignment.RIGHT);
+			barTextRight.setYTextAlignment(WidgetTextAlignment.BOTTOM);
+			barTextRight.setFontId(FontID.PLAIN_11);
+			barTextRight.setText(Integer.toString(tier + 1));
+			barTextRight.setTextColor(Color.WHITE.getRGB());
+			barTextRight.setTextShadowed(true);
+
 			bonusHeight += TOOLTIP_BAR_HEIGHT + TOOLTIP_BAR_PADDING_Y;
 		}
-		
+
 		int height = calculateTooltipTextHeight(textWidget.getText()) + bonusHeight;
 
 		tooltip.setOriginalHeight(height);
