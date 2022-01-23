@@ -202,7 +202,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		{
 			buildTooltip();
 		}
-		else if (event.getScriptId() == SCRIPT_BUILD_FRAGMENT_OVERLAY)
+		else if (event.getScriptId() == SCRIPT_BUILD_FRAGMENT_OVERLAY && builtOverlayFirstLogin)
 		{
 			buildOverlay();
 		}
@@ -211,7 +211,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
-		if (isLeaguesWorld() && event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
+		if (builtOverlayFirstLogin && isLeaguesWorld() && event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
 		{
 			buildOverlay();
 		}
