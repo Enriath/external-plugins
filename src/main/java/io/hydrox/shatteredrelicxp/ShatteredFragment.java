@@ -34,7 +34,7 @@ public enum ShatteredFragment
 	TACTICAL_DUELIST("%s%% chance to save Melee weapon charges", new String[]{"20", "40", "80"}),
 	UNHOLY_RANGER("+%s%% Ranged accuracy at 0 prayer", new String[]{"30", "60", "100"}),
 	BOTTOMLESS_QUIVER("%s%% chance to save ammo & Ranged charges", new String[]{"40", "60", "90"}),
-	UNHOLY_WIZARD("+%s%% Melee accuracy at 0 prayer", new String[]{"40", "70", "125"}),
+	UNHOLY_WIZARD("+%s%% Magic accuracy at 0 prayer", new String[]{"40", "70", "125"}),
 	ARCANE_CONDUIT("%s%% chance to save runes & Magic charges", new String[]{"40", "60", "90"}),
 	THRALL_DAMAGE("%sx max hit for Thralls", new String[]{"2", "3", "4"}),
 	LIVIN_ON_A_PRAYER("%s%% slower Prayer drain", new String[]{"15", "30", "60"}),
