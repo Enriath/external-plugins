@@ -504,7 +504,9 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private ShatteredFragment getFragmentInSlot(int slot)
 	{
-		int slotValue = client.getVarbitValue(VARBIT_FRAGMENT_SLOT_BASE + slot);
+		// 13400, where slot 6 would be, isn't the contents of slot 6!. Jank!
+		int actualSlot = VARBIT_FRAGMENT_SLOT_BASE + slot + (slot >= 5 ? 1 : 0);
+		int slotValue = client.getVarbitValue(actualSlot);
 		return slotValue == 0 ? null : ShatteredFragment.byOrdinal(slotValue);
 	}
 
