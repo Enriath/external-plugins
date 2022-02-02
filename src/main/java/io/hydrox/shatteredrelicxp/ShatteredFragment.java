@@ -40,7 +40,7 @@ public enum ShatteredFragment
 	LIVIN_ON_A_PRAYER("%s%% slower Prayer drain", new String[]{"15", "30", "60"}),
 	DIVINE_RESTORATION("+1 Prayer point every %s", new String[]{"15s", "9s", "3.6s"}),
 	PRAYING_RESPECTS("Auto-bury bones & scatter ashes for %s xp", new String[]{"half", "normal", "double"}),
-	LARGER_RECHARGER("+10% special attack every %s", new String[]{"25s", "20s", "10s"}),
+	LARGER_RECHARGER("+10%% special attack every %s", new String[]{"25s", "20s", "10s"}),
 	SPECIAL_DISCOUNT("Special attacks cost a maximum of %s%% energy", new String[]{"50", "40", "25"}),
 	VENOMASTER("Chance to apply %s poison with attacks%s", new String[]{"3", "5", "7"}, new String[]{"", ". Poison immunity", ". Poison & venom immunity"}),
 	SLAY_ALL_DAY("Heal for %s each slayer kill", new String[]{"1", "2", "3"}),
