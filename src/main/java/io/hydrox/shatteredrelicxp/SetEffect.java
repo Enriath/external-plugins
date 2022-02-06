@@ -36,8 +36,8 @@ public enum SetEffect
 {
 	ABSOLUTE_UNIT("Absolute Unit",
 		new Effect[]{
-			new Effect(2, "30% less damage from monsters. 50% post-reduction recoil effect"),
-			new Effect(3, "50% less damage from monsters. 100% post-reduction recoil effect")},
+			new Effect(2, "30% less damage from monsters.<br>50% post-reduction recoil effect"),
+			new Effect(3, "50% less damage from monsters.<br>100% post-reduction recoil effect")},
 		DRAGON_ON_A_BIT, RUNE_ESCAPE, SUPERIOR_TRACKING, ARMADYLEAN_DECREE, DIVINE_RESTORATION, TACTICAL_DUELIST, SARADOMINIST_DEFENCE, VENOMASTER),
 	THE_ALCHEMIST("The Alchemist",
 		new Effect(3, "Process all food, wine, grimy herbs, & potions at once."),
@@ -48,7 +48,7 @@ public enum SetEffect
 			new Effect(3, "60% chance to hit twice with Magic")},
 		THRALL_DAMAGE, UNHOLY_WIZARD, ZAMORAKIAN_SIGHT, MOTHERS_MAGIC_FOSSILS, DEEPER_POCKETS, ROOTY_TOOTY_2X_RUNEYS, HOT_ON_THE_TRAIL),
 	THE_CRAFTSMAN("The Craftsman",
-		new Effect(3, "Most actions relating to smithing, crafting, & fletching are done all at once."),
+		new Effect(3, "Most actions relating to smithing,<br>crafting, & fletching are done all at once."),
 		RUMPLE_BOW_STRING, DRAGON_ON_A_BIT, IMCANDOS_APPRENTICE, GRAVE_ROBBER, PROFLECTHIONAL, PRO_TIPS),
 	DOUBLE_TAP("Double Tap",
 		new Effect[]{
@@ -68,21 +68,21 @@ public enum SetEffect
 		GRAVE_ROBBER, ROCK_SOLID, BANDOSIAN_MIGHT, LARGER_RECHARGER, HOT_ON_THE_TRAIL, VENOMASTER),
 	GREEDY_GATHERER("Greedy Gatherer",
 		new Effect[]{
-			new Effect(2, "2x resources from Fishing, Woodcutting, Mining, & Farming"),
-			new Effect(3, "3x resources from Fishing, Woodcutting, Mining, & Farming")},
+			new Effect(2, "2x resources from Fishing,<br>Woodcutting, Mining, & Farming"),
+			new Effect(3, "3x resources from Fishing,<br>Woodcutting, Mining, & Farming")},
 		MESSAGE_IN_A_BOTTLE, MOLTEN_MINER, ROCK_SOLID, CERTIFIED_FARMER, CHEFS_CATCH, SLASH_AND_BURN, JUST_DRUID),
 	KNIFES_EDGE("Knife's Edge",
 		new Effect[]{
 			new Effect(2, "+0.3% damage for each hitpoint missing"),
-			new Effect(3, "+0.6% damage for each hitpoint missin")},
+			new Effect(3, "+0.6% damage for each hitpoint missing")},
 		BARBARIAN_PEST_WARS, MESSAGE_IN_A_BOTTLE, SLAY_ALL_DAY, BOTTOMLESS_QUIVER, LIVIN_ON_A_PRAYER, PRAYING_RESPECTS, UNHOLY_WARRIOR, SARADOMINIST_DEFENCE),
 	LAST_RECALL("Last Recall",
-		new Effect(4, "Teleport back to where you teleported from with the Crystal of Memories"),
+		new Effect(4, "Teleport back to where you teleported from<br>with the Crystal of Memories"),
 		ENCHANTED_JEWELER, RUNE_ESCAPE, CLUED_IN, SLAY_N_PAY, SUPERIOR_TRACKING, CHINCHONKERS, HOMEWRECKER, PROFLECTHIONAL, ROOTY_TOOTY_2X_RUNEYS, SMOOTH_CRIMINAL),
 	PERSONAL_BANKER("Personal Banker",
 		new Effect[]{
-			new Effect(2, "50% chance to bank resources from Fishing, Woodcutting, Mining, & Farming"),
-			new Effect(3, "100% chance to bank resources from Fishing, Woodcutting, Mining, & Farming")},
+			new Effect(2, "50% chance to bank resources from Fishing,<br>Woodcutting, Mining, & Farming"),
+			new Effect(3, "100% chance to bank resources from Fishing,<br>Woodcutting, Mining, & Farming")},
 		SMITHING_DOUBLE, ALCHEMANIAC, MOLTEN_MINER, SEEDY_BUSINESS, CATCH_OF_THE_DAY, DEEPER_POCKETS),
 	TRAILBLAZER("Trailblazer",
 		new Effect(3, "Teleport to any waystone with the Portable waystone"),

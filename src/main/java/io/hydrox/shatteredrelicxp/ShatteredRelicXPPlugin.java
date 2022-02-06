@@ -402,6 +402,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private void buildSetTooltip(Widget tooltip, SetEffect setEffect)
 	{
 		Widget textWidget = tooltip.getDynamicChildren()[TOOLTIP_TEXT_INDEX];
+		int oldHeight = textWidget.getHeight();
 		// I don't think there's a varb to control what set effects are active, since the client knows the contents of
 		// all the slots & what effects they give. We need the amount of fragments for the effect anyway
 		int activeFragments = 0;
@@ -430,6 +431,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 		tooltip.setOriginalWidth(width);
 		tooltip.setOriginalHeight(height);
+		tooltip.setOriginalY(tooltip.getOriginalY() - (height - oldHeight));
 		tooltip.revalidate();
 		for (Widget child : tooltip.getDynamicChildren())
 		{
@@ -443,6 +445,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		int upperBound = getUpperBound(xp);
 		int lowerBound = getLowerBound(xp);
 		int bonusHeight = 0;
+		int oldHeight = tooltip.getHeight();
 
 		Widget textWidget = tooltip.getDynamicChildren()[TOOLTIP_TEXT_INDEX];
 		if (config.tooltipDescriptiveDescriptions() && fragment.getNumberOfSubstitutions() > 0)
@@ -536,6 +539,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		int height = calculateTooltipTextHeight(textWidget.getText()) + bonusHeight;
 
 		tooltip.setOriginalHeight(height);
+		tooltip.setOriginalY(tooltip.getOriginalY() - (height - oldHeight));
 		tooltip.revalidate();
 		for (Widget child : tooltip.getDynamicChildren())
 		{
