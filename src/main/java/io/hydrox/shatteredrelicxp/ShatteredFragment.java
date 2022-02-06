@@ -36,7 +36,7 @@ public enum ShatteredFragment
 	BOTTOMLESS_QUIVER("%s%% chance to save ammo & Ranged charges", new String[]{"40", "60", "90"}),
 	UNHOLY_WIZARD("+%s%% Magic accuracy at 0 prayer", new String[]{"40", "70", "125"}),
 	ARCANE_CONDUIT("%s%% chance to save runes & Magic charges", new String[]{"40", "60", "90"}),
-	THRALL_DAMAGE("%sx max hit for Thralls", new String[]{"2", "3", "4"}),
+	THRALL_DAMAGE("Thralls deal %sx damage", new String[]{"2", "3", "4"}),
 	LIVIN_ON_A_PRAYER("%s%% slower Prayer drain", new String[]{"15", "30", "60"}),
 	DIVINE_RESTORATION("+1 Prayer point every %s", new String[]{"15s", "9s", "3.6s"}),
 	PRAYING_RESPECTS("Auto-bury bones & scatter ashes for %s xp", new String[]{"half", "normal", "double"}),
