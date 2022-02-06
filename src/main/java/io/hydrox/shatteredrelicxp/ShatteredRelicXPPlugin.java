@@ -74,6 +74,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int OVERLAY_BAR_WIDGETS_START_INDEX = 120;
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_TOP = 8;
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM = 7;
+	private static final int OVERLAY_WIDGET_OFFSET_ICON = 5;
 
 	private static final int TOOLTIP_CHILD_ID = 3;
 	private static final int TOOLTIP_TEXT_INDEX = 2;
@@ -87,6 +88,9 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int SCRIPT_TOOLTIP_REPEAT = 526;
 	private static final int SCRIPT_TOOLTIP_BUILD = 2701;
 	private static final int SCRIPT_BUILD_FRAGMENT_OVERLAY = 3166;
+	private static final int SCRIPT_TOOLTIP_WIDGET_ARG_IDX = 1;
+	private static final int SCRIPT_TOOLTIP_CHILD_ARG_IDX = 2;
+	private static final int SCRIPT_TOOLTIP_TEXT_ARG_IDX = 4;
 
 	private static final int VARBIT_FRAGMENT_SLOT_BASE = 13395;
 	private static final int VAR_FRAGMENT_FIRST = 3282;
@@ -367,11 +371,74 @@ public class ShatteredRelicXPPlugin extends Plugin
 		{
 			return;
 		}
-		ShatteredFragment fragment = getFragmentInSlot(getFragmentSlotFromTrigger((Integer) tooltipScriptArgs[2]));
-		if (fragment == null)
+		int slot = getFragmentSlotFromTrigger((Integer) tooltipScriptArgs[SCRIPT_TOOLTIP_CHILD_ARG_IDX]);
+		Widget icon = client.getWidget((Integer) tooltipScriptArgs[SCRIPT_TOOLTIP_WIDGET_ARG_IDX]);
+		if (icon == null)
 		{
 			return;
 		}
+		icon = icon.getChild(slot * OVERLAY_WIDGETS_PER_ICON + OVERLAY_WIDGET_OFFSET_ICON);
+
+		if (slot >= SLOT_COUNT || iconIsSetEffect(icon.getSpriteId()))
+		{
+			SetEffect effect = SetEffect.byName((String) tooltipScriptArgs[SCRIPT_TOOLTIP_TEXT_ARG_IDX]);
+			if (effect == null)
+			{
+				return;
+			}
+			buildSetTooltip(tooltip, effect);
+		}
+		else
+		{
+			ShatteredFragment fragment = getFragmentInSlot(slot);
+			if (fragment == null)
+			{
+				return;
+			}
+			buildFragmentTooltip(tooltip, fragment);
+		}
+	}
+
+	private void buildSetTooltip(Widget tooltip, SetEffect setEffect)
+	{
+		Widget textWidget = tooltip.getDynamicChildren()[TOOLTIP_TEXT_INDEX];
+		// I don't think there's a varb to control what set effects are active, since the client knows the contents of
+		// all the slots & what effects they give. We need the amount of fragments for the effect anyway
+		int activeFragments = 0;
+		for (int i = 0; i < 7; i++)
+		{
+			ShatteredFragment fragment = getFragmentInSlot(i);
+			if (fragment != null && SetEffect.getEffects(fragment).contains(setEffect))
+			{
+				activeFragments += 1;
+			}
+		}
+
+		SetEffect.Effect effect = setEffect.getEffect(activeFragments);
+		String text = textWidget.getText();
+		text += " (" + effect.getRelicsRequired() + ")";
+
+		if (config.tooltipDescriptiveDescriptions())
+		{
+			text += "<br>" + effect.getTooltip();
+		}
+
+		textWidget.setText(text);
+
+		int height = calculateTooltipTextHeight(textWidget.getText());
+		int width = calculateTooltipWidth(textWidget.getText());
+
+		tooltip.setOriginalWidth(width);
+		tooltip.setOriginalHeight(height);
+		tooltip.revalidate();
+		for (Widget child : tooltip.getDynamicChildren())
+		{
+			child.revalidate();
+		}
+	}
+
+	private void buildFragmentTooltip(Widget tooltip, ShatteredFragment fragment)
+	{
 		int xp = fragment.getXp(client);
 		int upperBound = getUpperBound(xp);
 		int lowerBound = getLowerBound(xp);
@@ -541,5 +608,10 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private boolean isLeaguesWorld()
 	{
 		return client.getWorldType().contains(WorldType.SEASONAL);
+	}
+
+	private boolean iconIsSetEffect(int spriteId)
+	{
+		return spriteId >= 4114 && spriteId <= 4159;
 	}
 }
