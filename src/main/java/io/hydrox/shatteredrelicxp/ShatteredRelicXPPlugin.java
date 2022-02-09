@@ -223,11 +223,6 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private void buildOverlay()
 	{
-		if (!shouldModifyOverlay())
-		{
-			return;
-		}
-
 		Widget overlay = client.getWidget(SHATTERED_GROUP_ID, OVERLAY_CHILD_ID);
 		if (overlay == null || overlay.getDynamicChildren().length == 0)
 		{
@@ -602,11 +597,6 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private boolean shouldModifyTooltips()
 	{
 		return config.tooltipShowBar() || config.tooltipShowXP() || config.tooltipDescriptiveDescriptions();
-	}
-
-	private boolean shouldModifyOverlay()
-	{
-		return config.overlayShowBar() || config.overlayTextMode() != ShatteredRelicXPConfig.OverlayTextMode.NONE;
 	}
 
 	private boolean isLeaguesWorld()
