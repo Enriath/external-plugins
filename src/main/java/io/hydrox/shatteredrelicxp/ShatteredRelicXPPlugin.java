@@ -601,7 +601,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private boolean shouldModifyTooltips()
 	{
-		return config.tooltipShowBar() || config.tooltipShowXP();
+		return config.tooltipShowBar() || config.tooltipShowXP() || config.tooltipDescriptiveDescriptions();
 	}
 
 	private boolean shouldModifyOverlay()
