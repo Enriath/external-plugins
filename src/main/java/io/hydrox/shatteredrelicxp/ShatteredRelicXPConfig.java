@@ -159,4 +159,14 @@ public interface ShatteredRelicXPConfig extends Config
 	{
 		return Color.WHITE;
 	}
+
+	@ConfigItem(
+		keyName = "overrideBuffLimit",
+		name = "Override buff bar limit",
+		description = "Override the 8 icon limit in the buff bar"
+	)
+	default boolean overrideBuffLimit()
+	{
+		return true;
+	}
 }

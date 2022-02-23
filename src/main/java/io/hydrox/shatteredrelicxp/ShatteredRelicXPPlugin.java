@@ -52,7 +52,12 @@ import java.awt.Toolkit;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @PluginDescriptor(
 	name = "Shattered Relic XP",
@@ -74,6 +79,11 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM = 7;
 	private static final int OVERLAY_WIDGET_OFFSET_ICON = 6;
 	private static final int OVERLAY_EDITED_FLAG = 99;
+	private static final int OVERLAY_SET_BG_COLOUR = 8716250; // #84FFDA
+	private static final int OVERLAY_ICON_SIZE = 32;
+	private static final int OVERLAY_ICON_PADDING = 3;
+	private static final int OVERLAY_SET_BG_OPACITY = 190;
+	private static final int OVERLAY_SET_BORDER_OPACITY = 130;
 
 	private static final int TOOLTIP_CHILD_ID = 5;
 	private static final int TOOLTIP_TEXT_INDEX = 2;
@@ -86,6 +96,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private static final int SCRIPT_TOOLTIP_REPEAT = 526;
 	private static final int SCRIPT_TOOLTIP_BUILD = 2701;
+	private static final int SCRIPT_TOOLTIP_CLEAR = 40;
 	private static final int SCRIPT_BUILD_FRAGMENT_OVERLAY = 4671;
 	private static final int SCRIPT_TOOLTIP_WIDGET_ARG_IDX = 1;
 	private static final int SCRIPT_TOOLTIP_CHILD_ARG_IDX = 2;
@@ -213,6 +224,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 		// the missing ones.
 		int currentSlot = 0;
 
+		List<SetEffect> activeEffects = new ArrayList<>();
+
 		for (int i = 0; i < SLOT_COUNT; i++)
 		{
 			int currentIndex = OVERLAY_BAR_WIDGETS_START_INDEX + currentSlot * 2;
@@ -221,6 +234,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 			{
 				continue;
 			}
+			activeEffects.addAll(SetEffect.getEffects(fragment));
 			int xp = fragment.getXp(client);
 			int upperBound = getUpperBound(xp);
 			int lowerBound = getLowerBound(xp);
@@ -305,8 +319,103 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 			currentSlot += 1;
 		}
+		if (config.overrideBuffLimit())
+		{
+			Set<SetEffect> effects = activeEffects.stream()
+				.collect(Collectors.groupingBy((SetEffect e) -> e, Collectors.counting()))
+				.entrySet().stream()
+				.map(e -> e.getKey().getEffect(e.getValue().intValue()) == null ? null : e.getKey())
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+
+			int effectsToFind = effects.size();
+
+			for (int i = 0; i < effectsToFind; i++)
+			{
+				int baseIdx = (currentSlot + i) * OVERLAY_WIDGETS_PER_ICON;
+				Widget child = overlay.getChild(baseIdx + OVERLAY_WIDGET_OFFSET_ICON);
+				if (child != null)
+				{
+					effects.remove(SetEffect.byIconId(child.getSpriteId()));
+					continue;
+				}
+				SetEffect effect = effects.iterator().next();
+				buildSetEffectBuff(effect, baseIdx, overlay);
+				effects.remove(effect);
+			}
+		}
+		else
+		{
+			if (overlay.getChildren() != null && overlay.getChildren().length > OVERLAY_WIDGETS_PER_ICON * 8)
+			{
+				for (int i = OVERLAY_WIDGETS_PER_ICON * 8; i < OVERLAY_BAR_WIDGETS_START_INDEX; i++)
+				{
+					overlay.getChildren()[i] = null;
+				}
+			}
+		}
+
 		// Flag the overlay as having been edited, in a subtle and consistent way.
 		overlay.getChild(0).setModelZoom(OVERLAY_EDITED_FLAG);
+	}
+
+	private void buildSetEffectBuff(SetEffect effect, int baseIdx, Widget parent)
+	{
+		int x = (baseIdx / 10) * 37 + 3;
+
+		// BG
+		parent.createChild(baseIdx, WidgetType.RECTANGLE)
+			.setTextColor(42)
+			.setOpacity(0)
+			.setPos(x, OVERLAY_ICON_PADDING, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(OVERLAY_ICON_SIZE, OVERLAY_ICON_SIZE);
+		parent.createChild(baseIdx + 1, WidgetType.RECTANGLE)
+			.setTextColor(OVERLAY_SET_BG_COLOUR)
+			.setOpacity(OVERLAY_SET_BG_OPACITY)
+			.setFilled(true)
+			.setPos(x, OVERLAY_ICON_PADDING, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(OVERLAY_ICON_SIZE, OVERLAY_ICON_SIZE);
+		// Border
+		parent.createChild(baseIdx + 2, WidgetType.RECTANGLE)
+			.setTextColor(OVERLAY_SET_BG_COLOUR)
+			.setOpacity(OVERLAY_SET_BORDER_OPACITY)
+			.setFilled(true)
+			.setPos(x - 1, OVERLAY_ICON_PADDING - 1, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(1, OVERLAY_ICON_SIZE + 2);
+		parent.createChild(baseIdx + 3, WidgetType.RECTANGLE)
+			.setTextColor(OVERLAY_SET_BG_COLOUR)
+			.setOpacity(OVERLAY_SET_BORDER_OPACITY)
+			.setFilled(true)
+			.setPos(x + OVERLAY_ICON_SIZE, OVERLAY_ICON_PADDING - 1, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(1, OVERLAY_ICON_SIZE + OVERLAY_ICON_PADDING - 1);
+		parent.createChild(baseIdx + 4, WidgetType.RECTANGLE)
+			.setTextColor(OVERLAY_SET_BG_COLOUR)
+			.setOpacity(OVERLAY_SET_BORDER_OPACITY)
+			.setFilled(true)
+			.setPos(x, OVERLAY_ICON_PADDING - 1, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(OVERLAY_ICON_SIZE, 1);
+		parent.createChild(baseIdx + 5, WidgetType.RECTANGLE)
+			.setTextColor(OVERLAY_SET_BG_COLOUR)
+			.setOpacity(OVERLAY_SET_BORDER_OPACITY)
+			.setFilled(true)
+			.setPos(x, OVERLAY_ICON_SIZE + OVERLAY_ICON_PADDING, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(OVERLAY_ICON_SIZE, 1);
+
+		parent.createChild(baseIdx + 6, WidgetType.GRAPHIC)
+			.setSpriteId(effect.getIconId())
+			.setOpacity(0)
+			.setPos(x, OVERLAY_ICON_PADDING, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(OVERLAY_ICON_SIZE, OVERLAY_ICON_SIZE);
+
+		Widget listener = parent.createChild(baseIdx + 9, WidgetType.GRAPHIC)
+			.setOpacity(255)
+			.setPos(x, OVERLAY_ICON_PADDING, WidgetPositionMode.ABSOLUTE_LEFT, WidgetPositionMode.ABSOLUTE_BOTTOM)
+			.setSize(OVERLAY_ICON_SIZE, OVERLAY_ICON_SIZE)
+			.setHasListener(true);
+		listener.setOnMouseRepeatListener(SCRIPT_TOOLTIP_REPEAT, parent.getId(), baseIdx + 9, parent.getId() + 1, effect.getName(), 0, 512);
+		listener.setOnMouseLeaveListener(SCRIPT_TOOLTIP_CLEAR, parent.getId() + 1);
+
+		parent.revalidate();
 	}
 
 	private void cleanOverlay()
@@ -316,7 +425,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		{
 			return;
 		}
-
+		// Clean xp text
 		for (int i = 0; i < SLOT_COUNT; i++)
 		{
 			Widget topText = overlay.getChild(i * OVERLAY_WIDGETS_PER_ICON + OVERLAY_WIDGET_OFFSET_TEXT_TOP);
@@ -330,7 +439,15 @@ public class ShatteredRelicXPPlugin extends Plugin
 				bottomText.setText("");
 			}
 		}
-
+		// Clean extra icons
+		if (overlay.getChildren().length > OVERLAY_WIDGETS_PER_ICON * 8)
+		{
+			for (int i = OVERLAY_WIDGETS_PER_ICON * 8; i < OVERLAY_BAR_WIDGETS_START_INDEX; i++)
+			{
+				overlay.getChildren()[i] = null;
+			}
+		}
+		// Clean progress bars
 		if (overlay.getChildren().length > OVERLAY_BAR_WIDGETS_START_INDEX)
 		{
 			for (int i = OVERLAY_BAR_WIDGETS_START_INDEX; i < overlay.getChildren().length; i++)
