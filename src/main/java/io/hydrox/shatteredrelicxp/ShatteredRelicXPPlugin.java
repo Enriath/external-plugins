@@ -29,8 +29,6 @@ import net.runelite.api.Client;
 import net.runelite.api.FontID;
 import net.runelite.api.GameState;
 import net.runelite.api.WorldType;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.VarbitChanged;
@@ -75,6 +73,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_TOP = 8;
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM = 7;
 	private static final int OVERLAY_WIDGET_OFFSET_ICON = 6;
+	private static final int OVERLAY_EDITED_FLAG = 99;
 
 	private static final int TOOLTIP_CHILD_ID = 5;
 	private static final int TOOLTIP_TEXT_INDEX = 2;
@@ -87,7 +86,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private static final int SCRIPT_TOOLTIP_REPEAT = 526;
 	private static final int SCRIPT_TOOLTIP_BUILD = 2701;
-	private static final int SCRIPT_BUILD_FRAGMENT_OVERLAY = 3166;
+	private static final int SCRIPT_BUILD_FRAGMENT_OVERLAY = 4671;
 	private static final int SCRIPT_TOOLTIP_WIDGET_ARG_IDX = 1;
 	private static final int SCRIPT_TOOLTIP_CHILD_ARG_IDX = 2;
 	private static final int SCRIPT_TOOLTIP_TEXT_ARG_IDX = 4;
@@ -112,7 +111,6 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private Widget tooltipScriptSource = null;
 	private Object[] tooltipScriptArgs = null;
 	private boolean shouldBuildTooltip = false;
-	private boolean builtOverlayFirstLogin = false;
 
 	@Provides
 	ShatteredRelicXPConfig provideConfig(ConfigManager configManager)
@@ -125,7 +123,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	{
 		if (client.getGameState() == GameState.LOGGED_IN && isLeaguesWorld())
 		{
-			clientThread.invoke(this::buildOverlay);
+			clientThread.invoke(() -> buildOverlay(true));
 		}
 	}
 
@@ -139,29 +137,6 @@ public class ShatteredRelicXPPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged event)
-	{
-		if (event.getGameState() == GameState.LOGIN_SCREEN || event.getGameState() == GameState.HOPPING)
-		{
-			builtOverlayFirstLogin = false;
-		}
-	}
-
-	@Subscribe
-	public void onGameTick(GameTick event)
-	{
-		if (!isLeaguesWorld())
-		{
-			return;
-		}
-
-		if (!builtOverlayFirstLogin && client.getGameState() == GameState.LOGGED_IN)
-		{
-			buildOverlay();
-		}
-	}
-
-	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
 		if (!isLeaguesWorld())
@@ -171,7 +146,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 		if (event.getGroup().equals(ShatteredRelicXPConfig.GROUP))
 		{
-			clientThread.invoke(this::buildOverlay);
+			clientThread.invoke(() -> buildOverlay(true));
 		}
 	}
 
@@ -206,7 +181,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		{
 			buildTooltip();
 		}
-		else if (event.getScriptId() == SCRIPT_BUILD_FRAGMENT_OVERLAY && builtOverlayFirstLogin)
+		else if (event.getScriptId() == SCRIPT_BUILD_FRAGMENT_OVERLAY)
 		{
 			buildOverlay();
 		}
@@ -215,7 +190,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
-		if (builtOverlayFirstLogin && isLeaguesWorld() && event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
+		if (isLeaguesWorld() && event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
 		{
 			buildOverlay();
 		}
@@ -223,8 +198,13 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 	private void buildOverlay()
 	{
+		buildOverlay(false);
+	}
+
+	private void buildOverlay(boolean force)
+	{
 		Widget overlay = client.getWidget(SHATTERED_GROUP_ID, OVERLAY_CHILD_ID);
-		if (overlay == null || overlay.getDynamicChildren().length == 0)
+		if (overlay == null || overlay.getDynamicChildren().length == 0 || (overlay.getChild(0).getModelZoom() == OVERLAY_EDITED_FLAG && !force))
 		{
 			return;
 		}
@@ -325,7 +305,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 
 			currentSlot += 1;
 		}
-		builtOverlayFirstLogin = true;
+		// Flag the overlay as having been edited, in a subtle and consistent way.
+		overlay.getChild(0).setModelZoom(OVERLAY_EDITED_FLAG);
 	}
 
 	private void cleanOverlay()
