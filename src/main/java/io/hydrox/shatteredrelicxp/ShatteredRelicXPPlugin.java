@@ -74,9 +74,9 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int OVERLAY_BAR_WIDGETS_START_INDEX = 120;
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_TOP = 8;
 	private static final int OVERLAY_WIDGET_OFFSET_TEXT_BOTTOM = 7;
-	private static final int OVERLAY_WIDGET_OFFSET_ICON = 5;
+	private static final int OVERLAY_WIDGET_OFFSET_ICON = 6;
 
-	private static final int TOOLTIP_CHILD_ID = 3;
+	private static final int TOOLTIP_CHILD_ID = 5;
 	private static final int TOOLTIP_TEXT_INDEX = 2;
 	private static final int TOOLTIP_BAR_PADDING_X = 6;
 	private static final int TOOLTIP_BAR_PADDING_Y = 3;
