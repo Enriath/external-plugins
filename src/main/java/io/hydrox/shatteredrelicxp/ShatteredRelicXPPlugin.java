@@ -109,6 +109,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 	private static final int TIER_2_XP = 2000;
 	static final int TIER_3_XP = 8000;
 
+	private static final List<Integer> usedSlots = new ArrayList<>();
+
 	@Inject
 	private Client client;
 
@@ -224,6 +226,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		int currentSlot = 0;
 
 		List<SetEffect> activeEffects = new ArrayList<>();
+		usedSlots.clear();
 
 		for (int i = 0; i < SLOT_COUNT; i++)
 		{
@@ -234,6 +237,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 				continue;
 			}
 			activeEffects.addAll(SetEffect.getEffects(fragment));
+			usedSlots.add(i);
+
 			int xp = fragment.getXp(client);
 			int upperBound = getUpperBound(xp);
 			int lowerBound = getLowerBound(xp);
@@ -469,6 +474,10 @@ public class ShatteredRelicXPPlugin extends Plugin
 		}
 		else
 		{
+			if (usedSlots.size() > 0)
+			{
+				slot = usedSlots.get(slot);
+			}
 			ShatteredFragment fragment = getFragmentInSlot(slot);
 			if (fragment == null)
 			{
