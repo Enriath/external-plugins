@@ -195,7 +195,7 @@ public class ShatteredRelicXPPlugin extends Plugin
 		}
 		else if (event.getScriptId() == SCRIPT_BUILD_FRAGMENT_OVERLAY)
 		{
-			buildOverlay();
+			buildOverlay(false);
 		}
 	}
 
@@ -204,13 +204,8 @@ public class ShatteredRelicXPPlugin extends Plugin
 	{
 		if (isLeaguesWorld() && event.getIndex() >= VAR_FRAGMENT_FIRST && event.getIndex() <= VAR_FRAGMENT_LAST)
 		{
-			buildOverlay();
+			buildOverlay(true);
 		}
-	}
-
-	private void buildOverlay()
-	{
-		buildOverlay(false);
 	}
 
 	private void buildOverlay(boolean force)
