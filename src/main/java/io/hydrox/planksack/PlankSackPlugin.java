@@ -196,49 +196,30 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		// Interact in inventory
-		// Right click use in bank
-		if ((event.getId() == ItemID.PLANK_SACK && (event.getMenuOption().equals("Fill") || event.getMenuOption().equals("Empty")))
-		|| (event.getMenuTarget().equals("<col=ff9040>Plank sack</col>") && event.getMenuOption().equals("Use")))
+		if (event.getWidget() != null)
 		{
-			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
-			checkForUpdate = true;
-		}
-		// Shift click use in bank
-		else if (event.getMenuOption().equals("Use") && event.getId() == 9 && event.getMenuAction() == MenuAction.CC_OP)
-		{
-			ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
-			if (inventory != null)
+			// Interact in inventory
+			// Right click use in bank
+			if (event.getWidget().getItemId() == ItemID.PLANK_SACK &&
+				(event.getMenuOption().equals("Fill") || event.getMenuOption().equals("Empty") || event.getMenuOption().equals("Use")))
 			{
-				Item[] items = inventory.getItems();
-				int idx = event.getActionParam();
-				if (idx < items.length && items[idx].getId() == ItemID.PLANK_SACK)
+				inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+				checkForUpdate = true;
+			}
+			// Use plank on sack or sack on plank
+			else if (event.getMenuOption().equals("Use")
+				&& event.getMenuAction() == MenuAction.WIDGET_TARGET_ON_WIDGET
+				&& client.getSelectedWidget() != null)
+			{
+				int firstSelectedItemID = client.getSelectedWidget().getItemId();
+				int secondSelectedItemID = event.getWidget().getItemId();
+
+				if ((firstSelectedItemID == ItemID.PLANK_SACK && PLANKS.contains(secondSelectedItemID))
+					|| (PLANKS.contains(firstSelectedItemID) && secondSelectedItemID == ItemID.PLANK_SACK))
 				{
 					inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 					checkForUpdate = true;
 				}
-			}
-		}
-		// Use plank on sack or sack on plank
-		else if (event.getMenuOption().equals("Use") && event.getMenuAction() == MenuAction.ITEM_USE_ON_WIDGET_ITEM &&
-			(event.getId() == ItemID.PLANK_SACK || PLANKS.contains(event.getId())))
-		{
-			ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
-			if (inventory != null)
-			{
-				Item[] items = inventory.getItems();
-				int idx = event.getSelectedItemIndex();
-				if (idx < items.length)
-				{
-					int selectedItemID = items[idx].getId();
-					if ((selectedItemID == ItemID.PLANK_SACK && PLANKS.contains(event.getId()))
-						|| (PLANKS.contains(selectedItemID) && event.getId() == ItemID.PLANK_SACK))
-					{
-						inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
-						checkForUpdate = true;
-					}
-				}
-
 			}
 		}
 		else if (event.getMenuOption().equals("Repair"))
