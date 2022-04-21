@@ -85,6 +85,9 @@ public class PlankSackPlugin extends Plugin
 	private static final int CONSTRUCTION_SUBWIDGET_MATERIALS = 3;
 	private static final int CONSTRUCTION_SUBWIDGET_CANT_BUILD = 5;
 	private static final int CONSTRUCTION_IMCANDO_MAHOGANY_HOMES = 8912;
+	private static final int SCRIPT_CONSTRUCTION_OPTION_CLICKED = 1405;
+	private static final int SCRIPT_CONSTRUCTION_OPTION_KEYBIND = 1632;
+	private static final int SCRIPT_BUILD_CONSTRUCTION_MENU_ENTRY = 1404;
 
 	@Data
 	private static class BuildMenuItem
@@ -234,7 +237,8 @@ public class PlankSackPlugin extends Plugin
 	{
 		// Construction menu option selected
 		// Consutrction menu option selected with keybind
-		if (event.getScriptId() != 1405 && event.getScriptId() != 1632)
+		if (event.getScriptId() != SCRIPT_CONSTRUCTION_OPTION_CLICKED
+			&& event.getScriptId() != SCRIPT_CONSTRUCTION_OPTION_KEYBIND)
 		{
 			return;
 		}
@@ -272,7 +276,7 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onScriptPostFired(ScriptPostFired event)
 	{
-		if (event.getScriptId() != 1404)
+		if (event.getScriptId() != SCRIPT_BUILD_CONSTRUCTION_MENU_ENTRY)
 		{
 			return;
 		}
@@ -291,27 +295,36 @@ public class PlankSackPlugin extends Plugin
 			{
 				int idx = CONSTRUCTION_WIDGET_BUILD_IDX_START + i;
 				Widget widget = client.getWidget(CONSTRUCTION_WIDGET_GROUP, idx);
-				if (widget != null)
+				if (widget == null)
 				{
-					boolean canBuild = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_CANT_BUILD].isHidden();
-					Widget materialWidget = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_MATERIALS];
-					if (materialWidget != null)
+					continue;
+				}
+
+				boolean canBuild = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_CANT_BUILD].isHidden();
+				Widget materialWidget = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_MATERIALS];
+				if (materialWidget == null)
+				{
+					continue;
+				}
+
+				String[] materialLines = materialWidget.getText().split("<br>");
+				List<Item> materials = new ArrayList<>();
+				for (String line : materialLines)
+				{
+					String[] data = line.split(": ");
+					if (data.length < 2)
 					{
-						String[] materialLines = materialWidget.getText().split("<br>");
-						List<Item> materials = new ArrayList<>();
-						for (String line : materialLines)
-						{
-							String[] data = line.split(": ");
-							String name = data[0];
-							int count = Integer.parseInt(data[1]);
-							if (PLANK_NAMES.contains(name))
-							{
-								materials.add(new Item(PLANKS.get(PLANK_NAMES.indexOf(name)), count));
-							}
-						}
-						buildMenuItems.add(new BuildMenuItem(materials.toArray(new Item[0]), canBuild));
+						continue;
+					}
+
+					String name = data[0];
+					int count = Integer.parseInt(data[1]);
+					if (PLANK_NAMES.contains(name))
+					{
+						materials.add(new Item(PLANKS.get(PLANK_NAMES.indexOf(name)), count));
 					}
 				}
+				buildMenuItems.add(new BuildMenuItem(materials.toArray(new Item[0]), canBuild));
 			}
 			menuItemsToCheck = 0;
 		}
