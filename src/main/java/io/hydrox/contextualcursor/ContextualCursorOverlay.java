@@ -67,8 +67,7 @@ public class ContextualCursorOverlay extends Overlay
 	private static final int MENU_EXTRA_BOTTOM = 3;
 	private static final int MENU_BORDERS_TOTAL = MENU_EXTRA_TOP + MENU_OPTION_HEIGHT + MENU_EXTRA_BOTTOM;
 	private static final Set<MenuAction> IGNORED_ACTIONS = Sets.newHashSet(
-		MenuAction.WALK, MenuAction.CC_OP, MenuAction.CANCEL,
-		MenuAction.WIDGET_TYPE_2, MenuAction.WIDGET_TYPE_6, MenuAction.CC_OP_LOW_PRIORITY
+		MenuAction.WALK, MenuAction.CC_OP, MenuAction.CANCEL, MenuAction.CC_OP_LOW_PRIORITY
 	);
 
 	private final Client client;
@@ -163,7 +162,10 @@ public class ContextualCursorOverlay extends Overlay
 			menuEntry = menuEntries[last];
 		}
 
-		if (menuEntry == null || IGNORED_ACTIONS.contains(menuEntry.getType()))
+		if (menuEntry == null ||
+			(!menuEntry.isItemOp()
+			&& !menuEntry.getOption().equals("Examine")
+			&& IGNORED_ACTIONS.contains(menuEntry.getType())))
 		{
 			resetCursor();
 			return null;
