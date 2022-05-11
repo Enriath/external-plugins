@@ -64,7 +64,7 @@ public enum SpellSprite
 	FIRE_BLAST("Fire Blast", SpriteID.SPELL_FIRE_BLAST),
 	CHARGE_EARTH_ORB("Charge Earth Orb", SpriteID.SPELL_CHARGE_EARTH_ORB),
 	SARADOMIN_STRIKE("Saradomin Strike", SpriteID.SPELL_SARADOMIN_STRIKE),
-	CLAWS_OF_GUTHIX("Claws of Guthix", SpriteID.SPELL_CLAWS_OF_GUTHIC),
+	CLAWS_OF_GUTHIX("Claws of Guthix", SpriteID.SPELL_CLAWS_OF_GUTHIX),
 	FLAMES_OF_ZAMORAK("Flames of Zamorak", SpriteID.SPELL_FLAMES_OF_ZAMORAK),
 	WIND_WAVE("Wind Wave", SpriteID.SPELL_WIND_WAVE),
 	CHARGE_FIRE_ORB("Charge Fire Orb", SpriteID.SPELL_CHARGE_FIRE_ORB),
