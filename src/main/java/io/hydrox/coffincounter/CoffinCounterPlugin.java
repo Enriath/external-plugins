@@ -42,6 +42,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -184,12 +185,17 @@ public class CoffinCounterPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
+		if (event.getWidget() == null)
+		{
+			return;
+		}
+		int itemId = event.getWidget().getItemId();
 		// Handle when the player uses remains on the coffin
 		if (usingRemains || usingCoffin)
 		{
-			if (event.getMenuAction() == MenuAction.ITEM_USE_ON_WIDGET_ITEM &&
-				((usingRemains && Coffin.getFromItem(event.getId()) != null)
-				|| (usingCoffin && Shade.fromRemainsID(event.getId()) != null)))
+			if (event.getMenuAction() == MenuAction.WIDGET_TARGET_ON_WIDGET &&
+				((usingRemains && Coffin.getFromItem(itemId) != null)
+				|| (usingCoffin && Shade.fromRemainsID(itemId) != null)))
 			{
 				inventorySnapshot = createInventorySnapshot();
 				checkFill = true;
@@ -198,22 +204,24 @@ public class CoffinCounterPlugin extends Plugin
 			usingRemains = false;
 			usingCoffin = false;
 		}
-		// Handle when the fill option is used. CC_OP is for when the coffin is equipped.
+		// Handle when the fill option is used.
+		// This probably collides with the fish sack, but that shouldn't matter much
 		else if (event.getMenuOption().equals("Fill") &&
-			((event.getMenuAction() == MenuAction.ITEM_FIRST_OPTION && Coffin.getFromItem(event.getId()) != null)
-			|| (event.getMenuAction() == MenuAction.CC_OP && event.getId() == 2)))
+			event.getMenuAction() == MenuAction.CC_OP && event.getId() == 2 &&
+			(Coffin.getFromItem(itemId) != null
+				|| WidgetInfo.TO_GROUP(event.getWidget().getId()) == WidgetID.EQUIPMENT_GROUP_ID))
 		{
 			inventorySnapshot = createInventorySnapshot();
 			checkFill = true;
 		}
 		// First half of checking if the player has selected either remains or a coffin
-		else if (event.getMenuAction() == MenuAction.ITEM_USE)
+		else if (event.getMenuAction() == MenuAction.WIDGET_TARGET && itemId != -1)
 		{
-			if (Shade.fromRemainsID(event.getId()) != null)
+			if (Shade.fromRemainsID(itemId) != null)
 			{
 				usingRemains = true;
 			}
-			else if (Coffin.getFromItem(event.getId()) != null)
+			else if (Coffin.getFromItem(itemId) != null)
 			{
 				usingCoffin = true;
 			}
