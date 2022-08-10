@@ -171,7 +171,7 @@ public class ContextualCursorOverlay extends Overlay
 			return null;
 		}
 
-		processEntry(graphics,  menuEntry.getOption(),  menuEntry.getTarget());
+		processEntry(graphics,  menuEntry.getType(), menuEntry.getOption(),  menuEntry.getTarget());
 		return null;
 	}
 
@@ -202,35 +202,42 @@ public class ContextualCursorOverlay extends Overlay
 		return menuEntries[index];
 	}
 
-	private void processEntry(Graphics2D graphics, String option, String target)
+	private static final Set<MenuAction> SPELL_TYPES = Sets.newHashSet(
+		MenuAction.WIDGET_TARGET_ON_GAME_OBJECT, MenuAction.WIDGET_TARGET_ON_NPC, MenuAction.WIDGET_TARGET_ON_PLAYER,
+		MenuAction.WIDGET_TARGET_ON_GROUND_ITEM, MenuAction.WIDGET_TARGET_ON_WIDGET, MenuAction.WIDGET_TARGET
+	);
+
+	private void processEntry(Graphics2D graphics, MenuAction type, String option, String target)
 	{
-		if ((option.equals("Cast") || option.equals("Reanimate") || option.equals("Resurrect")) && target.contains("->"))
-		{
-			final Matcher spellFinder = SPELL_FINDER.matcher(target);
-
-			if (!spellFinder.find())
-			{
-				return;
-			}
-
-			final String spellText = spellFinder.group(1);
-			final SpellSprite spell = SpellSprite.get(spellText);
-
-			final BufferedImage magicSprite = spriteManager.getSprite(spell.spriteID, 0);
-			if (magicSprite == null)
-			{
-				return;
-			}
-
-			drawCursorWithSprite(graphics, magicSprite);
-			return;
-		}
-
 		final ContextualCursor cursor;
-		// Custom handling for RL & Vanilla Wiki lookup's spell-like nature
-		if (option.equals("Lookup") && Text.removeTags(target).startsWith("Wiki ->"))
+		if (SPELL_TYPES.contains(type))
 		{
-			cursor = ContextualCursor.WIKI;
+			// Custom handling for RL & Vanilla Wiki lookup's spell-like nature
+			if (option.equals("Lookup") && Text.removeTags(target).startsWith("Wiki ->"))
+			{
+				cursor = ContextualCursor.WIKI;
+			}
+			else
+			{
+				final Matcher spellFinder = SPELL_FINDER.matcher(target.toLowerCase());
+
+				if (!spellFinder.find())
+				{
+					return;
+				}
+
+				final String spellText = spellFinder.group(1);
+				final SpellSprite spell = SpellSprite.get(spellText);
+
+				final BufferedImage magicSprite = spriteManager.getSprite(spell.spriteID, 0);
+				if (magicSprite == null)
+				{
+					return;
+				}
+
+				drawCursorWithSprite(graphics, magicSprite);
+				return;
+			}
 		}
 		else
 		{
