@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Hydrox6 <ikada@protonmail.ch>
+ * Copyright (c) 2020-2022 Enriath <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,9 @@ import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
+import net.runelite.client.ui.overlay.components.ImageComponent;
+import net.runelite.client.ui.overlay.tooltip.Tooltip;
+import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 import net.runelite.client.util.Text;
 import javax.inject.Inject;
 import javax.swing.JPanel;
@@ -57,6 +60,9 @@ public class ContextualCursorOverlay extends Overlay
 		new java.awt.Point(0, 0),
 		"blank"
 	);
+	private static final Tooltip SPACER_TOOLTIP = new Tooltip(
+		new ImageComponent(new BufferedImage(1, 10, BufferedImage.TYPE_INT_ARGB))
+	);
 	private static final Pattern SPELL_FINDER = Pattern.compile(">(.*?)(?:</col>| -> )");
 	//The pointer sticks out to the left slightly, so this makes sure it's point to the correct spot
 	private static final Point POINTER_OFFSET = new Point(-5, 0);
@@ -74,6 +80,7 @@ public class ContextualCursorOverlay extends Overlay
 	private final ClientUI clientUI;
 	private final ContextualCursorPlugin plugin;
 	private final SpriteManager spriteManager;
+	private final TooltipManager tooltipManager;
 
 	private Point menuOpenPoint;
 
@@ -81,15 +88,17 @@ public class ContextualCursorOverlay extends Overlay
 	private Cursor originalCursor;
 
 	@Inject
-	ContextualCursorOverlay(Client client, ClientUI clientUI, ContextualCursorPlugin plugin, SpriteManager spriteManager)
+	ContextualCursorOverlay(Client client, ClientUI clientUI, ContextualCursorPlugin plugin,
+							SpriteManager spriteManager, TooltipManager tooltipManager)
 	{
-		setPosition(OverlayPosition.TOOLTIP);
-		setLayer(OverlayLayer.ALWAYS_ON_TOP);
-		setPriority(OverlayPriority.LOW);
+		setPosition(OverlayPosition.DYNAMIC);
+		setLayer(OverlayLayer.ABOVE_WIDGETS);
+		setPriority(OverlayPriority.HIGHEST);
 		this.client = client;
 		this.clientUI = clientUI;
 		this.plugin = plugin;
 		this.spriteManager = spriteManager;
+		this.tooltipManager = tooltipManager;
 	}
 
 	private void storeOriginalCursor()
@@ -139,8 +148,6 @@ public class ContextualCursorOverlay extends Overlay
 			resetCursor();
 			return null;
 		}
-
-		// TODO: Stop tooltips from overlapping the cursor
 
 		final MenuEntry menuEntry;
 
@@ -283,5 +290,7 @@ public class ContextualCursorOverlay extends Overlay
 		final int spriteX = POINTER_OFFSET.getX() + CENTRAL_POINT.getX() - sprite.getWidth() / 2;
 		final int spriteY = POINTER_OFFSET.getY() + CENTRAL_POINT.getY() - sprite.getHeight() / 2;
 		graphics.drawImage(sprite, mousePos.getX() + spriteX, mousePos.getY() + spriteY, null);
+		// Add an empty tooltip to keep real tooltips out of the way
+		tooltipManager.addFront(SPACER_TOOLTIP);
 	}
 }
