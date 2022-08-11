@@ -38,6 +38,7 @@ import io.hydrox.transmog.TransmogPreset;
 import io.hydrox.transmog.TransmogSlot;
 import io.hydrox.transmog.TransmogrificationManager;
 import io.hydrox.transmog.TransmogrificationPlugin;
+import io.hydrox.transmog.config.TransmogrificationConfigManager;
 import static io.hydrox.transmog.ui.MenuOps.CLEAR;
 import static io.hydrox.transmog.ui.MenuOps.HIDE;
 import static io.hydrox.transmog.ui.MenuOps.SET_ITEM;
@@ -89,6 +90,7 @@ public class MainTab extends CustomTab
 	private final CustomItemSearch slotItemSearch;
 	private final CustomSpriteSearch spriteSearch;
 	private final ItemManager itemManager;
+	private final TransmogrificationConfigManager configManager;
 	private final TransmogrificationManager manager;
 	private final UIManager uiManager;
 
@@ -105,13 +107,14 @@ public class MainTab extends CustomTab
 	@Inject
 	MainTab(ChatboxPanelManager chatboxPanelManager, ChatboxItemSearch allItemSearch, CustomItemSearch slotItemSearch,
 			CustomSpriteSearch spriteSearch, ItemManager itemManager, TransmogrificationPlugin plugin,
-			TransmogrificationManager manager)
+			TransmogrificationManager manager, TransmogrificationConfigManager configManager)
 	{
 		this.chatboxPanelManager = chatboxPanelManager;
 		this.allItemSearch = allItemSearch;
 		this.slotItemSearch = slotItemSearch;
 		this.spriteSearch = spriteSearch;
 		this.itemManager = itemManager;
+		this.configManager = configManager;
 		this.manager = manager;
 		this.uiManager = plugin.getUIManager();
 	}
@@ -168,6 +171,20 @@ public class MainTab extends CustomTab
 		guideButton.create();
 
 		guideButton.layout(3, 30);
+
+		CustomWidgetToggleButton shareButton = new CustomWidgetToggleButton(
+			parent,
+			"Share to Party",
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL,
+			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL_SELECTED,
+			CustomSprites.PARTY.getSpriteId(),
+			configManager::transmitToParty);
+		shareButton.setVerbs("Enable", "Disable");
+		shareButton.setSize(25, 25);
+		shareButton.setIconSize(19, 19);
+		shareButton.create();
+
+		shareButton.layout(30, 30);
 
 		// Create bottom buttons
 

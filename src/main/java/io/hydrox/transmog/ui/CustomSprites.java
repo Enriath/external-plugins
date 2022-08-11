@@ -37,7 +37,8 @@ public enum CustomSprites implements SpriteOverride
 	SLOT_JAW(-4370, "jaw.png"),
 	SLOT_SLEEVES(-4371, "sleeves.png"),
 	QUESTION_MARK(-4372, "questionmark.png"),
-	ADD(-4373, "add.png");
+	ADD(-4373, "add.png"),
+	PARTY(-4374, "party.png");
 
 	@Getter
 	private final int spriteId;

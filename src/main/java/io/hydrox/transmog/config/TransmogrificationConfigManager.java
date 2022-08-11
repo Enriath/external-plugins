@@ -43,6 +43,7 @@ public class TransmogrificationConfigManager
 	private static final String CONFIG_LAST_PRESET_IDX = "lastIndex";
 	private static final String CONFIG_TRANSMOG_ACTIVE = "transmogActive";
 	private static final String CONFIG_CURRENT_PRESET = "currentPreset";
+	private static final String CONFIG_TRANSMIT_TO_PARTY = "transmitToParty";
 
 	private final ConfigManager configManager;
 
@@ -60,6 +61,16 @@ public class TransmogrificationConfigManager
 	public void transmogActive(boolean value)
 	{
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_TRANSMOG_ACTIVE, value);
+	}
+
+	public boolean transmitToParty()
+	{
+		return Optional.ofNullable((Boolean)configManager.getRSProfileConfiguration(CONFIG_GROUP, CONFIG_TRANSMIT_TO_PARTY, Boolean.class)).orElse(false);
+	}
+
+	public void transmitToParty(boolean value)
+	{
+		configManager.setRSProfileConfiguration(CONFIG_GROUP, CONFIG_TRANSMIT_TO_PARTY, value);
 	}
 
 	public int currentPreset()
