@@ -178,7 +178,7 @@ public class MainTab extends CustomTab
 			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL,
 			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL_SELECTED,
 			CustomSprites.PARTY.getSpriteId(),
-			configManager::transmitToParty);
+			manager::setShareWithParty);
 		shareButton.setVerbs("Enable", "Disable");
 		shareButton.setSize(25, 25);
 		shareButton.setIconSize(19, 19);

@@ -42,6 +42,7 @@ import net.runelite.client.Notifier;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.party.PartyService;
 import net.runelite.client.util.Text;
 import java.awt.TrayIcon;
 import java.util.ArrayList;
@@ -55,12 +56,14 @@ import java.util.Objects;
 @Slf4j
 public class TransmogrificationManager
 {
+	private static final TransmogPreset EMPTY_PRESET = new TransmogPreset(-1);
 
 	private final Client client;
 	private final Notifier notifier;
 	private final ItemManager itemManager;
 	private final ChatMessageManager chatMessageManager;
 	private final TransmogrificationConfigManager config;
+	private final PartyService partyService;
 
 	@Getter
 	private final List<TransmogPreset> presets = new ArrayList<>();
@@ -70,6 +73,8 @@ public class TransmogrificationManager
 
 	@Getter
 	private final Map<String, int[]> currentActualStateMap = new HashMap<>();
+
+	private final Map<String, TransmogPreset> partyPresets = new HashMap<>();
 
 	@Getter
 	private int transmogHash = 0;
@@ -84,7 +89,7 @@ public class TransmogrificationManager
 	private int lastHintTick = -100;
 
 	@Inject
-	TransmogrificationManager(Client client, Notifier notifier, ItemManager itemManager,
+	TransmogrificationManager(Client client, Notifier notifier, ItemManager itemManager, PartyService partyService,
 							  ChatMessageManager chatMessageManager, TransmogrificationConfigManager config)
 	{
 		this.client = client;
@@ -92,6 +97,7 @@ public class TransmogrificationManager
 		this.itemManager = itemManager;
 		this.chatMessageManager = chatMessageManager;
 		this.config = config;
+		this.partyService = partyService;
 	}
 
 	public void shutDown()
@@ -209,6 +215,23 @@ public class TransmogrificationManager
 		return preset;
 	}
 
+	public TransmogPreset getPartyPreset(String name)
+	{
+		return partyPresets.getOrDefault(name, EMPTY_PRESET);
+	}
+
+	public void setPartyPreset(String name, TransmogPreset preset)
+	{
+		if (preset == null)
+		{
+			partyPresets.remove(name);
+		}
+		else
+		{
+			partyPresets.put(name, preset);
+		}
+	}
+
 	public TransmogPreset getPreset(int i)
 	{
 		if (i < presets.size())
@@ -227,6 +250,18 @@ public class TransmogrificationManager
 		else
 		{
 			removeTransmog(client.getLocalPlayer());
+		}
+	}
+
+	public void updateTransmog(Player player, TransmogPreset preset)
+	{
+		if (preset != null)
+		{
+			applyTransmog(player, preset);
+		}
+		else
+		{
+			removeTransmog(player);
 		}
 	}
 
@@ -278,6 +313,15 @@ public class TransmogrificationManager
 		if (isLocalPlayer)
 		{
 			transmogHash = Arrays.hashCode(kits);
+			if (partyService.isInParty())
+			{
+				partyService.send(new TransmogUpdateMessage(
+					config.transmitToParty()
+						? preset.toMessageData()
+						: null)
+				);
+			}
+
 		}
 		player.getPlayerComposition().setHash();
 
@@ -299,6 +343,16 @@ public class TransmogrificationManager
 		int[] kits = comp.getEquipmentIds();
 		System.arraycopy(currentActualState, 0, kits, 0, kits.length);
 		comp.setHash();
+		if (player == client.getLocalPlayer())
+		{
+			partyService.send(new TransmogUpdateMessage(null));
+		}
+	}
+
+	public void setShareWithParty(boolean state)
+	{
+		config.transmitToParty(state);
+		partyService.send(new TransmogUpdateMessage(state ? getCurrentPreset().toMessageData() : null));
 	}
 
 	void saveCurrent()

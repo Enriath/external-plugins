@@ -205,6 +205,23 @@ public class TransmogPreset
 		return V2Parser.VERSION_FLAG + icon + "," + name + "," + slots;
 	}
 
+	public String toMessageData()
+	{
+		if (overrides.isEmpty())
+		{
+			return "";
+		}
+
+		final Map<TransmogSlot, Integer> merged = new HashMap<>();
+		Arrays.asList(TransmogSlot.values()).forEach(tk -> merged.put(tk, null));
+		merged.putAll(overrides);
+		return merged.entrySet().stream()
+			.sorted(Map.Entry.comparingByKey())
+			.map(Map.Entry::getValue)
+			.map(v -> v == null ? "null" : String.valueOf(v))
+			.collect(Collectors.joining(","));
+	}
+
 	void loadNames(final ItemManager itemManager)
 	{
 		for (Map.Entry<TransmogSlot, Integer> entry : overrides.entrySet())

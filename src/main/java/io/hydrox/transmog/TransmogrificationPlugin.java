@@ -34,6 +34,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuEntry;
+import net.runelite.api.Player;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
@@ -42,6 +43,8 @@ import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuShouldLeftClick;
 import net.runelite.api.events.PlayerChanged;
+import net.runelite.api.events.PlayerDespawned;
+import net.runelite.api.events.PlayerSpawned;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.VarbitChanged;
@@ -50,11 +53,18 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.input.MouseWheelListener;
+import net.runelite.client.party.PartyMember;
+import net.runelite.client.party.PartyService;
+import net.runelite.client.party.WSClient;
 import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.party.PartyPlugin;
 import javax.inject.Provider;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @PluginDescriptor(
 	name = "Transmogrification",
@@ -62,6 +72,7 @@ import java.util.Arrays;
 	tags = {"transmog", "transmogrification", "fashion", "armour", "armor", "equipment"}
 )
 @Slf4j
+@PluginDependency(PartyPlugin.class)
 public class TransmogrificationPlugin extends Plugin implements MouseWheelListener
 {
 	private static final String FORCE_RIGHT_CLICK_MENU_FLAG = UIManager.ORANGE_COLOUR_WIDGET_NAME + UIManager.FORCE_RIGHT_CLICK_WIDGET_NAME;
@@ -85,6 +96,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Inject
 	private TransmogrificationManager transmogManager;
 
+	@Inject
+	private PartyService partyService;
+
+	@Inject
+	private WSClient wsClient;
+
 	// The provider is needed to break cyclic inject loops between the UI tabs and UI Manager, for some reason.
 	// I hate it, but I really don't want to unpick this mess right now.
 	@Inject
@@ -104,6 +121,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			uiManager = getUIManager();
 		}
 
+		wsClient.registerMessage(TransmogUpdateMessage.class);
 		spriteManager.addSpriteOverrides(CustomSprites.values());
 		mouseManager.registerMouseWheelListener(this);
 		firstContainerChangeFlag = true;
@@ -133,6 +151,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		{
 			transmogManager.shutDown();
 			uiManager.shutDown();
+			wsClient.unregisterMessage(TransmogUpdateMessage.class);
 		});
 	}
 
@@ -256,6 +275,44 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		{
 			transmogManager.reapplyTransmog();
 		}
+	}
+
+	private final Map<String, Player> playerMapByName = new HashMap<>();
+
+	@Subscribe
+	public void onPlayerSpawned(PlayerSpawned e)
+	{
+		Player spawned = e.getPlayer();
+		if (spawned == client.getLocalPlayer())
+		{
+			return;
+		}
+
+		playerMapByName.put(spawned.getName(), spawned);
+
+		transmogManager.updateDefault(spawned);
+		transmogManager.applyTransmog(spawned, transmogManager.getPartyPreset(spawned.getName()));
+	}
+
+	@Subscribe
+	public void onPlayerDespawned(PlayerDespawned e)
+	{
+		playerMapByName.remove(e.getPlayer().getName());
+	}
+
+	@Subscribe
+	public void onTransmogUpdateMessage(TransmogUpdateMessage e)
+	{
+		PartyMember member = partyService.getMemberById(e.getMemberId());
+		String name = member.getDisplayName();
+		Player player = playerMapByName.getOrDefault(name, null);
+		if (player == null)
+		{
+			return;
+		}
+		TransmogPreset preset = e.getPresetData() == null ? null : TransmogPreset.fromConfig(-1, e.getPresetData());
+		transmogManager.setPartyPreset(name, preset);
+		transmogManager.updateTransmog(player, preset);
 	}
 
 	// UI Events
