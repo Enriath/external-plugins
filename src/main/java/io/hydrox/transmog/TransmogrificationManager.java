@@ -79,6 +79,8 @@ public class TransmogrificationManager
 	@Setter
 	private boolean emptyEquipment;
 
+	private int lastHintTick = -100;
+
 	@Inject
 	TransmogrificationManager(Client client, Notifier notifier, ItemManager itemManager,
 							  ChatMessageManager chatMessageManager, TransmogrificationConfigManager config)
@@ -363,11 +365,15 @@ public class TransmogrificationManager
 
 	public void hintDefaultState()
 	{
-		notifier.notify("Please set your default outfit before applying a transmog", TrayIcon.MessageType.WARNING);
-		chatMessageManager.queue(QueuedMessage.builder()
-			.type(ChatMessageType.ENGINE)
-			.value("<col=dd0000>Please set your default outfit before applying a transmog</col>")
-			.build());
+		if (client.getTickCount() > lastHintTick + 100)
+		{
+			lastHintTick = client.getTickCount();
+			notifier.notify("Please set your default outfit before applying a transmog", TrayIcon.MessageType.WARNING);
+			chatMessageManager.queue(QueuedMessage.builder()
+				.type(ChatMessageType.ENGINE)
+				.value("<col=dd0000>Please set your default outfit before applying a transmog</col>")
+				.build());
+		}
 	}
 
 	@VisibleForTesting
