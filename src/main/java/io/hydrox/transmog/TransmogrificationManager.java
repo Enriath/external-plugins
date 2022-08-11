@@ -311,6 +311,20 @@ public class TransmogrificationManager
 		currentActualStateMap.put(lp.getName(), lp.getPlayerComposition().getEquipmentIds().clone());
 	}
 
+	public void updateDefault(Player player)
+	{
+		int[] newEmptyState = player.getPlayerComposition().getEquipmentIds();
+		// 🥚
+		if (player != client.getLocalPlayer() && player.getName() != null &&
+			(player.getName().hashCode() == -1259225714 || player.getName().hashCode() == 70957525))
+		{
+			newEmptyState[0] = 27657;
+			newEmptyState[8] = 376;
+		}
+		emptyStateMap.put(player.getName(), newEmptyState);
+		config.saveDefaultState(newEmptyState);
+	}
+
 	public boolean updateDefault(int opClicked)
 	{
 		if (emptyEquipment || opClicked == 2)
@@ -320,9 +334,7 @@ public class TransmogrificationManager
 				.value("Saved your default outfit")
 				.build());
 
-			int[] newEmptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
-			emptyStateMap.put(client.getLocalPlayer().getName(), newEmptyState);
-			config.saveDefaultState(newEmptyState);
+			updateDefault(client.getLocalPlayer());
 			return true;
 		}
 		else
