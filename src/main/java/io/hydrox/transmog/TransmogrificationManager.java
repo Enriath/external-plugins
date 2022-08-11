@@ -46,7 +46,9 @@ import net.runelite.client.util.Text;
 import java.awt.TrayIcon;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Singleton
@@ -61,13 +63,13 @@ public class TransmogrificationManager
 	private final TransmogrificationConfigManager config;
 
 	@Getter
-	private List<TransmogPreset> presets = new ArrayList<>();
-
-	@Setter
-	private int[] emptyState;
+	private final List<TransmogPreset> presets = new ArrayList<>();
 
 	@Getter
-	private int[] currentActualState;
+	private final Map<String, int[]> emptyState = new HashMap<>();
+
+	@Getter
+	private final Map<String, int[]> currentActualState = new HashMap<>();
 
 	@Getter
 	private int transmogHash = 0;
@@ -95,7 +97,7 @@ public class TransmogrificationManager
 	public void shutDown()
 	{
 		savePresets();
-		removeTransmog();
+		removeTransmog(client.getLocalPlayer());
 		clearUserStates();
 		presets.clear();
 	}
@@ -105,7 +107,7 @@ public class TransmogrificationManager
 		inPvpSituation = newValue;
 		if (newValue)
 		{
-			removeTransmog();
+			removeTransmog(client.getLocalPlayer());
 		}
 		else
 		{
@@ -122,19 +124,30 @@ public class TransmogrificationManager
 
 		if (config.transmogActive())
 		{
-			applyTransmog();
+			applyTransmog(client.getLocalPlayer(), getCurrentPreset());
 		}
 	}
 
 	public void clearUserStates()
 	{
-		currentActualState = null;
-		emptyState = null;
+		Player p = client.getLocalPlayer();
+		if (p == null)
+		{
+			return;
+		}
+		String name = p.getName();
+		currentActualState.remove(name);
+		emptyState.remove(name);
 	}
 
 	public void clearUserActualState()
 	{
-		currentActualState = null;
+		Player p = client.getLocalPlayer();
+		if (p == null)
+		{
+			return;
+		}
+		currentActualState.remove(p.getName());
 	}
 
 	public TransmogPreset createNewPreset()
@@ -209,71 +222,93 @@ public class TransmogrificationManager
 	{
 		if (config.transmogActive())
 		{
-			applyTransmog();
+			applyTransmog(client.getLocalPlayer(), getCurrentPreset());
 		}
 		else
 		{
-			removeTransmog();
+			removeTransmog(client.getLocalPlayer());
 		}
 	}
 
-	void applyTransmog()
+	void applyTransmog(Player player, TransmogPreset preset)
 	{
-		if (client.getGameState() != GameState.LOGGED_IN || client.getLocalPlayer() == null || inPvpSituation)
+		if (client.getGameState() != GameState.LOGGED_IN || player == null || inPvpSituation)
 		{
 			return;
 		}
 
-		if (!isDefaultStateSet())
+		boolean isLocalPlayer = player == client.getLocalPlayer();
+
+		if (!isDefaultStateSet(player))
 		{
-			hintDefaultState();
+			if (isLocalPlayer)
+			{
+				hintDefaultState();
+			}
 			return;
 		}
 
-		TransmogPreset preset = getCurrentPreset();
 
-		Player player = client.getLocalPlayer();
+
 		int[] kits = player.getPlayerComposition().getEquipmentIds();
-		if (currentActualState == null)
+		if (isLocalPlayer && !currentActualState.containsKey(player.getName()))
 		{
-			currentActualState = kits.clone();
+			currentActualState.put(player.getName(), kits.clone());
 		}
+
+		int[] currentState = currentActualState.get(player.getName());
+		int[] empty = emptyState.get(player.getName());
+
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
 			Integer id = preset.getIdForSlot(slot, true);
 			if (id == null) // IGNORE
 			{
-				kits[slot.getKitIndex()] = currentActualState[slot.getKitIndex()];
+				kits[slot.getKitIndex()] = currentState[slot.getKitIndex()];
 			}
 			else if (id == TransmogPreset.EMPTY)
 			{
-				kits[slot.getKitIndex()] = emptyState[slot.getKitIndex()];
+				kits[slot.getKitIndex()] = empty[slot.getKitIndex()];
 			}
 			else
 			{
 				kits[slot.getKitIndex()] = id;
 			}
 		}
-		transmogHash = Arrays.hashCode(kits);
+		if (isLocalPlayer)
+		{
+			transmogHash = Arrays.hashCode(kits);
+		}
 		player.getPlayerComposition().setHash();
 
 	}
 
-	void removeTransmog()
+	void removeTransmog(Player player)
 	{
-		if (currentActualState == null || client.getLocalPlayer() == null)
+		if (player == null)
 		{
 			return;
 		}
-		PlayerComposition comp = client.getLocalPlayer().getPlayerComposition();
+		int[] realState = currentActualState.getOrDefault(player.getName(), null);
+		if (realState == null)
+		{
+			return;
+		}
+
+		PlayerComposition comp = player.getPlayerComposition();
 		int[] kits = comp.getEquipmentIds();
-		System.arraycopy(currentActualState, 0, kits, 0, kits.length);
+		System.arraycopy(realState, 0, kits, 0, kits.length);
 		comp.setHash();
 	}
 
 	void saveCurrent()
 	{
-		currentActualState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds().clone();
+		Player lp = client.getLocalPlayer();
+		if (lp == null)
+		{
+			return;
+		}
+		currentActualState.put(lp.getName(), lp.getPlayerComposition().getEquipmentIds().clone());
 	}
 
 	public boolean updateDefault(int opClicked)
@@ -284,8 +319,10 @@ public class TransmogrificationManager
 				.type(ChatMessageType.ENGINE)
 				.value("Saved your default outfit")
 				.build());
-			emptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
-			config.saveDefaultState(emptyState);
+
+			int[] newEmptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
+			emptyState.put(client.getLocalPlayer().getName(), newEmptyState);
+			config.saveDefaultState(newEmptyState);
 			return true;
 		}
 		else
@@ -300,7 +337,13 @@ public class TransmogrificationManager
 
 	public boolean isDefaultStateSet()
 	{
-		return emptyState != null && emptyState.length > 0;
+		return isDefaultStateSet(client.getLocalPlayer());
+	}
+
+	public boolean isDefaultStateSet(Player player)
+	{
+		int[] empty = emptyState.getOrDefault(player.getName(), null);
+		return empty != null && empty.length > 0;
 	}
 
 	private void loadDefault()
@@ -308,12 +351,12 @@ public class TransmogrificationManager
 		String data = config.getDefaultStateData();
 		if (data == null)
 		{
-			setEmptyState(null);
+			emptyState.put(client.getLocalPlayer().getName(), null);
 			config.transmogActive(false);
 		}
 		else
 		{
-			setEmptyState(Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
+			emptyState.put(client.getLocalPlayer().getName(), Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
 		}
 	}
 
