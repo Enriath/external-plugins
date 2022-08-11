@@ -66,10 +66,10 @@ public class TransmogrificationManager
 	private final List<TransmogPreset> presets = new ArrayList<>();
 
 	@Getter
-	private final Map<String, int[]> emptyState = new HashMap<>();
+	private final Map<String, int[]> emptyStateMap = new HashMap<>();
 
 	@Getter
-	private final Map<String, int[]> currentActualState = new HashMap<>();
+	private final Map<String, int[]> currentActualStateMap = new HashMap<>();
 
 	@Getter
 	private int transmogHash = 0;
@@ -136,8 +136,8 @@ public class TransmogrificationManager
 			return;
 		}
 		String name = p.getName();
-		currentActualState.remove(name);
-		emptyState.remove(name);
+		currentActualStateMap.remove(name);
+		emptyStateMap.remove(name);
 	}
 
 	public void clearUserActualState()
@@ -147,7 +147,7 @@ public class TransmogrificationManager
 		{
 			return;
 		}
-		currentActualState.remove(p.getName());
+		currentActualStateMap.remove(p.getName());
 	}
 
 	public TransmogPreset createNewPreset()
@@ -251,24 +251,24 @@ public class TransmogrificationManager
 
 
 		int[] kits = player.getPlayerComposition().getEquipmentIds();
-		if (isLocalPlayer && !currentActualState.containsKey(player.getName()))
+		if (isLocalPlayer && !currentActualStateMap.containsKey(player.getName()))
 		{
-			currentActualState.put(player.getName(), kits.clone());
+			currentActualStateMap.put(player.getName(), kits.clone());
 		}
 
-		int[] currentState = currentActualState.get(player.getName());
-		int[] empty = emptyState.get(player.getName());
+		int[] currentActualState = currentActualStateMap.get(player.getName());
+		int[] emptyState = emptyStateMap.get(player.getName());
 
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
 			Integer id = preset.getIdForSlot(slot, true);
 			if (id == null) // IGNORE
 			{
-				kits[slot.getKitIndex()] = currentState[slot.getKitIndex()];
+				kits[slot.getKitIndex()] = currentActualState[slot.getKitIndex()];
 			}
 			else if (id == TransmogPreset.EMPTY)
 			{
-				kits[slot.getKitIndex()] = empty[slot.getKitIndex()];
+				kits[slot.getKitIndex()] = emptyState[slot.getKitIndex()];
 			}
 			else
 			{
@@ -289,15 +289,15 @@ public class TransmogrificationManager
 		{
 			return;
 		}
-		int[] realState = currentActualState.getOrDefault(player.getName(), null);
-		if (realState == null)
+		int[] currentActualState = currentActualStateMap.getOrDefault(player.getName(), null);
+		if (currentActualState == null)
 		{
 			return;
 		}
 
 		PlayerComposition comp = player.getPlayerComposition();
 		int[] kits = comp.getEquipmentIds();
-		System.arraycopy(realState, 0, kits, 0, kits.length);
+		System.arraycopy(currentActualState, 0, kits, 0, kits.length);
 		comp.setHash();
 	}
 
@@ -308,7 +308,7 @@ public class TransmogrificationManager
 		{
 			return;
 		}
-		currentActualState.put(lp.getName(), lp.getPlayerComposition().getEquipmentIds().clone());
+		currentActualStateMap.put(lp.getName(), lp.getPlayerComposition().getEquipmentIds().clone());
 	}
 
 	public boolean updateDefault(int opClicked)
@@ -321,7 +321,7 @@ public class TransmogrificationManager
 				.build());
 
 			int[] newEmptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
-			emptyState.put(client.getLocalPlayer().getName(), newEmptyState);
+			emptyStateMap.put(client.getLocalPlayer().getName(), newEmptyState);
 			config.saveDefaultState(newEmptyState);
 			return true;
 		}
@@ -342,7 +342,7 @@ public class TransmogrificationManager
 
 	public boolean isDefaultStateSet(Player player)
 	{
-		int[] empty = emptyState.getOrDefault(player.getName(), null);
+		int[] empty = emptyStateMap.getOrDefault(player.getName(), null);
 		return empty != null && empty.length > 0;
 	}
 
@@ -351,12 +351,12 @@ public class TransmogrificationManager
 		String data = config.getDefaultStateData();
 		if (data == null)
 		{
-			emptyState.put(client.getLocalPlayer().getName(), null);
+			emptyStateMap.put(client.getLocalPlayer().getName(), null);
 			config.transmogActive(false);
 		}
 		else
 		{
-			emptyState.put(client.getLocalPlayer().getName(), Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
+			emptyStateMap.put(client.getLocalPlayer().getName(), Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
 		}
 	}
 
