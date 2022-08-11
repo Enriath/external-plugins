@@ -94,6 +94,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	private int lastWorld = 0;
 	private boolean forceRightClickFlag;
 	private boolean firstContainerChangeFlag;
+	private Runnable nextFrameRunner;
 
 	@Override
 	public void startUp()
@@ -109,7 +110,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
-			clientThread.invoke(() ->
+			nextFrameRunner = () ->
 				{
 					lastWorld = client.getWorld();
 					transmogManager.saveCurrent();
@@ -118,7 +119,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 					uiManager.createTab(uiManager.getEquipmentOverlay());
 					updatePvpState();
 					updateEquipmentState();
-				});
+				};
 		}
 	}
 
@@ -158,9 +159,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		{
 			if (client.getWorld() != lastWorld)
 			{
-				lastWorld = client.getWorld();
-				transmogManager.loadData();
-				updateEquipmentState();
+				nextFrameRunner = () ->
+				{
+					lastWorld = client.getWorld();
+					transmogManager.loadData();
+					updateEquipmentState();
+				};
 			}
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
@@ -220,6 +224,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onGameTick(GameTick e)
 	{
+		if (nextFrameRunner != null)
+		{
+			nextFrameRunner.run();
+			nextFrameRunner = null;
+		}
+
 		if (client.getLocalPlayer() == null || !config.transmogActive())
 		{
 			return;
@@ -227,7 +237,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		// On most teleports, the player kits are reset. This will reapply the transmog if needed.
 		final int currentHash = Arrays.hashCode(client.getLocalPlayer().getPlayerComposition().getEquipmentIds());
-		if (currentHash != transmogManager.getTransmogHash())
+		if (currentHash != transmogManager.getTransmogHash() && transmogManager.isDefaultStateSet())
 		{
 			transmogManager.reapplyTransmog();
 		}
