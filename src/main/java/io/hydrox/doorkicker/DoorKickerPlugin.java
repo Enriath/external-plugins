@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Hydrox6 <ikada@protonmail.ch>
+ * Copyright (c) 2020-2022, Enriath <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@ import net.runelite.api.Player;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -47,9 +46,6 @@ public class DoorKickerPlugin extends Plugin
 	@Inject
 	private Client client;
 
-	@Inject
-	private ClientThread clientThread;
-
 	private LocalPoint doorLocation;
 
 	@Subscribe
@@ -57,11 +53,11 @@ public class DoorKickerPlugin extends Plugin
 	{
 		if (e.getMenuOption().equals("Open") && e.getMenuTarget().endsWith("Door"))
 		{
-			clientThread.invokeLater(() -> doorLocation = client.getLocalDestinationLocation());
+			doorLocation = LocalPoint.fromScene(e.getParam0(), e.getParam1());
 		}
 		else
 		{
-			clientThread.invokeLater(() -> doorLocation = null);
+			doorLocation = null;
 		}
 	}
 
