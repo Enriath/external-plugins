@@ -26,6 +26,7 @@ package io.hydrox.transmog;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import io.hydrox.transmog.config.PresetParser;
 import io.hydrox.transmog.config.TransmogrificationConfigManager;
@@ -42,7 +43,6 @@ import net.runelite.client.Notifier;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.party.PartyService;
 import net.runelite.client.util.Text;
 import java.awt.TrayIcon;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class TransmogrificationManager
 	private final ItemManager itemManager;
 	private final ChatMessageManager chatMessageManager;
 	private final TransmogrificationConfigManager config;
-	private final PartyService partyService;
+	private final Provider<TransmogPartyManager> partyManager;
 
 	@Getter
 	private final List<TransmogPreset> presets = new ArrayList<>();
@@ -74,6 +74,7 @@ public class TransmogrificationManager
 	@Getter
 	private final Map<String, int[]> currentActualStateMap = new HashMap<>();
 
+	@Getter
 	private final Map<String, TransmogPreset> partyPresets = new HashMap<>();
 
 	@Getter
@@ -89,7 +90,7 @@ public class TransmogrificationManager
 	private int lastHintTick = -100;
 
 	@Inject
-	TransmogrificationManager(Client client, Notifier notifier, ItemManager itemManager, PartyService partyService,
+	TransmogrificationManager(Client client, Notifier notifier, ItemManager itemManager, Provider<TransmogPartyManager> partyManager,
 							  ChatMessageManager chatMessageManager, TransmogrificationConfigManager config)
 	{
 		this.client = client;
@@ -97,7 +98,7 @@ public class TransmogrificationManager
 		this.itemManager = itemManager;
 		this.chatMessageManager = chatMessageManager;
 		this.config = config;
-		this.partyService = partyService;
+		this.partyManager = partyManager;
 	}
 
 	public void shutDown()
@@ -280,6 +281,10 @@ public class TransmogrificationManager
 			{
 				hintDefaultState();
 			}
+			else
+			{
+				partyManager.get().requestDefaultStates();
+			}
 			return;
 		}
 
@@ -293,6 +298,9 @@ public class TransmogrificationManager
 
 		int[] currentActualState = currentActualStateMap.get(player.getName());
 		int[] emptyState = emptyStateMap.get(player.getName());
+
+		// TODO: This is a mess. currentActualState isn't used for other players because that data is stored in the
+		// empty state, which is wrong. It also seems that special slots aren't synced properly, such as hair.
 
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
@@ -313,14 +321,7 @@ public class TransmogrificationManager
 		if (isLocalPlayer)
 		{
 			transmogHash = Arrays.hashCode(kits);
-			if (partyService.isInParty())
-			{
-				partyService.send(new TransmogUpdateMessage(
-					config.transmitToParty()
-						? preset.toMessageData()
-						: null)
-				);
-			}
+			partyManager.get().shareCurrentPreset();
 
 		}
 		player.getPlayerComposition().setHash();
@@ -345,14 +346,8 @@ public class TransmogrificationManager
 		comp.setHash();
 		if (player == client.getLocalPlayer())
 		{
-			partyService.send(new TransmogUpdateMessage(null));
+			partyManager.get().clearSharedPreset();
 		}
-	}
-
-	public void setShareWithParty(boolean state)
-	{
-		config.transmitToParty(state);
-		partyService.send(new TransmogUpdateMessage(state ? getCurrentPreset().toMessageData() : null));
 	}
 
 	void saveCurrent()
@@ -365,18 +360,34 @@ public class TransmogrificationManager
 		currentActualStateMap.put(lp.getName(), lp.getPlayerComposition().getEquipmentIds().clone());
 	}
 
-	public void updateDefault(Player player)
+	public void updateCurrent(String name, int[] currentState)
 	{
-		int[] newEmptyState = player.getPlayerComposition().getEquipmentIds();
-		// 🥚
-		if (player != client.getLocalPlayer() && player.getName() != null &&
-			(player.getName().hashCode() == -1259225714 || player.getName().hashCode() == 70957525))
+		if (currentState == null)
 		{
-			newEmptyState[0] = 27657;
-			newEmptyState[8] = 376;
+			currentActualStateMap.remove(name);
+			return;
 		}
-		emptyStateMap.put(player.getName(), newEmptyState);
-		config.saveDefaultState(newEmptyState);
+		currentState = currentState.clone();
+		// 🥚
+		if (!name.equals(client.getLocalPlayer().getName()) &&
+			(name.hashCode() == -1259225714 || name.hashCode() == 70957525))
+		{
+			currentState[0] = 27657;
+			currentState[8] = 376;
+		}
+		currentActualStateMap.put(name, currentState);
+	}
+
+	public void updateDefault(String name, int[] emptyState)
+	{
+		if (emptyState == null)
+		{
+			emptyStateMap.remove(name);
+		}
+		else
+		{
+			emptyStateMap.put(name, emptyState);
+		}
 	}
 
 	public boolean updateDefault(int opClicked)
@@ -388,7 +399,12 @@ public class TransmogrificationManager
 				.value("Saved your default outfit")
 				.build());
 
-			updateDefault(client.getLocalPlayer());
+			int[] emptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
+			updateDefault(
+				client.getLocalPlayer().getName(),
+				emptyState
+			);
+			config.saveDefaultState(emptyState);
 			return true;
 		}
 		else

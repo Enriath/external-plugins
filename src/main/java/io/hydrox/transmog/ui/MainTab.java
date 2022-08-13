@@ -34,6 +34,7 @@ import io.hydrox.transmog.HairMapping;
 import io.hydrox.transmog.Mapping;
 import io.hydrox.transmog.MappingMapping;
 import io.hydrox.transmog.SleeveMapping;
+import io.hydrox.transmog.TransmogPartyManager;
 import io.hydrox.transmog.TransmogPreset;
 import io.hydrox.transmog.TransmogSlot;
 import io.hydrox.transmog.TransmogrificationManager;
@@ -90,9 +91,10 @@ public class MainTab extends CustomTab
 	private final CustomItemSearch slotItemSearch;
 	private final CustomSpriteSearch spriteSearch;
 	private final ItemManager itemManager;
-	private final TransmogrificationConfigManager configManager;
+	private final TransmogPartyManager partyManager;
 	private final TransmogrificationManager manager;
 	private final UIManager uiManager;
+	private final TransmogrificationConfigManager config;
 
 	@Getter
 	private final Map<TransmogSlot, CustomWidgetTransmogBox> uiSlots = new HashMap<>();
@@ -107,16 +109,17 @@ public class MainTab extends CustomTab
 	@Inject
 	MainTab(ChatboxPanelManager chatboxPanelManager, ChatboxItemSearch allItemSearch, CustomItemSearch slotItemSearch,
 			CustomSpriteSearch spriteSearch, ItemManager itemManager, TransmogrificationPlugin plugin,
-			TransmogrificationManager manager, TransmogrificationConfigManager configManager)
+			TransmogrificationManager manager, TransmogPartyManager partyManager, TransmogrificationConfigManager config)
 	{
 		this.chatboxPanelManager = chatboxPanelManager;
 		this.allItemSearch = allItemSearch;
 		this.slotItemSearch = slotItemSearch;
 		this.spriteSearch = spriteSearch;
 		this.itemManager = itemManager;
-		this.configManager = configManager;
+		this.partyManager = partyManager;
 		this.manager = manager;
 		this.uiManager = plugin.getUIManager();
+		this.config = config;
 	}
 
 	@Override
@@ -178,11 +181,15 @@ public class MainTab extends CustomTab
 			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL,
 			SpriteID.UNKNOWN_BUTTON_SQUARE_SMALL_SELECTED,
 			CustomSprites.PARTY.getSpriteId(),
-			manager::setShareWithParty);
+			partyManager::setShareWithParty);
 		shareButton.setVerbs("Enable", "Disable");
 		shareButton.setSize(25, 25);
 		shareButton.setIconSize(19, 19);
 		shareButton.create();
+		if (config.transmitToParty())
+		{
+			shareButton.toggle();
+		}
 
 		shareButton.layout(30, 30);
 

@@ -34,7 +34,6 @@ import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.MenuEntry;
-import net.runelite.api.Player;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
@@ -50,12 +49,13 @@ import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.PartyChanged;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.input.MouseWheelListener;
-import net.runelite.client.party.PartyMember;
-import net.runelite.client.party.PartyService;
 import net.runelite.client.party.WSClient;
+import net.runelite.client.party.events.UserPart;
+import net.runelite.client.party.messages.UserSync;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -63,8 +63,6 @@ import net.runelite.client.plugins.party.PartyPlugin;
 import javax.inject.Provider;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @PluginDescriptor(
 	name = "Transmogrification",
@@ -97,7 +95,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	private TransmogrificationManager transmogManager;
 
 	@Inject
-	private PartyService partyService;
+	private TransmogPartyManager partyManager;
 
 	@Inject
 	private WSClient wsClient;
@@ -122,6 +120,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		}
 
 		wsClient.registerMessage(TransmogUpdateMessage.class);
+		wsClient.registerMessage(TransmogEmptyMessage.class);
 		spriteManager.addSpriteOverrides(CustomSprites.values());
 		mouseManager.registerMouseWheelListener(this);
 		firstContainerChangeFlag = true;
@@ -151,7 +150,9 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		{
 			transmogManager.shutDown();
 			uiManager.shutDown();
+			partyManager.clearSharedPreset();
 			wsClient.unregisterMessage(TransmogUpdateMessage.class);
+			wsClient.unregisterMessage(TransmogEmptyMessage.class);
 		});
 	}
 
@@ -265,7 +266,14 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onPlayerChanged(PlayerChanged e)
 	{
-		if (client.getLocalPlayer() == null || e.getPlayer() != client.getLocalPlayer() || !config.transmogActive())
+		if (e.getPlayer() != client.getLocalPlayer())
+		{
+			partyManager.onPlayerSpawned(e.getPlayer());
+			//transmogManager.updateTransmog(e.getPlayer(), transmogManager.getPartyPreset(e.getPlayer().getName()));
+			return;
+		}
+
+		if (client.getLocalPlayer() == null || !config.transmogActive())
 		{
 			return;
 		}
@@ -277,42 +285,52 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		}
 	}
 
-	private final Map<String, Player> playerMapByName = new HashMap<>();
+	// Party events
 
-	@Subscribe
+	@Subscribe(priority = -1)
 	public void onPlayerSpawned(PlayerSpawned e)
 	{
-		Player spawned = e.getPlayer();
-		if (spawned == client.getLocalPlayer())
-		{
-			return;
-		}
-
-		playerMapByName.put(spawned.getName(), spawned);
-
-		transmogManager.updateDefault(spawned);
-		transmogManager.applyTransmog(spawned, transmogManager.getPartyPreset(spawned.getName()));
+		//partyManager.onPlayerSpawned(e.getPlayer());
 	}
 
 	@Subscribe
 	public void onPlayerDespawned(PlayerDespawned e)
 	{
-		playerMapByName.remove(e.getPlayer().getName());
+		partyManager.onPlayerDespawned(e.getPlayer());
 	}
 
 	@Subscribe
 	public void onTransmogUpdateMessage(TransmogUpdateMessage e)
 	{
-		PartyMember member = partyService.getMemberById(e.getMemberId());
-		String name = member.getDisplayName();
-		Player player = playerMapByName.getOrDefault(name, null);
-		if (player == null)
+		partyManager.onTransmogUpdateMessage(e);
+	}
+
+	@Subscribe
+	public void onTransmogEmptyMessage(TransmogEmptyMessage e)
+	{
+		partyManager.onTransmogEmptyMessage(e);
+	}
+
+	@Subscribe
+	public void onUserSync(UserSync e)
+	{
+		partyManager.onUserSync();
+	}
+
+	@Subscribe
+	public void onUserPart(UserPart e)
+	{
+		partyManager.onUserPart(e);
+	}
+
+	@Subscribe
+	public void onPartyChanged(PartyChanged e)
+	{
+		Runnable runner = partyManager.onPartyChanged(e);
+		if (runner != null)
 		{
-			return;
+			nextFrameRunner = runner;
 		}
-		TransmogPreset preset = e.getPresetData() == null ? null : TransmogPreset.fromConfig(-1, e.getPresetData());
-		transmogManager.setPartyPreset(name, preset);
-		transmogManager.updateTransmog(player, preset);
 	}
 
 	// UI Events
