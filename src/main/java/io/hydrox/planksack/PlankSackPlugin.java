@@ -80,6 +80,8 @@ public class PlankSackPlugin extends Plugin
 	private static final List<String> PLANK_NAMES = Arrays.asList("Plank", "Oak plank", "Teak plank", "Mahogany plank");
 	private static final Set<Integer> MAHOGANY_HOMES_REPAIRS = Sets.newHashSet(
 		39982, 39995, 40011, 40089, 40099, 40158, 40159, 40163, 40168, 40170, 40177, 40295, 40298);
+
+	private static final Set<Integer> HALLOWED_SEPULCHRE_FIXES = Sets.newHashSet(39527, 39528);
 	private static final int CONSTRUCTION_WIDGET_GROUP = 458;
 	private static final int CONSTRUCTION_WIDGET_BUILD_IDX_START = 4;
 	private static final int CONSTRUCTION_SUBWIDGET_MATERIALS = 3;
@@ -229,6 +231,10 @@ public class PlankSackPlugin extends Plugin
 			watchForAnimations = true;
 			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 		}
+		else if (event.getMenuOption().equals("Fix") && HALLOWED_SEPULCHRE_FIXES.contains(event.getId()))
+		{
+			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+		}
 	}
 
 	@Subscribe
@@ -361,6 +367,27 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
+		// Hallowed Sepulchre
+		if (event.getType() == ChatMessageType.SPAM && event.getMessage().equals("You repair the broken bridge."))
+		{
+			// Any planks in the inventory are prioritised, and are removed after this chat message.
+			// Therefore, we need to delay this check by a bit to make sure it picks up inventory planks being used.
+			clientThread.invokeLater(() -> {
+				Multiset<Integer> current = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+				Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
+				switch (delta.size())
+				{
+					case 0:
+						setPlankCount(plankCount - 2);
+						break;
+					case 1:
+						setPlankCount(plankCount - 1);
+						break;
+				}
+			});
+		}
+
+		// Sack checking/updating
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 		{
 			return;
