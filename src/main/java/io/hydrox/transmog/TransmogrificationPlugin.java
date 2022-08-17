@@ -43,7 +43,6 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuShouldLeftClick;
 import net.runelite.api.events.PlayerChanged;
 import net.runelite.api.events.PlayerDespawned;
-import net.runelite.api.events.PlayerSpawned;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.VarbitChanged;
@@ -55,14 +54,16 @@ import net.runelite.client.input.MouseManager;
 import net.runelite.client.input.MouseWheelListener;
 import net.runelite.client.party.WSClient;
 import net.runelite.client.party.events.UserPart;
-import net.runelite.client.party.messages.UserSync;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.party.PartyPlugin;
+import net.runelite.client.plugins.party.messages.StatusUpdate;
 import javax.inject.Provider;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Queue;
 
 @PluginDescriptor(
 	name = "Transmogrification",
@@ -109,7 +110,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	private int lastWorld = 0;
 	private boolean forceRightClickFlag;
 	private boolean firstContainerChangeFlag;
-	private Runnable nextFrameRunner;
+	private final Queue<Runnable> nextFrameRunnerQueue = new ArrayDeque<>();
 
 	@Override
 	public void startUp()
@@ -127,7 +128,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		if (client.getGameState() == GameState.LOGGED_IN)
 		{
-			nextFrameRunner = () ->
+			nextFrameRunnerQueue.add(() ->
 				{
 					lastWorld = client.getWorld();
 					transmogManager.saveCurrent();
@@ -136,7 +137,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 					uiManager.createTab(uiManager.getEquipmentOverlay());
 					updatePvpState();
 					updateEquipmentState();
-				};
+				});
 		}
 	}
 
@@ -179,12 +180,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		{
 			if (client.getWorld() != lastWorld)
 			{
-				nextFrameRunner = () ->
+				nextFrameRunnerQueue.add(() ->
 				{
 					lastWorld = client.getWorld();
 					transmogManager.loadData();
 					updateEquipmentState();
-				};
+				});
 			}
 		}
 		else if (e.getGameState() == GameState.LOGIN_SCREEN || e.getGameState() == GameState.HOPPING)
@@ -244,10 +245,15 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onGameTick(GameTick e)
 	{
-		if (nextFrameRunner != null)
+		if (nextFrameRunnerQueue.size() > 0)
 		{
-			nextFrameRunner.run();
-			nextFrameRunner = null;
+			Runnable r = nextFrameRunnerQueue.poll();
+			do
+			{
+				r.run();
+				r = nextFrameRunnerQueue.poll();
+			}
+			while (r != null);
 		}
 
 		if (client.getLocalPlayer() == null || !config.transmogActive())
@@ -266,10 +272,10 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onPlayerChanged(PlayerChanged e)
 	{
+		// Update party members transmogs when they change armour
 		if (e.getPlayer() != client.getLocalPlayer())
 		{
 			partyManager.onPlayerSpawned(e.getPlayer());
-			//transmogManager.updateTransmog(e.getPlayer(), transmogManager.getPartyPreset(e.getPlayer().getName()));
 			return;
 		}
 
@@ -286,12 +292,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	}
 
 	// Party events
-
-	@Subscribe(priority = -1)
-	public void onPlayerSpawned(PlayerSpawned e)
-	{
-		//partyManager.onPlayerSpawned(e.getPlayer());
-	}
 
 	@Subscribe
 	public void onPlayerDespawned(PlayerDespawned e)
@@ -312,7 +312,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	}
 
 	@Subscribe
-	public void onUserSync(UserSync e)
+	public void onStatusUpdate(StatusUpdate e)
 	{
 		partyManager.onUserSync();
 	}
@@ -320,7 +320,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onUserPart(UserPart e)
 	{
-		partyManager.onUserPart(e);
+		partyManager.clearUser(e.getMemberId());
 	}
 
 	@Subscribe
@@ -329,7 +329,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		Runnable runner = partyManager.onPartyChanged(e);
 		if (runner != null)
 		{
-			nextFrameRunner = runner;
+			nextFrameRunnerQueue.add(runner);
 		}
 	}
 

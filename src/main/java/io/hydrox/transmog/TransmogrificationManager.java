@@ -299,9 +299,6 @@ public class TransmogrificationManager
 		int[] currentActualState = currentActualStateMap.get(player.getName());
 		int[] emptyState = emptyStateMap.get(player.getName());
 
-		// TODO: This is a mess. currentActualState isn't used for other players because that data is stored in the
-		// empty state, which is wrong. It also seems that special slots aren't synced properly, such as hair.
-
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
 			Integer id = preset.getIdForSlot(slot, true);

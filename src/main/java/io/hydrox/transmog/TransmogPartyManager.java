@@ -33,8 +33,6 @@ import net.runelite.api.Player;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
-import net.runelite.client.party.events.UserJoin;
-import net.runelite.client.party.events.UserPart;
 import net.runelite.client.party.messages.UserSync;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,27 +108,6 @@ public class TransmogPartyManager
 		transmogManager.updateDefault(name, e.getEmptyState());
 	}
 
-	public Runnable onUserJoin(UserJoin e)
-	{
-		return () ->
-		{
-			if (client.getGameState() == GameState.LOGGED_IN)
-			{
-				shareEmptyState();
-			}
-
-			PartyMember member = partyService.getMemberById(e.getMemberId());
-			String name = member.getDisplayName();
-			Player player = playerMapByName.getOrDefault(name, null);
-			if (player == null)
-			{
-				return;
-			}
-
-			transmogManager.updateTransmog(player, transmogManager.getPartyPreset(name));
-		};
-	}
-
 	public void onUserSync()
 	{
 		if (client.getGameState() == GameState.LOGGED_IN)
@@ -141,12 +118,19 @@ public class TransmogPartyManager
 		playerMapByMemberId.clear();
 		for (PartyMember pm : partyService.getMembers())
 		{
+			// Ignore self
+			if (pm.getMemberId() == partyService.getLocalMember().getMemberId())
+			{
+				continue;
+			}
+			// Ignore those with uninitialised usernames
 			String name = pm.getDisplayName();
 			if ("<unknown>".equals(name))
 			{
 				continue;
 			}
 			playerMapByMemberId.put(pm.getMemberId(), name);
+			// Don't bother trying to apply transmog if the user isn't present
 			Player player = playerMapByName.getOrDefault(name, null);
 			if (player == null)
 			{
@@ -157,9 +141,9 @@ public class TransmogPartyManager
 		}
 	}
 
-	public void onUserPart(UserPart e)
+	public void clearUser(long memberId)
 	{
-		String name = playerMapByMemberId.getOrDefault(e.getMemberId(), null);
+		String name = playerMapByMemberId.getOrDefault(memberId, null);
 		if (name == null)
 		{
 			return;
@@ -170,11 +154,19 @@ public class TransmogPartyManager
 		{
 			transmogManager.removeTransmog(playerMapByName.get(name));
 		}
-		playerMapByMemberId.remove(e.getMemberId());
+		playerMapByMemberId.remove(memberId);
 	}
 
 	public Runnable onPartyChanged(PartyChanged e)
 	{
+		if (e.getPartyId() == null)
+		{
+			for (long id : playerMapByMemberId.keySet())
+			{
+				clearUser(id);
+			}
+		}
+		// TODO: This stuff may not be needed, not 100% sure
 		if (client.getGameState() != GameState.LOGGED_IN || e.getPartyId() == null || client.getLocalPlayer().getName() == null)
 		{
 			return null;
