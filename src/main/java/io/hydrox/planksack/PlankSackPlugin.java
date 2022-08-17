@@ -84,7 +84,6 @@ public class PlankSackPlugin extends Plugin
 	private static final int CONSTRUCTION_WIDGET_BUILD_IDX_START = 4;
 	private static final int CONSTRUCTION_SUBWIDGET_MATERIALS = 3;
 	private static final int CONSTRUCTION_SUBWIDGET_CANT_BUILD = 5;
-	private static final int CONSTRUCTION_IMCANDO_MAHOGANY_HOMES = 8912;
 	private static final int SCRIPT_CONSTRUCTION_OPTION_CLICKED = 1405;
 	private static final int SCRIPT_CONSTRUCTION_OPTION_KEYBIND = 1632;
 	private static final int SCRIPT_BUILD_CONSTRUCTION_MENU_ENTRY = 1404;
@@ -225,9 +224,9 @@ public class PlankSackPlugin extends Plugin
 				}
 			}
 		}
-		else if (event.getMenuOption().equals("Repair"))
+		else if (event.getMenuOption().equals("Repair") && MAHOGANY_HOMES_REPAIRS.contains(event.getId()))
 		{
-			watchForAnimations = MAHOGANY_HOMES_REPAIRS.contains(event.getId());
+			watchForAnimations = true;
 			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 		}
 	}
@@ -236,7 +235,7 @@ public class PlankSackPlugin extends Plugin
 	public void onScriptPreFired(ScriptPreFired event)
 	{
 		// Construction menu option selected
-		// Consutrction menu option selected with keybind
+		// Construction menu option selected with keybind
 		if (event.getScriptId() != SCRIPT_CONSTRUCTION_OPTION_CLICKED
 			&& event.getScriptId() != SCRIPT_CONSTRUCTION_OPTION_KEYBIND)
 		{
@@ -289,73 +288,73 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
-		if (menuItemsToCheck > 0)
+		if (menuItemsToCheck <= 0)
 		{
-			for (int i = 0; i < menuItemsToCheck; i++)
-			{
-				int idx = CONSTRUCTION_WIDGET_BUILD_IDX_START + i;
-				Widget widget = client.getWidget(CONSTRUCTION_WIDGET_GROUP, idx);
-				if (widget == null)
-				{
-					continue;
-				}
-
-				boolean canBuild = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_CANT_BUILD].isHidden();
-				Widget materialWidget = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_MATERIALS];
-				if (materialWidget == null)
-				{
-					continue;
-				}
-
-				String[] materialLines = materialWidget.getText().split("<br>");
-				List<Item> materials = new ArrayList<>();
-				for (String line : materialLines)
-				{
-					String[] data = line.split(": ");
-					if (data.length < 2)
-					{
-						continue;
-					}
-
-					String name = data[0];
-					int count = Integer.parseInt(data[1]);
-					if (PLANK_NAMES.contains(name))
-					{
-						materials.add(new Item(PLANKS.get(PLANK_NAMES.indexOf(name)), count));
-					}
-				}
-				buildMenuItems.add(new BuildMenuItem(materials.toArray(new Item[0]), canBuild));
-			}
-			menuItemsToCheck = 0;
+			return;
 		}
+
+		for (int i = 0; i < menuItemsToCheck; i++)
+		{
+			int idx = CONSTRUCTION_WIDGET_BUILD_IDX_START + i;
+			Widget widget = client.getWidget(CONSTRUCTION_WIDGET_GROUP, idx);
+			if (widget == null)
+			{
+				continue;
+			}
+
+			boolean canBuild = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_CANT_BUILD].isHidden();
+			Widget materialWidget = widget.getDynamicChildren()[CONSTRUCTION_SUBWIDGET_MATERIALS];
+			if (materialWidget == null)
+			{
+				continue;
+			}
+
+			String[] materialLines = materialWidget.getText().split("<br>");
+			List<Item> materials = new ArrayList<>();
+			for (String line : materialLines)
+			{
+				String[] data = line.split(": ");
+				if (data.length < 2)
+				{
+					continue;
+				}
+
+				String name = data[0];
+				int count = Integer.parseInt(data[1]);
+				if (PLANK_NAMES.contains(name))
+				{
+					materials.add(new Item(PLANKS.get(PLANK_NAMES.indexOf(name)), count));
+				}
+			}
+			buildMenuItems.add(new BuildMenuItem(materials.toArray(new Item[0]), canBuild));
+		}
+		menuItemsToCheck = 0;
 	}
 
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged event)
 	{
-		if (event.getActor() != client.getLocalPlayer() || client.getLocalPlayer() == null)
+		if (!watchForAnimations || event.getActor() != client.getLocalPlayer() || client.getLocalPlayer() == null)
 		{
 			return;
 		}
 
-		if (watchForAnimations)
+		int anim = client.getLocalPlayer().getAnimation();
+		if ((lastAnimation == AnimationID.CONSTRUCTION || lastAnimation == AnimationID.CONSTRUCTION_IMCANDO)
+			&& anim != lastAnimation)
 		{
-			int anim = client.getLocalPlayer().getAnimation();
-			if ((lastAnimation == AnimationID.CONSTRUCTION || lastAnimation == CONSTRUCTION_IMCANDO_MAHOGANY_HOMES) && anim != lastAnimation)
+			Multiset<Integer> current = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+			Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
+			if (delta.size() == 0)
 			{
-				Multiset<Integer> current = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
-				Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
-				if (delta.size() == 0)
-				{
-					setPlankCount(plankCount - 1);
-				}
-				watchForAnimations = false;
-				lastAnimation = -1;
+				setPlankCount(plankCount - 1);
 			}
-			else
-			{
-				lastAnimation = anim;
-			}
+			watchForAnimations = false;
+			lastAnimation = -1;
+		}
+		else
+		{
+			lastAnimation = anim;
 		}
 	}
 
@@ -366,21 +365,22 @@ public class PlankSackPlugin extends Plugin
 		{
 			return;
 		}
-		if (event.getMessage().startsWith("Basic\u00A0planks:"))
+		final String message = event.getMessage();
+		if (message.startsWith("Basic\u00A0planks:"))
 		{
-			String message = Text.removeTags(event.getMessage());
-			setPlankCount(Arrays.stream(message.split(",")).mapToInt(s -> Integer.parseInt(s.split(":\u00A0")[1])).sum());
+			String stripped = Text.removeTags(event.getMessage());
+			setPlankCount(Arrays.stream(stripped.split(",")).mapToInt(s -> Integer.parseInt(s.split(":\u00A0")[1])).sum());
 		}
-		else if (event.getMessage().equals("You haven't got any planks that can go in the sack."))
+		else if (message.equals("You haven't got any planks that can go in the sack."))
 		{
 			checkForUpdate = false;
 		}
-		else if (event.getMessage().equals("Your sack is full."))
+		else if (message.equals("Your sack is full."))
 		{
 			setPlankCount(28);
 			checkForUpdate = false;
 		}
-		else if (event.getMessage().equals("Your sack is empty."))
+		else if (message.equals("Your sack is empty."))
 		{
 			setPlankCount(0);
 			checkForUpdate = false;
