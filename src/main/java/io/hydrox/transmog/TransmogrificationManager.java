@@ -193,7 +193,7 @@ public class TransmogrificationManager
 		{
 			presets.set(i, null);
 		}
-		if (presets.stream().filter(Objects::nonNull).count() <= 0)
+		if (presets.stream().noneMatch(Objects::nonNull))
 		{
 			presets.set(0, new TransmogPreset(i));
 		}
