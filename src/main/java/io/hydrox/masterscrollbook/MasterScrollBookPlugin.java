@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Hydrox6 <ikada@protonmail.ch>
+ * Copyright (c) 2021-2022, Enriath <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.RuneScapeProfileChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -77,7 +78,7 @@ public class MasterScrollBookPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Getter
-	private Map<Scroll, Integer> counts = new HashMap<>();
+	private final Map<Scroll, Integer> counts = new HashMap<>();
 
 	@Getter
 	private Scroll selectedDefault = null;
@@ -108,6 +109,12 @@ public class MasterScrollBookPlugin extends Plugin
 	public void onVarbitChanged(VarbitChanged e)
 	{
 		update();
+	}
+
+	@Subscribe
+	public void onRuneScapeProfileChanged(RuneScapeProfileChanged e)
+	{
+		counts.clear();
 	}
 
 	private void update()
