@@ -375,6 +375,7 @@ public class TransmogrificationManager
 		{
 			currentState[0] = 27657;
 			currentState[8] = 376;
+			emptyStateMap.putIfAbsent(name, currentState);
 		}
 		currentActualStateMap.put(name, currentState);
 	}
