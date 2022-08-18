@@ -180,6 +180,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		{
 			if (client.getWorld() != lastWorld)
 			{
+				transmogManager.setReady(false);
 				nextFrameRunnerQueue.add(() ->
 				{
 					lastWorld = client.getWorld();
@@ -279,7 +280,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			return;
 		}
 
-		if (client.getLocalPlayer() == null || !config.transmogActive())
+		if (!transmogManager.isReady() || client.getLocalPlayer() == null || !config.transmogActive())
 		{
 			return;
 		}

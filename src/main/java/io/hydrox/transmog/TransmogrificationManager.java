@@ -87,6 +87,10 @@ public class TransmogrificationManager
 	@Setter
 	private boolean emptyEquipment;
 
+	@Getter
+	@Setter
+	private boolean ready;
+
 	private int lastHintTick = -100;
 
 	@Inject
@@ -443,11 +447,12 @@ public class TransmogrificationManager
 	{
 		loadDefault();
 		loadPresets();
+		ready = true;
 	}
 
 	void loadPresets()
 	{
-		migrateV1();
+		//migrateV1();
 		presets.clear();
 		for (int i = 0; i <= config.lastIndex(); i++)
 		{
