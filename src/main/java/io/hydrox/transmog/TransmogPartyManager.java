@@ -33,7 +33,6 @@ import net.runelite.api.Player;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
-import net.runelite.client.party.messages.UserSync;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,11 +109,6 @@ public class TransmogPartyManager
 
 	public void onUserSync()
 	{
-		if (client.getGameState() == GameState.LOGGED_IN)
-		{
-			shareEmptyState();
-		}
-
 		playerMapByMemberId.clear();
 		for (PartyMember pm : partyService.getMembers())
 		{
@@ -209,7 +203,7 @@ public class TransmogPartyManager
 	{
 		if (partyService.isInParty())
 		{
-			partyService.send(new UserSync());
+			partyService.send(new TransmogDefaultStateRequest());
 		}
 	}
 

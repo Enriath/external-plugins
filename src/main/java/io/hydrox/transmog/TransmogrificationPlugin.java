@@ -122,6 +122,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 
 		wsClient.registerMessage(TransmogUpdateMessage.class);
 		wsClient.registerMessage(TransmogEmptyMessage.class);
+		wsClient.registerMessage(TransmogDefaultStateRequest.class);
 		spriteManager.addSpriteOverrides(CustomSprites.values());
 		mouseManager.registerMouseWheelListener(this);
 		firstContainerChangeFlag = true;
@@ -154,6 +155,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			partyManager.clearSharedPreset();
 			wsClient.unregisterMessage(TransmogUpdateMessage.class);
 			wsClient.unregisterMessage(TransmogEmptyMessage.class);
+			wsClient.unregisterMessage(TransmogDefaultStateRequest.class);
 		});
 	}
 
@@ -316,6 +318,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	public void onStatusUpdate(StatusUpdate e)
 	{
 		partyManager.onUserSync();
+	}
+
+	@Subscribe
+	public void onTransmogDefaultStateRequest(TransmogDefaultStateRequest e)
+	{
+		partyManager.shareEmptyState();
 	}
 
 	@Subscribe
