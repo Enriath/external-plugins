@@ -285,7 +285,7 @@ public class TransmogrificationManager
 			{
 				hintDefaultState();
 			}
-			else
+			else if (partyManager.get().isPlayerInParty(player.getName()))
 			{
 				partyManager.get().requestDefaultStates();
 			}

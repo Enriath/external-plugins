@@ -47,6 +47,7 @@ public class TransmogPartyManager
 	private final Map<String, Player> playerMapByName = new HashMap<>();
 
 	private final Map<Long, String> playerMapByMemberId = new HashMap<>();
+	private final Map<String, Long> memberMapByPlayerName = new HashMap<>();
 
 	@Inject
 	TransmogPartyManager(Client client, TransmogrificationManager transmogManager, PartyService partyService,
@@ -110,6 +111,7 @@ public class TransmogPartyManager
 	public void onUserSync()
 	{
 		playerMapByMemberId.clear();
+		memberMapByPlayerName.clear();
 		for (PartyMember pm : partyService.getMembers())
 		{
 			// Ignore self
@@ -124,6 +126,7 @@ public class TransmogPartyManager
 				continue;
 			}
 			playerMapByMemberId.put(pm.getMemberId(), name);
+			memberMapByPlayerName.put(name, pm.getMemberId());
 			// Don't bother trying to apply transmog if the user isn't present
 			Player player = playerMapByName.getOrDefault(name, null);
 			if (player == null)
@@ -219,5 +222,10 @@ public class TransmogPartyManager
 	{
 		configManager.transmitToParty(state);
 		shareCurrentPreset();
+	}
+
+	boolean isPlayerInParty(String name)
+	{
+		return memberMapByPlayerName.containsKey(name);
 	}
 }
