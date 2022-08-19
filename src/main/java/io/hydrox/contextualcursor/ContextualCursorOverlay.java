@@ -217,34 +217,30 @@ public class ContextualCursorOverlay extends Overlay
 	private void processEntry(Graphics2D graphics, MenuAction type, String option, String target)
 	{
 		final ContextualCursor cursor;
-		if (SPELL_TYPES.contains(type))
+		if (SPELL_TYPES.contains(type) && option.equals("Cast"))
 		{
-			// Custom handling for RL & Vanilla Wiki lookup's spell-like nature
-			if (option.equals("Lookup") && Text.removeTags(target).startsWith("Wiki ->"))
+			final Matcher spellFinder = SPELL_FINDER.matcher(target.toLowerCase());
+
+			if (!spellFinder.find())
 			{
-				cursor = ContextualCursor.WIKI;
-			}
-			else
-			{
-				final Matcher spellFinder = SPELL_FINDER.matcher(target.toLowerCase());
-
-				if (!spellFinder.find())
-				{
-					return;
-				}
-
-				final String spellText = spellFinder.group(1);
-				final SpellSprite spell = SpellSprite.get(spellText);
-
-				final BufferedImage magicSprite = spriteManager.getSprite(spell.spriteID, 0);
-				if (magicSprite == null)
-				{
-					return;
-				}
-
-				drawCursorWithSprite(graphics, magicSprite);
 				return;
 			}
+
+			final String spellText = spellFinder.group(1);
+			final SpellSprite spell = SpellSprite.get(spellText);
+
+			final BufferedImage magicSprite = spriteManager.getSprite(spell.spriteID, 0);
+			if (magicSprite == null)
+			{
+				return;
+			}
+
+			drawCursorWithSprite(graphics, magicSprite);
+			return;
+		}
+		else if (option.equals("Lookup") && Text.removeTags(target).startsWith("Wiki ->"))
+		{
+			cursor = ContextualCursor.WIKI;
 		}
 		else
 		{
