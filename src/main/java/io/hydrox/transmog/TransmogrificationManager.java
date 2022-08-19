@@ -322,8 +322,11 @@ public class TransmogrificationManager
 		if (isLocalPlayer)
 		{
 			transmogHash = Arrays.hashCode(kits);
-			partyManager.get().shareCurrentPreset();
-
+			if (preset.isChanged())
+			{
+				preset.setChanged(false);
+				partyManager.get().shareCurrentPreset();
+			}
 		}
 		player.getPlayerComposition().setHash();
 

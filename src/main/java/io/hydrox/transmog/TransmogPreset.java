@@ -53,6 +53,10 @@ public class TransmogPreset
 	@Getter
 	private String name;
 
+	@Getter
+	@Setter
+	private boolean changed = false;
+
 	public TransmogPreset(int id)
 	{
 		this(id, -1, "");
@@ -131,6 +135,7 @@ public class TransmogPreset
 	{
 		overrides.put(slot, id);
 		names.put(slot, name);
+		changed = true;
 	}
 
 	public void clearSlot(TransmogSlot slot)
