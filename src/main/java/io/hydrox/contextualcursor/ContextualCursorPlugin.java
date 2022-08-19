@@ -25,6 +25,7 @@
 package io.hydrox.contextualcursor;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
@@ -39,6 +40,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 @PluginDescriptor(
 	name = "Contextual Cursor",
@@ -48,7 +50,9 @@ import java.awt.event.MouseEvent;
 public class ContextualCursorPlugin extends Plugin implements KeyListener, MouseListener
 {
 	@Inject
-	private ContextualCursorOverlay contextualCursorOverlay;
+	private ContextualCursorDrawOverlay contextualCursorDrawOverlay;
+	@Inject
+	private ContextualCursorWorkerOverlay contextualCursorWorkerOverlay;
 
 	@Inject
 	private OverlayManager overlayManager;
@@ -62,9 +66,14 @@ public class ContextualCursorPlugin extends Plugin implements KeyListener, Mouse
 	@Getter
 	private boolean altPressed;
 
+	@Getter
+	@Setter
+	private BufferedImage spriteToDraw;
+
 	protected void startUp()
 	{
-		overlayManager.add(contextualCursorOverlay);
+		overlayManager.add(contextualCursorWorkerOverlay);
+		overlayManager.add(contextualCursorDrawOverlay);
 		keyManager.registerKeyListener(this);
 		mouseManager.registerMouseListener(this);
 	}
@@ -72,8 +81,9 @@ public class ContextualCursorPlugin extends Plugin implements KeyListener, Mouse
 	@Override
 	protected void shutDown()
 	{
-		overlayManager.remove(contextualCursorOverlay);
-		contextualCursorOverlay.resetCursor();
+		overlayManager.remove(contextualCursorWorkerOverlay);
+		overlayManager.remove(contextualCursorDrawOverlay);
+		contextualCursorWorkerOverlay.resetCursor();
 		keyManager.unregisterKeyListener(this);
 		mouseManager.unregisterMouseListener(this);
 	}
@@ -83,7 +93,7 @@ public class ContextualCursorPlugin extends Plugin implements KeyListener, Mouse
 	{
 		if (event.getGameState() != GameState.LOGGED_IN && event.getGameState() != GameState.LOADING)
 		{
-			contextualCursorOverlay.resetCursor();
+			contextualCursorWorkerOverlay.resetCursor();
 		}
 	}
 

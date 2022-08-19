@@ -53,7 +53,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class ContextualCursorOverlay extends Overlay
+public class ContextualCursorWorkerOverlay extends Overlay
 {
 	private static final Cursor BLANK_MOUSE = Toolkit.getDefaultToolkit().createCustomCursor(
 		new BufferedImage(32, 32,BufferedImage.TYPE_INT_ARGB),
@@ -64,10 +64,6 @@ public class ContextualCursorOverlay extends Overlay
 		new ImageComponent(new BufferedImage(1, 10, BufferedImage.TYPE_INT_ARGB))
 	);
 	private static final Pattern SPELL_FINDER = Pattern.compile(">(.*?)(?:</col>| -> )");
-	//The pointer sticks out to the left slightly, so this makes sure it's point to the correct spot
-	private static final Point POINTER_OFFSET = new Point(-5, 0);
-	//The centre of the circle (biased bottom right since it's an even size), for use with sprites
-	private static final Point CENTRAL_POINT = new Point(16, 18);
 	private static final int MENU_OPTION_HEIGHT = 15;
 	private static final int MENU_EXTRA_TOP = 4;
 	private static final int MENU_EXTRA_BOTTOM = 3;
@@ -88,8 +84,8 @@ public class ContextualCursorOverlay extends Overlay
 	private Cursor originalCursor;
 
 	@Inject
-	ContextualCursorOverlay(Client client, ClientUI clientUI, ContextualCursorPlugin plugin,
-							SpriteManager spriteManager, TooltipManager tooltipManager)
+	ContextualCursorWorkerOverlay(Client client, ClientUI clientUI, ContextualCursorPlugin plugin,
+								  SpriteManager spriteManager, TooltipManager tooltipManager)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_WIDGETS);
@@ -129,6 +125,7 @@ public class ContextualCursorOverlay extends Overlay
 		if (cursorOverriden)
 		{
 			cursorOverriden = false;
+			plugin.setSpriteToDraw(null);
 			if (originalCursor != null)
 			{
 				clientUI.setCursor(originalCursor);
@@ -235,7 +232,7 @@ public class ContextualCursorOverlay extends Overlay
 				return;
 			}
 
-			drawCursorWithSprite(graphics, magicSprite);
+			setSpriteToDraw(magicSprite);
 			return;
 		}
 		else if (option.equals("Lookup") && Text.removeTags(target).startsWith("Wiki ->"))
@@ -271,21 +268,16 @@ public class ContextualCursorOverlay extends Overlay
 		}
 		if (sprite != null)
 		{
-			drawCursorWithSprite(graphics, sprite);
+			setSpriteToDraw(sprite);
 		}
 	}
 
-	private void drawCursorWithSprite(Graphics2D graphics, BufferedImage sprite)
+	private void setSpriteToDraw(BufferedImage sprite)
 	{
 		storeOriginalCursor();
 		clientUI.setCursor(BLANK_MOUSE);
 		cursorOverriden = true;
-		final Point mousePos = client.getMouseCanvasPosition();
-		final ContextualCursor blank = ContextualCursor.BLANK;
-		graphics.drawImage(blank.getCursor(), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
-		final int spriteX = POINTER_OFFSET.getX() + CENTRAL_POINT.getX() - sprite.getWidth() / 2;
-		final int spriteY = POINTER_OFFSET.getY() + CENTRAL_POINT.getY() - sprite.getHeight() / 2;
-		graphics.drawImage(sprite, mousePos.getX() + spriteX, mousePos.getY() + spriteY, null);
+		plugin.setSpriteToDraw(sprite);
 		// Add an empty tooltip to keep real tooltips out of the way
 		tooltipManager.addFront(SPACER_TOOLTIP);
 	}
