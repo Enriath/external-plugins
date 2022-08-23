@@ -51,7 +51,7 @@ public class DoorKickerPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked e)
 	{
-		if (e.getMenuOption().equals("Open") && e.getMenuTarget().endsWith("Door"))
+		if (e.getMenuOption().equals("Open") && e.getMenuTarget().toLowerCase().endsWith("door"))
 		{
 			doorLocation = LocalPoint.fromScene(e.getParam0(), e.getParam1());
 		}
