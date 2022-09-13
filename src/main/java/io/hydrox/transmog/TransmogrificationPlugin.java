@@ -43,6 +43,7 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuShouldLeftClick;
 import net.runelite.api.events.PlayerChanged;
 import net.runelite.api.events.PlayerDespawned;
+import net.runelite.api.events.PlayerSpawned;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.VarbitChanged;
@@ -53,7 +54,9 @@ import net.runelite.client.game.SpriteManager;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.input.MouseWheelListener;
 import net.runelite.client.party.WSClient;
+import net.runelite.client.party.events.UserJoin;
 import net.runelite.client.party.events.UserPart;
+import net.runelite.client.party.messages.UserSync;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -121,8 +124,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		}
 
 		wsClient.registerMessage(TransmogUpdateMessage.class);
-		wsClient.registerMessage(TransmogEmptyMessage.class);
-		wsClient.registerMessage(TransmogDefaultStateRequest.class);
 		spriteManager.addSpriteOverrides(CustomSprites.values());
 		mouseManager.registerMouseWheelListener(this);
 		firstContainerChangeFlag = true;
@@ -154,8 +155,6 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 			uiManager.shutDown();
 			partyManager.clearSharedPreset();
 			wsClient.unregisterMessage(TransmogUpdateMessage.class);
-			wsClient.unregisterMessage(TransmogEmptyMessage.class);
-			wsClient.unregisterMessage(TransmogDefaultStateRequest.class);
 		});
 	}
 
@@ -248,6 +247,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	@Subscribe
 	public void onGameTick(GameTick e)
 	{
+		partyManager.onGameTick();
 		if (nextFrameRunnerQueue.size() > 0)
 		{
 			Runnable r = nextFrameRunnerQueue.poll();
@@ -297,6 +297,12 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	// Party events
 
 	@Subscribe
+	public void onPlayerSpawned(PlayerSpawned e)
+	{
+		partyManager.onPlayerSpawned(e.getPlayer());
+	}
+
+	@Subscribe
 	public void onPlayerDespawned(PlayerDespawned e)
 	{
 		partyManager.onPlayerDespawned(e.getPlayer());
@@ -309,21 +315,21 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	}
 
 	@Subscribe
-	public void onTransmogEmptyMessage(TransmogEmptyMessage e)
-	{
-		partyManager.onTransmogEmptyMessage(e);
-	}
-
-	@Subscribe
 	public void onStatusUpdate(StatusUpdate e)
 	{
-		partyManager.onUserSync();
+		partyManager.onStatusUpdate();
 	}
 
 	@Subscribe
-	public void onTransmogDefaultStateRequest(TransmogDefaultStateRequest e)
+	public void onUserSync(UserSync e)
 	{
-		partyManager.shareEmptyState();
+		partyManager.onStatusUpdate();
+	}
+
+	@Subscribe
+	public void onUserJoin(UserJoin e)
+	{
+		partyManager.shareCurrentPreset();
 	}
 
 	@Subscribe

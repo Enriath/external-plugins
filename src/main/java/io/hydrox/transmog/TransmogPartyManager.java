@@ -33,12 +33,15 @@ import net.runelite.api.Player;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
+import net.runelite.client.party.messages.PartyMemberMessage;
+import net.runelite.client.party.messages.PartyMessage;
 import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
 public class TransmogPartyManager
 {
+	static final int RATE_LIMIT = 1;
 	private final Client client;
 	private final TransmogrificationManager transmogManager;
 	private final TransmogrificationConfigManager configManager;
@@ -47,7 +50,9 @@ public class TransmogPartyManager
 	private final Map<String, Player> playerMapByName = new HashMap<>();
 
 	private final Map<Long, String> playerMapByMemberId = new HashMap<>();
-	private final Map<String, Long> memberMapByPlayerName = new HashMap<>();
+
+	private int lastSend = 0;
+	private PartyMessage messageToSend;
 
 	@Inject
 	TransmogPartyManager(Client client, TransmogrificationManager transmogManager, PartyService partyService,
@@ -72,6 +77,16 @@ public class TransmogPartyManager
 		transmogManager.applyTransmog(spawned, transmogManager.getPartyPreset(spawned.getName()));
 	}
 
+	public void onGameTick()
+	{
+		if (messageToSend != null && lastSend + RATE_LIMIT < client.getTickCount())
+		{
+			lastSend = client.getTickCount();
+			partyService.send(messageToSend);
+			messageToSend = null;
+		}
+	}
+
 	public void onPlayerDespawned(Player despawned)
 	{
 		playerMapByName.remove(despawned.getName());
@@ -85,6 +100,16 @@ public class TransmogPartyManager
 		}
 		PartyMember member = partyService.getMemberById(e.getMemberId());
 		String name = member.getDisplayName();
+		// Only fall back to transmitted name if there isn't a stored preset, probably because the update was sent
+		// before a name was set on party join, to try to reduce abuse of people changing other's transmogs
+		if (name.equals("<unknown>"))
+		{
+			if (transmogManager.getPartyPreset(e.getName()) != null)
+			{
+				return;
+			}
+			name = e.getName();
+		}
 		TransmogPreset preset = e.getPresetData() == null ? null : TransmogPreset.fromConfig(-1, e.getPresetData());
 		transmogManager.setPartyPreset(name, preset);
 
@@ -97,21 +122,9 @@ public class TransmogPartyManager
 		transmogManager.updateTransmog(player, preset);
 	}
 
-	public void onTransmogEmptyMessage(TransmogEmptyMessage e)
-	{
-		if (partyService.getLocalMember().getMemberId() == e.getMemberId())
-		{
-			return;
-		}
-		PartyMember member = partyService.getMemberById(e.getMemberId());
-		String name = member.getDisplayName();
-		transmogManager.updateDefault(name, e.getEmptyState());
-	}
-
-	public void onUserSync()
+	public void onStatusUpdate()
 	{
 		playerMapByMemberId.clear();
-		memberMapByPlayerName.clear();
 		for (PartyMember pm : partyService.getMembers())
 		{
 			// Ignore self
@@ -126,7 +139,6 @@ public class TransmogPartyManager
 				continue;
 			}
 			playerMapByMemberId.put(pm.getMemberId(), name);
-			memberMapByPlayerName.put(name, pm.getMemberId());
 			// Don't bother trying to apply transmog if the user isn't present
 			Player player = playerMapByName.getOrDefault(name, null);
 			if (player == null)
@@ -168,21 +180,7 @@ public class TransmogPartyManager
 		{
 			return null;
 		}
-		return () ->
-		{
-			shareEmptyState();
-			shareCurrentPreset();
-		};
-	}
-
-	void shareEmptyState()
-	{
-		if (partyService.isInParty())
-		{
-			partyService.send(new TransmogEmptyMessage(
-				transmogManager.getEmptyStateMap().get(client.getLocalPlayer().getName())
-			));
-		}
+		return this::shareCurrentPreset;
 	}
 
 	private boolean shouldSharePreset()
@@ -192,21 +190,14 @@ public class TransmogPartyManager
 
 	void shareCurrentPreset()
 	{
-		if (partyService.isInParty())
+		if (partyService.isInParty() && client.getGameState() == GameState.LOGGED_IN)
 		{
-			partyService.send(new TransmogUpdateMessage(
+			queueSend(new TransmogUpdateMessage(
+				client.getLocalPlayer().getName(),
 				shouldSharePreset()
-					? transmogManager.getCurrentPreset().toMessageData()
+					? transmogManager.getCurrentPresetSerialised()
 					: null
 			));
-		}
-	}
-
-	void requestDefaultStates()
-	{
-		if (partyService.isInParty())
-		{
-			partyService.send(new TransmogDefaultStateRequest());
 		}
 	}
 
@@ -214,7 +205,7 @@ public class TransmogPartyManager
 	{
 		if (partyService.isInParty())
 		{
-			partyService.send(new TransmogUpdateMessage(null));
+			queueSend(new TransmogUpdateMessage(client.getLocalPlayer().getName(), null));
 		}
 	}
 
@@ -224,8 +215,10 @@ public class TransmogPartyManager
 		shareCurrentPreset();
 	}
 
-	boolean isPlayerInParty(String name)
+
+
+	void queueSend(PartyMemberMessage message)
 	{
-		return memberMapByPlayerName.containsKey(name);
+		messageToSend = message;
 	}
 }

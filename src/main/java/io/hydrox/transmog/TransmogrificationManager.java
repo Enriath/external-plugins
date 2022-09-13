@@ -220,6 +220,11 @@ public class TransmogrificationManager
 		return preset;
 	}
 
+	public String getCurrentPresetSerialised()
+	{
+		return getCurrentPreset().toMessageData(emptyState);
+	}
+
 	public TransmogPreset getPartyPreset(String name)
 	{
 		return partyPresets.getOrDefault(name, EMPTY_PRESET);

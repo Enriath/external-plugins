@@ -34,5 +34,6 @@ import net.runelite.client.party.messages.PartyMemberMessage;
 @EqualsAndHashCode(callSuper = true)
 public class TransmogUpdateMessage extends PartyMemberMessage
 {
+	String name;
 	String presetData;
 }
