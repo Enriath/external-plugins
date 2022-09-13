@@ -68,8 +68,7 @@ public class TransmogrificationManager
 	@Getter
 	private final List<TransmogPreset> presets = new ArrayList<>();
 
-	@Getter
-	private final Map<String, int[]> emptyStateMap = new HashMap<>();
+	private int[] emptyState;
 
 	@Getter
 	private final Map<String, int[]> currentActualStateMap = new HashMap<>();
@@ -148,7 +147,7 @@ public class TransmogrificationManager
 		}
 		String name = p.getName();
 		currentActualStateMap.remove(name);
-		emptyStateMap.remove(name);
+		emptyState = null;
 	}
 
 	public void clearUserActualState()
@@ -284,20 +283,11 @@ public class TransmogrificationManager
 
 		boolean isLocalPlayer = player == client.getLocalPlayer();
 
-		if (!isDefaultStateSet(player))
+		if (isLocalPlayer && !isDefaultStateSet())
 		{
-			if (isLocalPlayer)
-			{
-				hintDefaultState();
-			}
-			else if (partyManager.get().isPlayerInParty(player.getName()))
-			{
-				partyManager.get().requestDefaultStates();
-			}
+			hintDefaultState();
 			return;
 		}
-
-
 
 		int[] kits = player.getPlayerComposition().getEquipmentIds();
 		if (isLocalPlayer && !currentActualStateMap.containsKey(player.getName()))
@@ -306,7 +296,6 @@ public class TransmogrificationManager
 		}
 
 		int[] currentActualState = currentActualStateMap.get(player.getName());
-		int[] emptyState = emptyStateMap.get(player.getName());
 
 		for (TransmogSlot slot : TransmogSlot.values())
 		{
@@ -317,7 +306,10 @@ public class TransmogrificationManager
 			}
 			else if (id == TransmogPreset.EMPTY)
 			{
-				kits[slot.getKitIndex()] = emptyState[slot.getKitIndex()];
+				if (isLocalPlayer)
+				{
+					kits[slot.getKitIndex()] = emptyState[slot.getKitIndex()];
+				}
 			}
 			else
 			{
@@ -334,7 +326,6 @@ public class TransmogrificationManager
 			}
 		}
 		player.getPlayerComposition().setHash();
-
 	}
 
 	void removeTransmog(Player player)
@@ -356,6 +347,7 @@ public class TransmogrificationManager
 		if (player == client.getLocalPlayer())
 		{
 			partyManager.get().clearSharedPreset();
+			getCurrentPreset().setChanged(true);
 		}
 	}
 
@@ -383,21 +375,12 @@ public class TransmogrificationManager
 		{
 			currentState[0] = 27657;
 			currentState[8] = 376;
-			emptyStateMap.putIfAbsent(name, currentState);
+			TransmogPreset p = partyPresets.getOrDefault(name, new TransmogPreset(-1));
+			p.setSlot(TransmogSlot.values()[0], 27145, "");
+			p.setSlot(TransmogSlot.values()[6], 376, "");
+			partyPresets.put(name, p);
 		}
 		currentActualStateMap.put(name, currentState);
-	}
-
-	public void updateDefault(String name, int[] emptyState)
-	{
-		if (emptyState == null)
-		{
-			emptyStateMap.remove(name);
-		}
-		else
-		{
-			emptyStateMap.put(name, emptyState);
-		}
 	}
 
 	public boolean updateDefault(int opClicked)
@@ -409,12 +392,10 @@ public class TransmogrificationManager
 				.value("Saved your default outfit")
 				.build());
 
-			int[] emptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
-			updateDefault(
-				client.getLocalPlayer().getName(),
-				emptyState
-			);
-			config.saveDefaultState(emptyState);
+			int[] newEmptyState = client.getLocalPlayer().getPlayerComposition().getEquipmentIds();
+			emptyState = newEmptyState;
+			config.saveDefaultState(newEmptyState);
+			partyManager.get().shareCurrentPreset();
 			return true;
 		}
 		else
@@ -429,13 +410,7 @@ public class TransmogrificationManager
 
 	public boolean isDefaultStateSet()
 	{
-		return isDefaultStateSet(client.getLocalPlayer());
-	}
-
-	public boolean isDefaultStateSet(Player player)
-	{
-		int[] empty = emptyStateMap.getOrDefault(player.getName(), null);
-		return empty != null && empty.length > 0;
+		return emptyState != null && emptyState.length > 0;
 	}
 
 	private void loadDefault()
@@ -443,12 +418,12 @@ public class TransmogrificationManager
 		String data = config.getDefaultStateData();
 		if (data == null)
 		{
-			emptyStateMap.put(client.getLocalPlayer().getName(), null);
+			emptyState = null;
 			config.transmogActive(false);
 		}
 		else
 		{
-			emptyStateMap.put(client.getLocalPlayer().getName(), Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray());
+			emptyState = Text.fromCSV(data).stream().mapToInt(Integer::valueOf).toArray();
 		}
 	}
 

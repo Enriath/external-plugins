@@ -187,6 +187,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 					lastWorld = client.getWorld();
 					transmogManager.loadData();
 					updateEquipmentState();
+					partyManager.shareCurrentPreset();
 				});
 			}
 		}
