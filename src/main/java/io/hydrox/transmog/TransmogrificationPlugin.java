@@ -165,7 +165,7 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 	 */
 	private void updatePvpState()
 	{
-		final boolean newState = client.getVar(Varbits.PVP_SPEC_ORB) == 1;
+		final boolean newState = client.getVarbitValue(Varbits.PVP_SPEC_ORB) == 1;
 
 		if (newState != transmogManager.isInPvpSituation())
 		{
