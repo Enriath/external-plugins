@@ -30,6 +30,7 @@ import io.hydrox.transmog.config.TransmogrificationConfigManager;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Player;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.party.PartyMember;
 import net.runelite.client.party.PartyService;
@@ -43,6 +44,7 @@ public class TransmogPartyManager
 {
 	static final int RATE_LIMIT = 1;
 	private final Client client;
+	private final ClientThread clientThread;
 	private final TransmogrificationManager transmogManager;
 	private final TransmogrificationConfigManager configManager;
 	private final PartyService partyService;
@@ -55,10 +57,11 @@ public class TransmogPartyManager
 	private PartyMessage messageToSend;
 
 	@Inject
-	TransmogPartyManager(Client client, TransmogrificationManager transmogManager, PartyService partyService,
+	TransmogPartyManager(Client client, ClientThread clientThread, TransmogrificationManager transmogManager, PartyService partyService,
 						 TransmogrificationConfigManager configManager)
 	{
 		this.client = client;
+		this.clientThread = clientThread;
 		this.transmogManager = transmogManager;
 		this.partyService = partyService;
 		this.configManager = configManager;
@@ -119,7 +122,7 @@ public class TransmogPartyManager
 		{
 			return;
 		}
-		transmogManager.updateTransmog(player, preset);
+		clientThread.invoke(() -> transmogManager.updateTransmog(player, preset));
 	}
 
 	public void onStatusUpdate()
@@ -146,7 +149,7 @@ public class TransmogPartyManager
 				continue;
 			}
 
-			transmogManager.updateTransmog(player, transmogManager.getPartyPreset(name));
+			clientThread.invoke(() -> transmogManager.updateTransmog(player, transmogManager.getPartyPreset(name)));
 		}
 	}
 
@@ -161,7 +164,7 @@ public class TransmogPartyManager
 		transmogManager.setPartyPreset(name, null);
 		if (playerMapByName.containsKey(name))
 		{
-			transmogManager.removeTransmog(playerMapByName.get(name));
+			clientThread.invoke(() -> transmogManager.removeTransmog(playerMapByName.get(name)));
 		}
 		playerMapByMemberId.remove(memberId);
 	}
