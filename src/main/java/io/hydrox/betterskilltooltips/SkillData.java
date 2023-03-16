@@ -71,11 +71,6 @@ enum SkillData
 	private final int goalStartVarp;
 	private final int goalEndVarp;
 
-	SkillData(Skill skill, VarPlayer goalStartVarp, VarPlayer goalEndVarp)
-	{
-		this(skill, goalStartVarp.getId(), goalEndVarp.getId());
-	}
-
 	String getName()
 	{
 		return skill.getName();
