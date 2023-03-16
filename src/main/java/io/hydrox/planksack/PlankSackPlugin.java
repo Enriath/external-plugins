@@ -79,7 +79,22 @@ public class PlankSackPlugin extends Plugin
 	private static final List<Integer> PLANKS = Arrays.asList(ItemID.PLANK, ItemID.OAK_PLANK, ItemID.TEAK_PLANK, ItemID.MAHOGANY_PLANK);
 	private static final List<String> PLANK_NAMES = Arrays.asList("Plank", "Oak plank", "Teak plank", "Mahogany plank");
 	private static final Set<Integer> MAHOGANY_HOMES_REPAIRS = Sets.newHashSet(
-		39982, 39995, 40011, 40089, 40099, 40158, 40159, 40163, 40168, 40170, 40177, 40295, 40298);
+		39982, // Bob clock
+		39995, // Jeff mirror
+		40010, // Leela mirror
+		40011, // Barbara clock
+		40089, // Norman clock
+		40099, // Larry clock
+		40158, // Noella hat stand
+		40159, // Noella mirror
+		40163, // Noella clock
+		40168, // Ross hat stand
+		40170, // Ross mirror
+		40177, // Jess clock
+		40295, // Tau hat stand
+		40298, // Larry hat stand
+		40289  // Mariah hat stand
+	);
 
 	private static final Set<Integer> HALLOWED_SEPULCHRE_FIXES = Sets.newHashSet(39527, 39528);
 	private static final int CONSTRUCTION_WIDGET_GROUP = 458;
