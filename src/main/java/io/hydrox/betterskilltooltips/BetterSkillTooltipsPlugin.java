@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Hydrox6 <ikada@protonmail.ch>
+ * Copyright (c) 2021-2023, Enriath <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
