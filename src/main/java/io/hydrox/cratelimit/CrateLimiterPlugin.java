@@ -48,14 +48,6 @@ import java.util.Set;
 )
 public class CrateLimiterPlugin extends Plugin
 {
-	private static final Set<MenuAction> VALID_MENU_ACTIONS = ImmutableSet.of(
-		MenuAction.ITEM_FIRST_OPTION,
-		MenuAction.ITEM_SECOND_OPTION,
-		MenuAction.ITEM_THIRD_OPTION,
-		MenuAction.ITEM_FOURTH_OPTION,
-		MenuAction.ITEM_FIFTH_OPTION
-	);
-
 	// These items have an Open option, but shouldn't have a speed limit
 	private static final Set<Integer> OPEN_EXCEPTIONS = ImmutableSet.of(
 		ItemID.LOOTING_BAG,
@@ -109,7 +101,7 @@ public class CrateLimiterPlugin extends Plugin
 	@Subscribe
 	void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (!VALID_MENU_ACTIONS.contains(event.getMenuAction()))
+		if (event.getMenuAction() != MenuAction.CC_OP)
 		{
 			return;
 		}
