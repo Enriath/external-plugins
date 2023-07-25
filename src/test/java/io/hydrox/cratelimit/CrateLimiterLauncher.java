@@ -3,7 +3,7 @@ package io.hydrox.cratelimit;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class CrateLimiterPluginTest
+public class CrateLimiterLauncher
 {
 	public static void main(String[] args) throws Exception
 	{
