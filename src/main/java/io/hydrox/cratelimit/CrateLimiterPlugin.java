@@ -26,7 +26,6 @@ package io.hydrox.cratelimit;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
@@ -47,7 +46,6 @@ import java.util.Set;
 	description = "Slows down the opening of crates and jars",
 	tags = {"crate", "jar", "eclectic", "medium", "mediums", "rangers", "ranger", "clue", "clues", "open", "loot"}
 )
-@Slf4j
 public class CrateLimiterPlugin extends Plugin
 {
 	private static final Set<MenuAction> VALID_MENU_ACTIONS = ImmutableSet.of(
