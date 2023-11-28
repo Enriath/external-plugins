@@ -32,8 +32,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.ui.FontManager;
@@ -124,7 +124,7 @@ public class UIManager
 
 	Widget getContainer()
 	{
-		final Widget equipment = client.getWidget(WidgetInfo.EQUIPMENT);
+		final Widget equipment = client.getWidget(InterfaceID.EQUIPMENT, 0);
 		return equipment.getParent();
 	}
 
