@@ -139,7 +139,7 @@ public class CustomSpriteSearch extends CustomSearch
 		for (Mapping mapping : source)
 		{
 			if (mapping.prettyName().toLowerCase().contains(search) &&
-				mapping.gender() == plugin.getGender())
+				mapping.bodyKit() == plugin.getBodyKit())
 			{
 				results.add(mapping);
 			}

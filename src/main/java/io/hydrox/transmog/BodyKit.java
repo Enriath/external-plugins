@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Hydrox6 <ikada@protonmail.ch>
+ * Copyright (c) 2023, Enriath <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,8 +24,8 @@
  */
 package io.hydrox.transmog;
 
-public enum Gender
+public enum BodyKit
 {
-	MALE,
-	FEMALE
+	MASC,
+	FEMME
 }

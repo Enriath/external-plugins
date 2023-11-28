@@ -27,7 +27,7 @@ package io.hydrox.transmog;
 public interface Mapping
 {
 	String prettyName();
-	Gender gender();
+	BodyKit bodyKit();
 	int modelId();
 	int kitId();
 }

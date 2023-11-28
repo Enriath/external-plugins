@@ -34,7 +34,7 @@ import java.util.Map;
 public enum FacialHairMapping implements Mapping
 {
 	EMPTY("Empty", -1, -1),
-	
+
 	NONE("None", 47825, 270),
 	GOATEE("Goatee", 47814, 266),
 	LONG("Long", 47837, 267),
@@ -84,9 +84,9 @@ public enum FacialHairMapping implements Mapping
 	}
 
 	@Override
-	public Gender gender()
+	public BodyKit bodyKit()
 	{
-		return Gender.MALE;
+		return BodyKit.MASC;
 	}
 
 	@Override

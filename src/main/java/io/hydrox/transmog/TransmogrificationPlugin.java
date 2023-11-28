@@ -414,13 +414,13 @@ public class TransmogrificationPlugin extends Plugin implements MouseWheelListen
 		return event;
 	}
 	
-	public Gender getGender()
+	public BodyKit getBodyKit()
 	{
 		if (client.getLocalPlayer() == null)
 		{
 			return null;
 		}
-		return client.getLocalPlayer().getPlayerComposition().isFemale() ? Gender.FEMALE : Gender.MALE;
+		return client.getLocalPlayer().getPlayerComposition().isFemale() ? BodyKit.FEMME : BodyKit.MASC;
 	}
 
 	public UIManager getUIManager()
