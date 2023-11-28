@@ -40,16 +40,16 @@ public enum MappingMapping
 		HairMapping.class,
 		HairMapping::fromKitID,
 		HairMapping::fromModelID,
-		2500,
-		0
+		600,
+		10
 	),
 	JAW(
 		TransmogSlot.JAW,
 		FacialHairMapping.class,
 		FacialHairMapping::fromKitID,
 		FacialHairMapping::fromModelID,
-		1500,
-		-12
+		600,
+		10
 	),
 	SLEEVES(
 		TransmogSlot.SLEEVES,

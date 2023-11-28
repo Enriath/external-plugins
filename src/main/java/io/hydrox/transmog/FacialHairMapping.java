@@ -34,22 +34,22 @@ import java.util.Map;
 public enum FacialHairMapping implements Mapping
 {
 	EMPTY("Empty", -1, -1),
-
-	CLEAN_SHAVEN("Clean-shaven", -1, 270),
-	GOATEE("Goatee", 81, 266),
-	LONG("Long", 82, 267),
-	MEDIUM("Medium", 83, 268),
-	SMALL_MOUSTACHE("Small moustache", 79, 269),
-	SHORT("Short", 80, 271),
-	POINTY("Pointy", 85, 272),
-	SPLIT("Split", 84, 273),
-	HANDLEBAR("Handlebar", 28398, 367),
-	MUTTON("Mutton", 28397, 368),
-	FULL_MUTTON("Full mutton", 28400, 369),
-	BIG_MOUSTACHE("Big moustache", 28393, 370),
-	WAXED_MOUSTACHE("Waxed moustache", 28394, 371),
-	DALI("Dali", 28388, 372),
-	VIZIER("Vizier", 28399, 373);
+	
+	NONE("None", 47825, 270),
+	GOATEE("Goatee", 47814, 266),
+	LONG("Long", 47837, 267),
+	MEDIUM("Medium", 47820, 268),
+	MOUSTACHE("Moustache", 47787, 269),
+	SHORT("Short", 47767, 271),
+	POINTY("Pointy", 47784, 272),
+	SPLIT("Split", 47840, 273),
+	HANDLEBAR("Handlebar", 47830, 367),
+	MUTTON("Mutton", 47797, 368),
+	FULL_MUTTON("Full Mutton", 47783, 369),
+	BIG_MOUSTACHE("Big Moustache", 47770, 370),
+	WAXED_MOUSTACHE("Waxed Moustache", 47795, 371),
+	DALI("Dali", 47789, 372),
+	VIZIER("Vizier", 47826, 373);
 
 	private final String name;
 	private final int modelID;
