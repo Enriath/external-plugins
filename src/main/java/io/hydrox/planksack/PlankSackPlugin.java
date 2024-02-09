@@ -418,8 +418,8 @@ public class PlankSackPlugin extends Plugin
 					case 1:
 						setPlankCount(plankCount - 2);
 						break;
-					cause 2:
-						setPlankCount(plankCount - 1)
+					case 2:
+						setPlankCount(plankCount - 1);
 						break;
 				}
 			});
