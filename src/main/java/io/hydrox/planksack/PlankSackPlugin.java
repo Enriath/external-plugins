@@ -402,7 +402,7 @@ public class PlankSackPlugin extends Plugin
 			});
 		}
 
-		//Port Piscarilius Fishing Cranes
+		// Port Piscarilius Fishing Cranes
 		if (event.getType() == ChatMessageType.SPAM && event.getMessage().equals("You successfully repair the fishing crane."))
 		{
 			// Any planks in the inventory are prioritised, and are removed after this chat message.
