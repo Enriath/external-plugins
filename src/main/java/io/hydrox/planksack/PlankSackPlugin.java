@@ -402,6 +402,29 @@ public class PlankSackPlugin extends Plugin
 			});
 		}
 
+		//Port Piscarilius Fishing Cranes
+		if (event.getType() == ChatMessageType.SPAM && event.getMessage().equals("You successfully repair the fishing crane."))
+		{
+			// Any planks in the inventory are prioritised, and are removed after this chat message.
+			// Therefore, we need to delay this check by a bit to make sure it picks up inventory planks being used.
+			clientThread.invokeLater(() -> {
+				Multiset<Integer> current = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+				Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
+				switch (delta.size())
+				{
+					case 0:
+						setPlankCount(plankCount - 3);
+						break;
+					case 1:
+						setPlankCount(plankCount - 2);
+						break;
+					cause 2:
+						setPlankCount(plankCount - 1)
+						break;
+				}
+			});
+		}
+
 		// Sack checking/updating
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 		{
