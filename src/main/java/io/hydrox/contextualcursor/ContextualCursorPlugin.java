@@ -24,11 +24,13 @@
  */
 package io.hydrox.contextualcursor;
 
+import com.google.inject.Provides;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
@@ -69,6 +71,17 @@ public class ContextualCursorPlugin extends Plugin implements KeyListener, Mouse
 	@Getter
 	@Setter
 	private BufferedImage spriteToDraw;
+
+
+	@Inject
+	ContextualCursorConfig config;
+
+	@Provides
+	ContextualCursorConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(ContextualCursorConfig.class);
+	}
+
 
 	protected void startUp()
 	{

@@ -249,8 +249,8 @@ public class ContextualCursorWorkerOverlay extends Overlay
 			resetCursor();
 			return;
 		}
-
-		BufferedImage sprite = cursor.getCursor();
+		
+		BufferedImage sprite = cursor.getCursor(plugin.config.skin());
 		if (cursor.getSpriteID() != null)
 		{
 			if (client.getSpriteOverrides().containsKey(cursor.getSpriteID()))

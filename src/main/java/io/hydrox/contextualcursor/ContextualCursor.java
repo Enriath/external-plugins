@@ -29,6 +29,7 @@ import net.runelite.api.SpriteID;
 import net.runelite.client.util.ImageUtil;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,11 +92,24 @@ public enum ContextualCursor
 	WOODCUTTING(SpriteID.SKILL_WOODCUTTING, "chop down", "chop-down", "chop", "cut", "hack");
 
 	private BufferedImage cursor;
+	private BufferedImage cursorOSRS;
 	private Integer spriteID;
 	private String[] actions;
+	private boolean hasOsrsVairant = false;
+
+	private boolean resourceExists(String resourcePath) {
+		return ContextualCursorPlugin.class.getResourceAsStream(resourcePath) != null;
+	}
+
 
 	ContextualCursor(String cursor_path, String ... actions)
 	{
+		String osrsPath = String.format("cursors/%s_osrs.png", cursor_path);
+		if (resourceExists(osrsPath)) {
+			this.cursorOSRS = ImageUtil.loadImageResource(ContextualCursorPlugin.class, osrsPath);
+			hasOsrsVairant = true;
+		}
+
 		this.cursor = ImageUtil.loadImageResource(ContextualCursorPlugin.class, String.format("cursors/%s.png", cursor_path));
 		this.actions = actions;
 	}
@@ -124,4 +138,10 @@ public enum ContextualCursor
 		//return cursorMap.get(action.toLowerCase());
 		return cursorMap.getOrDefault(action.toLowerCase(), GENERIC);
 	}
+
+	public BufferedImage getCursor(Skin sKin) {
+		final boolean displayOSRS = sKin == Skin.OSRS && isHasOsrsVairant();
+		return displayOSRS ? getCursorOSRS() : getCursor();
+	}
+
 }
