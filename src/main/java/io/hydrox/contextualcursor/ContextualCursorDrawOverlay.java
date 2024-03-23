@@ -66,7 +66,7 @@ public class ContextualCursorDrawOverlay extends Overlay
 
 		final Point mousePos = client.getMouseCanvasPosition();
 		final ContextualCursor blank = ContextualCursor.BLANK;
-		graphics.drawImage(blank.getCursor(), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
+		graphics.drawImage(blank.getCursor(plugin.config.skin()), mousePos.getX() + POINTER_OFFSET.getX(), mousePos.getY() + POINTER_OFFSET.getY(), null);
 		final int spriteX = POINTER_OFFSET.getX() + CENTRAL_POINT.getX() - sprite.getWidth() / 2;
 		final int spriteY = POINTER_OFFSET.getY() + CENTRAL_POINT.getY() - sprite.getHeight() / 2;
 		graphics.drawImage(sprite, mousePos.getX() + spriteX, mousePos.getY() + spriteY, null);
