@@ -1,5 +1,6 @@
 package io.hydrox.quickprayerpreview;
 
+import java.awt.Color;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import net.runelite.client.config.Config;
@@ -17,9 +18,31 @@ public interface QuickPrayerPreviewConfig extends Config
 	String KEY_TOOLTIP_SPRITE_SIZE = "tooltipSpriteSize";
 
 	@ConfigItem(
+		name = "Replace Tooltip Sprite With Text",
+		description = "Replaces the tooltip prayer sprites with text.",
+		position = 0,
+		keyName = "useTextTooltip"
+	)
+	default boolean useTextTooltip()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		name = "Tooltip Text Color",
+		description = "Color of the tooltip text, if enabled.",
+		position = 1,
+		keyName = "tooltipTextColor"
+	)
+	default Color tooltipTextColor()
+	{
+		return Color.WHITE;
+	}
+
+	@ConfigItem(
 		name = "Tooltip Sprite Size",
 		description = "Size of tooltip prayer sprites.",
-		position = 0,
+		position = 2,
 		keyName = KEY_TOOLTIP_SPRITE_SIZE
 	)
 	@Units(Units.PIXELS)
@@ -32,7 +55,7 @@ public interface QuickPrayerPreviewConfig extends Config
 	@ConfigItem(
 		name = "Require Key Press",
 		description = "Only display quick-prayer orb tooltip while pressing the set key.",
-		position = 1,
+		position = 3,
 		keyName = "requireKeyPress"
 	)
 	default boolean requireKeyPress()
@@ -43,7 +66,7 @@ public interface QuickPrayerPreviewConfig extends Config
 	@ConfigItem(
 		name = "Key To Press",
 		description = "The key to press to display the quick-prayer orb tooltip.",
-		position = 2,
+		position = 4,
 		keyName = "keyToPress"
 	)
 	default ModifierlessKeybind keyToPress()
@@ -54,7 +77,7 @@ public interface QuickPrayerPreviewConfig extends Config
 	@ConfigItem(
 		name = "Add Print Menu Entry",
 		description = "Adds a menu entry to the quick-prayer orb to print to chatbox.",
-		position = 3,
+		position = 5,
 		keyName = "addPrintMenuEntry"
 	)
 	default boolean addPrintMenuEntry()

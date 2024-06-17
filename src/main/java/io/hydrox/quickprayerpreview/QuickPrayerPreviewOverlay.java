@@ -38,12 +38,13 @@ import net.runelite.client.config.RuneLiteConfig;
 import net.runelite.client.config.TooltipPositionType;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.ComponentOrientation;
 import net.runelite.client.ui.overlay.components.ImageComponent;
-import net.runelite.client.ui.overlay.components.PanelComponent;
+import net.runelite.client.ui.overlay.components.LineComponent;
 
-public class QuickPrayerPreviewOverlay extends Overlay
+public class QuickPrayerPreviewOverlay extends OverlayPanel
 {
 	private static final int UNDER_OFFSET = 24;
 
@@ -51,8 +52,6 @@ public class QuickPrayerPreviewOverlay extends Overlay
 	private final QuickPrayerPreviewPlugin plugin;
 	private final QuickPrayerPreviewConfig config;
 	private final RuneLiteConfig runeLiteConfig;
-
-	private final PanelComponent panelComponent = new PanelComponent();
 
 	@Inject
 	public QuickPrayerPreviewOverlay(final Client client,
@@ -69,7 +68,7 @@ public class QuickPrayerPreviewOverlay extends Overlay
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 		setPriority(Overlay.PRIORITY_HIGH);
 
-		panelComponent.setOrientation(ComponentOrientation.HORIZONTAL);
+		setDynamicFont(true);
 	}
 
 	@Override
@@ -94,8 +93,6 @@ public class QuickPrayerPreviewOverlay extends Overlay
 			return null;
 		}
 
-		panelComponent.getChildren().clear();
-
 		final net.runelite.api.Point mouseCanvasPosition = client.getMouseCanvasPosition();
 
 		final Rectangle prevBounds = getBounds();
@@ -111,14 +108,24 @@ public class QuickPrayerPreviewOverlay extends Overlay
 		}
 
 		panelComponent.setPreferredLocation(new Point(tooltipX, tooltipY));
+		final boolean text = config.useTextTooltip();
+		panelComponent.setOrientation(text ? ComponentOrientation.VERTICAL : ComponentOrientation.HORIZONTAL);
+		panelComponent.getChildren().clear();
 
 		for (final Prayer p : prayers)
 		{
-			final BufferedImage img = plugin.getSprite(p);
-
-			if (img != null)
+			if (text)
 			{
-				panelComponent.getChildren().add(new ImageComponent(img));
+				panelComponent.getChildren().add(LineComponent.builder().leftColor(config.tooltipTextColor()).left(p.getName()).build());
+			}
+			else
+			{
+				final BufferedImage img = plugin.getSprite(p);
+
+				if (img != null)
+				{
+					panelComponent.getChildren().add(new ImageComponent(img));
+				}
 			}
 		}
 
