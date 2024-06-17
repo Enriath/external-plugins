@@ -34,9 +34,14 @@ import java.util.Map;
 import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
+import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -56,6 +61,8 @@ import net.runelite.client.util.ImageUtil;
 )
 public class QuickPrayerPreviewPlugin extends Plugin implements KeyListener
 {
+
+	private static final String CHAT_MESSAGE_PREFIX = "<col=ff0000>Quick-prayers</col>: ";
 	private static final int QUICK_PRAYER_VARBIT = 4102;
 
 	@Inject
@@ -138,7 +145,7 @@ public class QuickPrayerPreviewPlugin extends Plugin implements KeyListener
 			return;
 		}
 
-		if (e.getKey().equals(QuickPrayerPreviewConfig.KEY_SPRITE_SIZE))
+		if (e.getKey().equals(QuickPrayerPreviewConfig.KEY_TOOLTIP_SPRITE_SIZE))
 		{
 			clientThread.invokeLater(() -> {
 				prayerSprites.clear();
@@ -158,6 +165,51 @@ public class QuickPrayerPreviewPlugin extends Plugin implements KeyListener
 		}
 	}
 
+	@Subscribe
+	public void onMenuOpened(final MenuOpened event)
+	{
+		if (!config.addPrintMenuEntry())
+		{
+			return;
+		}
+
+		final MenuEntry me = event.getFirstEntry();
+
+		if (me.getWidget() == null ||
+			me.getWidget().getId() != ComponentID.MINIMAP_QUICK_PRAYER_ORB ||
+			!"Activate".equals(me.getOption()))
+		{
+			return;
+		}
+
+		client.createMenuEntry(1)
+			.setOption("Print")
+			.setTarget(me.getTarget())
+			.setType(MenuAction.RUNELITE)
+			.onClick(e -> {
+				if (quickPrayers.isEmpty())
+				{
+					client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", CHAT_MESSAGE_PREFIX + "Unknown or unset", null);
+					return;
+				}
+
+				final StringBuilder sb = new StringBuilder(CHAT_MESSAGE_PREFIX);
+
+				for (int i = 0; i < quickPrayers.size(); i++)
+				{
+					sb.append(quickPrayers.get(i).getName());
+
+					if (i != quickPrayers.size() - 1)
+					{
+						sb.append(", ");
+					}
+				}
+
+				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", sb.toString(), null);
+			});
+	}
+
+
 	private void loadSprites()
 	{
 		if (quickPrayers == null)
@@ -165,7 +217,7 @@ public class QuickPrayerPreviewPlugin extends Plugin implements KeyListener
 			return;
 		}
 
-		final int size = config.spriteSize();
+		final int size = config.tooltipSpriteSize();
 
 		for (final Prayer prayer : quickPrayers)
 		{

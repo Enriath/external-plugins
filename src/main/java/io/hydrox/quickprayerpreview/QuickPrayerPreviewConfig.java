@@ -14,17 +14,17 @@ public interface QuickPrayerPreviewConfig extends Config
 {
 	String CONFIG_GROUP = "quickprayerpreview";
 
-	String KEY_SPRITE_SIZE = "spriteSize";
+	String KEY_TOOLTIP_SPRITE_SIZE = "tooltipSpriteSize";
 
 	@ConfigItem(
-		name = "Sprite Size",
+		name = "Tooltip Sprite Size",
 		description = "Size of tooltip prayer sprites.",
 		position = 0,
-		keyName = KEY_SPRITE_SIZE
+		keyName = KEY_TOOLTIP_SPRITE_SIZE
 	)
 	@Units(Units.PIXELS)
 	@Range(min = 8, max = 32)
-	default int spriteSize()
+	default int tooltipSpriteSize()
 	{
 		return 32;
 	}
@@ -49,5 +49,16 @@ public interface QuickPrayerPreviewConfig extends Config
 	default ModifierlessKeybind keyToPress()
 	{
 		return new ModifierlessKeybind(KeyEvent.VK_SHIFT, InputEvent.SHIFT_DOWN_MASK);
+	}
+
+	@ConfigItem(
+		name = "Add Print Menu Entry",
+		description = "Adds a menu entry to the quick-prayer orb to print to chatbox.",
+		position = 3,
+		keyName = "addPrintMenuEntry"
+	)
+	default boolean addPrintMenuEntry()
+	{
+		return false;
 	}
 }
