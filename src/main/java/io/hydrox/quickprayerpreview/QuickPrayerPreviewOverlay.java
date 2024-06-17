@@ -24,68 +24,83 @@
  */
 package io.hydrox.quickprayerpreview;
 
-import net.runelite.api.Client;
-import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
-import net.runelite.client.config.RuneLiteConfig;
-import net.runelite.client.config.TooltipPositionType;
-import net.runelite.client.ui.overlay.Overlay;
-import net.runelite.client.ui.overlay.OverlayLayer;
-import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
-import net.runelite.client.ui.overlay.components.ComponentOrientation;
-import net.runelite.client.ui.overlay.components.ImageComponent;
-import net.runelite.client.ui.overlay.components.PanelComponent;
-import javax.inject.Inject;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import javax.inject.Inject;
+import net.runelite.api.Client;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.Widget;
+import net.runelite.client.config.RuneLiteConfig;
+import net.runelite.client.config.TooltipPositionType;
+import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPanel;
+import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.ComponentOrientation;
+import net.runelite.client.ui.overlay.components.ImageComponent;
+import net.runelite.client.ui.overlay.components.LineComponent;
 
-public class QuickPrayerPreviewOverlay extends Overlay
+public class QuickPrayerPreviewOverlay extends OverlayPanel
 {
 	private static final int UNDER_OFFSET = 24;
 
 	private final Client client;
 	private final QuickPrayerPreviewPlugin plugin;
+	private final QuickPrayerPreviewConfig config;
 	private final RuneLiteConfig runeLiteConfig;
 
-	private final PanelComponent panelComponent = new PanelComponent();
-
 	@Inject
-	public QuickPrayerPreviewOverlay(Client client, QuickPrayerPreviewPlugin plugin, final RuneLiteConfig runeLiteConfig)
+	public QuickPrayerPreviewOverlay(final Client client,
+	                                 final QuickPrayerPreviewPlugin plugin,
+	                                 final QuickPrayerPreviewConfig config,
+	                                 final RuneLiteConfig runeLiteConfig)
 	{
 		this.client = client;
 		this.plugin = plugin;
+		this.config = config;
 		this.runeLiteConfig = runeLiteConfig;
+
 		setPosition(OverlayPosition.TOOLTIP);
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
-		setPriority(OverlayPriority.HIGH);
-		panelComponent.setOrientation(ComponentOrientation.HORIZONTAL);
+		setPriority(Overlay.PRIORITY_HIGH);
+
+		setDynamicFont(true);
 	}
 
 	@Override
-	public Dimension render(Graphics2D graphics)
+	public Dimension render(final Graphics2D graphics)
 	{
-		panelComponent.getChildren().clear();
-		Widget orb = client.getWidget(WidgetInfo.MINIMAP_PRAYER_ORB);
-		List<Prayer> prayers = plugin.getQuickPrayers();
-		if (prayers == null || orb == null || orb.isHidden() || orb.isSelfHidden())
+		if (config.requireKeyPress() && !plugin.isKeyPressed())
 		{
 			return null;
 		}
-		net.runelite.api.Point mouseCanvasPosition = client.getMouseCanvasPosition();
 
-		final int canvasWidth = client.getCanvasWidth();
-		final int canvasHeight = client.getCanvasHeight();
+		final List<Prayer> prayers = plugin.getQuickPrayers();
+
+		if (prayers == null)
+		{
+			return null;
+		}
+
+		final Widget orb = client.getWidget(ComponentID.MINIMAP_PRAYER_ORB);
+
+		if (orb == null || orb.isHidden() || orb.isSelfHidden())
+		{
+			return null;
+		}
+
+		final net.runelite.api.Point mouseCanvasPosition = client.getMouseCanvasPosition();
+
 		final Rectangle prevBounds = getBounds();
 
-		final int tooltipX = Math.min(canvasWidth - prevBounds.width, mouseCanvasPosition.getX());
+		final int tooltipX = Math.min(client.getCanvasWidth() - prevBounds.width, mouseCanvasPosition.getX());
 		final int tooltipY = runeLiteConfig.tooltipPosition() == TooltipPositionType.UNDER_CURSOR
-		? Math.max(0, mouseCanvasPosition.getY() - 2 - prevBounds.height)
-		: Math.min(canvasHeight - prevBounds.height, mouseCanvasPosition.getY() + UNDER_OFFSET);
+			? Math.max(0, mouseCanvasPosition.getY() - 2 - prevBounds.height)
+			: Math.min(client.getCanvasHeight() - prevBounds.height, mouseCanvasPosition.getY() + UNDER_OFFSET);
 
 		if (!orb.getBounds().contains(new Point(mouseCanvasPosition.getX(), mouseCanvasPosition.getY())))
 		{
@@ -93,12 +108,24 @@ public class QuickPrayerPreviewOverlay extends Overlay
 		}
 
 		panelComponent.setPreferredLocation(new Point(tooltipX, tooltipY));
-		for (Prayer p : prayers)
+		final boolean text = config.useTextTooltip();
+		panelComponent.setOrientation(text ? ComponentOrientation.VERTICAL : ComponentOrientation.HORIZONTAL);
+		panelComponent.getChildren().clear();
+
+		for (final Prayer p : prayers)
 		{
-			BufferedImage img = plugin.getSprite(p);
-			if (img != null)
+			if (text)
 			{
-				panelComponent.getChildren().add(new ImageComponent(img));
+				panelComponent.getChildren().add(LineComponent.builder().leftColor(config.tooltipTextColor()).left(p.getName()).build());
+			}
+			else
+			{
+				final BufferedImage img = plugin.getSprite(p);
+
+				if (img != null)
+				{
+					panelComponent.getChildren().add(new ImageComponent(img));
+				}
 			}
 		}
 
