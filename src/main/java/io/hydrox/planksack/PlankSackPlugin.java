@@ -30,6 +30,8 @@ import com.google.common.collect.Multisets;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import com.google.inject.Provides;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.Getter;
 import net.runelite.api.AnimationID;
@@ -77,23 +79,89 @@ public class PlankSackPlugin extends Plugin
 {
 	private static final List<Integer> PLANKS = Arrays.asList(ItemID.PLANK, ItemID.OAK_PLANK, ItemID.TEAK_PLANK, ItemID.MAHOGANY_PLANK);
 	private static final List<String> PLANK_NAMES = Arrays.asList("Plank", "Oak plank", "Teak plank", "Mahogany plank");
-	private static final Set<Integer> MAHOGANY_HOMES_REPAIRS = Sets.newHashSet(
-		39982, // Bob clock
-		39995, // Jeff mirror
-		40010, // Leela mirror
-		40011, // Barbara clock
-		40089, // Norman clock
-		40099, // Larry clock
-		40158, // Noella hat stand
-		40159, // Noella mirror
-		40163, // Noella clock
-		40168, // Ross hat stand
-		40170, // Ross mirror
-		40177, // Jess clock
-		40295, // Tau hat stand
-		40298, // Larry hat stand
-		40289  // Mariah hat stand
-	);
+	private static final Map<Integer, Integer> MAHOGANY_HOMES_REPAIRS = new HashMap<>();
+
+	static {
+		MAHOGANY_HOMES_REPAIRS.put(39981, 4); // Bob large table
+		MAHOGANY_HOMES_REPAIRS.put(39985, 2); // Bob bookcase (1)
+		MAHOGANY_HOMES_REPAIRS.put(39986, 2); // Bob bookcase (2)
+		MAHOGANY_HOMES_REPAIRS.put(39983, 2); // Bob cabinet (1)
+		MAHOGANY_HOMES_REPAIRS.put(39984, 2); // Bob cabinet (2)
+		MAHOGANY_HOMES_REPAIRS.put(39982, 1); // Bob clock
+		MAHOGANY_HOMES_REPAIRS.put(39987, 2); // Bob wardrobe
+		MAHOGANY_HOMES_REPAIRS.put(39988, 2); // Bob drawers
+		MAHOGANY_HOMES_REPAIRS.put(40007, 2); // Leela small table (1)
+		MAHOGANY_HOMES_REPAIRS.put(40008, 2); // Leela small table (2)
+		MAHOGANY_HOMES_REPAIRS.put(40009, 3); // Leela table
+		MAHOGANY_HOMES_REPAIRS.put(40010, 1); // Leela mirror
+		MAHOGANY_HOMES_REPAIRS.put(40291, 3); // Leela double Bed
+		MAHOGANY_HOMES_REPAIRS.put(40292, 2); // Leela cupboard
+		MAHOGANY_HOMES_REPAIRS.put(40084, 3); // Tau table (1)
+		MAHOGANY_HOMES_REPAIRS.put(40085, 3); // Tau table (2)
+		MAHOGANY_HOMES_REPAIRS.put(40086, 2); // Tau cupboard
+		MAHOGANY_HOMES_REPAIRS.put(40087, 2); // Tau shelves (1)
+		MAHOGANY_HOMES_REPAIRS.put(40088, 2); // Tau shelves (2)
+		MAHOGANY_HOMES_REPAIRS.put(40295, 1); // Tau hat stand
+		MAHOGANY_HOMES_REPAIRS.put(40095, 2); // Larry drawers (1)
+		MAHOGANY_HOMES_REPAIRS.put(40096, 2); // Larry drawers (2)
+		MAHOGANY_HOMES_REPAIRS.put(40099, 1); // Larry clock
+		MAHOGANY_HOMES_REPAIRS.put(40298, 1); // Larry hat stand
+		MAHOGANY_HOMES_REPAIRS.put(40097, 3); // Larry table (1)
+		MAHOGANY_HOMES_REPAIRS.put(40098, 3); // Larry table (2)
+		MAHOGANY_HOMES_REPAIRS.put(40002, 3); // Mariah table
+		MAHOGANY_HOMES_REPAIRS.put(40003, 2); // Mariah shelves
+		MAHOGANY_HOMES_REPAIRS.put(40004, 2); // Mariah bed
+		MAHOGANY_HOMES_REPAIRS.put(40005, 2); // Mariah small table (1)
+		MAHOGANY_HOMES_REPAIRS.put(40006, 2); // Mariah small table (2)
+		MAHOGANY_HOMES_REPAIRS.put(40288, 2); // Mariah cupboard
+		MAHOGANY_HOMES_REPAIRS.put(40289, 1); // Mariah hat Stand
+		MAHOGANY_HOMES_REPAIRS.put(40165, 2); // Ross drawers (1)
+		MAHOGANY_HOMES_REPAIRS.put(40166, 2); // Ross drawers (2)
+		MAHOGANY_HOMES_REPAIRS.put(40167, 3); // Ross double bed
+		MAHOGANY_HOMES_REPAIRS.put(40168, 1); // Ross hat stand
+		MAHOGANY_HOMES_REPAIRS.put(40169, 2); // Ross bed
+		MAHOGANY_HOMES_REPAIRS.put(40170, 1); // Ross mirror
+		MAHOGANY_HOMES_REPAIRS.put(39989, 3); // Jeff table
+		MAHOGANY_HOMES_REPAIRS.put(39990, 2); // Jeff bookcase
+		MAHOGANY_HOMES_REPAIRS.put(39991, 2); // Jeff shelves
+		MAHOGANY_HOMES_REPAIRS.put(39992, 3); // Jeff bed
+		MAHOGANY_HOMES_REPAIRS.put(39993, 2); // Jeff drawers
+		MAHOGANY_HOMES_REPAIRS.put(39994, 2); // Jeff dresser
+		MAHOGANY_HOMES_REPAIRS.put(39995, 1); // Jeff mirror
+		MAHOGANY_HOMES_REPAIRS.put(39996, 1); // Jeff chair
+		MAHOGANY_HOMES_REPAIRS.put(40011, 1); // Barbara clock
+		MAHOGANY_HOMES_REPAIRS.put(40012, 3); // Barbara table
+		MAHOGANY_HOMES_REPAIRS.put(40013, 2); // Barbara bed
+		MAHOGANY_HOMES_REPAIRS.put(40014, 1); // Barbara chair (1)
+		MAHOGANY_HOMES_REPAIRS.put(40015, 1); // Barbara chair (2)
+		MAHOGANY_HOMES_REPAIRS.put(40294, 2); // Barbara drawers
+		MAHOGANY_HOMES_REPAIRS.put(40156, 2); // Noella dresser
+		MAHOGANY_HOMES_REPAIRS.put(40157, 2); // Noella cupboard
+		MAHOGANY_HOMES_REPAIRS.put(40158, 1); // Noella hat Stand
+		MAHOGANY_HOMES_REPAIRS.put(40159, 1); // Noella mirror
+		MAHOGANY_HOMES_REPAIRS.put(40160, 2); // Noella drawers
+		MAHOGANY_HOMES_REPAIRS.put(40161, 3); // Noella table (1)
+		MAHOGANY_HOMES_REPAIRS.put(40162, 3); // Noella table (2)
+		MAHOGANY_HOMES_REPAIRS.put(40163, 1); // Noella clock
+		MAHOGANY_HOMES_REPAIRS.put(40089, 1); // Norman clock
+		MAHOGANY_HOMES_REPAIRS.put(40090, 3); // Norman table
+		MAHOGANY_HOMES_REPAIRS.put(40091, 3); // Norman double bed
+		MAHOGANY_HOMES_REPAIRS.put(40092, 2); // Norman bookshelf
+		MAHOGANY_HOMES_REPAIRS.put(40093, 2); // Norman drawers
+		MAHOGANY_HOMES_REPAIRS.put(40094, 2); // Norman small table
+		MAHOGANY_HOMES_REPAIRS.put(39997, 3); // Sarah table
+		MAHOGANY_HOMES_REPAIRS.put(39998, 2); // Sarah bed
+		MAHOGANY_HOMES_REPAIRS.put(39999, 2); // Sarah dresser
+		MAHOGANY_HOMES_REPAIRS.put(40000, 2); // Sarah small table
+		MAHOGANY_HOMES_REPAIRS.put(40001, 2); // Sarah shelves
+		MAHOGANY_HOMES_REPAIRS.put(40171, 2); // Jess drawers (1)
+		MAHOGANY_HOMES_REPAIRS.put(40172, 2); // Jess drawers (2)
+		MAHOGANY_HOMES_REPAIRS.put(40173, 2); // Jess cabinet (1)
+		MAHOGANY_HOMES_REPAIRS.put(40174, 2); // Jess cabinet (2)
+		MAHOGANY_HOMES_REPAIRS.put(40175, 3); // Jess bed
+		MAHOGANY_HOMES_REPAIRS.put(40176, 3); // Jess table
+		MAHOGANY_HOMES_REPAIRS.put(40177, 1); // Jess clock
+	}
 
 	private static final Set<Integer> HALLOWED_SEPULCHRE_FIXES = Sets.newHashSet(39527, 39528);
 	private static final int CONSTRUCTION_WIDGET_GROUP = 458;
@@ -143,6 +211,7 @@ public class PlankSackPlugin extends Plugin
 
 	@Getter
 	private int plankCount = -1;
+	private int buildCost = 0;
 
 	private PlankSackCounter plankSackCounter;
 
@@ -240,9 +309,11 @@ public class PlankSackPlugin extends Plugin
 				}
 			}
 		}
-		else if (event.getMenuOption().equals("Repair") && MAHOGANY_HOMES_REPAIRS.contains(event.getId()))
+		else if ((event.getMenuOption().equals("Repair") || event.getMenuOption().equals("Build")) &&
+				MAHOGANY_HOMES_REPAIRS.containsKey(event.getId()) && !watchForAnimations)
 		{
 			watchForAnimations = true;
+			buildCost = MAHOGANY_HOMES_REPAIRS.get(event.getId());
 			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 		}
 		else if (event.getMenuOption().equals("Fix") && HALLOWED_SEPULCHRE_FIXES.contains(event.getId()))
@@ -365,12 +436,18 @@ public class PlankSackPlugin extends Plugin
 		{
 			Multiset<Integer> current = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 			Multiset<Integer> delta = Multisets.difference(inventorySnapshot, current);
-			if (delta.size() == 0)
+
+			int planksUsedFromInventory = delta.size();
+			int planksUsedFromSack = buildCost - planksUsedFromInventory;
+
+			if(planksUsedFromSack > 0)
 			{
-				setPlankCount(plankCount - 1);
+				setPlankCount(plankCount - planksUsedFromSack);
 			}
+
 			watchForAnimations = false;
 			lastAnimation = -1;
+			buildCost = 0;
 		}
 		else
 		{
