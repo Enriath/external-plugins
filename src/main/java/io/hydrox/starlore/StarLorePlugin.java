@@ -60,7 +60,7 @@ public class StarLorePlugin extends Plugin
 	private Client client;
 
 	private boolean checkText;
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	@Subscribe
 	public void onWidgetLoaded(WidgetLoaded event)
