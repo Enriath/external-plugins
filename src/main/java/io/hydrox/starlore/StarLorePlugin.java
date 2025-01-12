@@ -92,8 +92,12 @@ public class StarLorePlugin extends Plugin
 		checkText = false;
 		if (NOTHING_INTERESTING_TEXT.equals(w.getText()))
 		{
-			int idx = random.nextInt(MORE_INTERESTING_TEXTS.size());
-			w.setText(MORE_INTERESTING_TEXTS.get(idx));
+			int idx = random.nextInt(MORE_INTERESTING_TEXTS.size() + 1);
+			// Allow one of the options to be the default boring text
+			if (idx < MORE_INTERESTING_TEXTS.size())
+			{
+				w.setText(MORE_INTERESTING_TEXTS.get(idx));
+			}
 		}
 	}
 }
