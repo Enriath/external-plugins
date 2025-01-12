@@ -46,7 +46,7 @@ public class StarLorePlugin extends Plugin
 {
 	private static final int CHATBOX_TEXT_WIDGET_GROUP = 229;
 	private static final int CHATBOX_TEXT_WIDGET_CHILD = 1;
-	private static final String NOTHING_INTERESTING_TEXT = "You look through the telescope but you don't see anything<br>interesting.";
+	private static final String NOTHING_INTERESTING_TEXT = "You look through the telescope, but you don't see anything<br>interesting.";
 
 	private static final List<String> MORE_INTERESTING_TEXTS = Arrays.asList(
 		"Hmm... are the stars really small, or are they just very far away?",
