@@ -64,7 +64,6 @@ public class QuickPrayerPreviewOverlay extends Overlay
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 		setPriority(OverlayPriority.HIGH);
 		panelComponent.setOrientation(ComponentOrientation.HORIZONTAL);
-		panelComponent.setBackgroundColor(runeLiteConfig.overlayBackgroundColor());
 	}
 
 	@Override
@@ -102,6 +101,8 @@ public class QuickPrayerPreviewOverlay extends Overlay
 				panelComponent.getChildren().add(new ImageComponent(img));
 			}
 		}
+
+		panelComponent.setBackgroundColor(runeLiteConfig.overlayBackgroundColor());
 
 		return panelComponent.render(graphics);
 	}
