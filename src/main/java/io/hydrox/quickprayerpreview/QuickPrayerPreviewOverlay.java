@@ -102,6 +102,8 @@ public class QuickPrayerPreviewOverlay extends Overlay
 			}
 		}
 
+		panelComponent.setBackgroundColor(runeLiteConfig.overlayBackgroundColor());
+
 		return panelComponent.render(graphics);
 	}
 }
