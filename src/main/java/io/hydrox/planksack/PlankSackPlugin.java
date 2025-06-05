@@ -288,7 +288,7 @@ public class PlankSackPlugin extends Plugin
 			// Interact in inventory
 			// Right click use in bank
 			if (event.getWidget().getItemId() == ItemID.PLANK_SACK &&
-				(event.getMenuOption().equals("Fill") || event.getMenuOption().equals("Empty") || event.getMenuOption().equals("Use")))
+				(event.getMenuOption().equals("Fill") || event.getMenuOption().equals("Fill from inventory") || event.getMenuOption().equals("Empty") || event.getMenuOption().equals("Empty to inventory") || event.getMenuOption().equals("Use")))
 			{
 				inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 				checkForUpdate = true;
