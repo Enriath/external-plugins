@@ -85,6 +85,8 @@ public class PlankSackPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
+	@Inject
+	private ConfigManager configManager;
 
 	@Inject
 	private InfoBoxManager infoBoxManager;
@@ -147,7 +149,7 @@ public class PlankSackPlugin extends Plugin
 			PLANK_SACK_CAMPHOR = client.getVarbitValue(VarbitID.PLANK_SACK_CAMPHOR);
 			PLANK_SACK_IRONWOOD = client.getVarbitValue(VarbitID.PLANK_SACK_IRONWOOD);
 			PLANK_SACK_ROSEWOOD = client.getVarbitValue(VarbitID.PLANK_SACK_ROSEWOOD);
-			plankCount = PLANK_SACK_PLAIN + PLANK_SACK_OAK + PLANK_SACK_TEAK + PLANK_SACK_MAHOGANY + PLANK_SACK_CAMPHOR + PLANK_SACK_IRONWOOD + PLANK_SACK_ROSEWOOD;
+			setPlankCount();
 		}
 	}
 
@@ -201,10 +203,15 @@ public class PlankSackPlugin extends Plugin
 			default:
 				return;
 		}
-		
-		plankCount = PLANK_SACK_PLAIN + PLANK_SACK_OAK + PLANK_SACK_TEAK + PLANK_SACK_MAHOGANY + PLANK_SACK_CAMPHOR + PLANK_SACK_IRONWOOD + PLANK_SACK_ROSEWOOD;
+		setPlankCount();
 	}
-
+	
+	private void setPlankCount()
+	{
+		plankCount = PLANK_SACK_PLAIN + PLANK_SACK_OAK + PLANK_SACK_TEAK + PLANK_SACK_MAHOGANY + PLANK_SACK_CAMPHOR + PLANK_SACK_IRONWOOD + PLANK_SACK_ROSEWOOD;
+		configManager.setRSProfileConfiguration(PlankSackConfig.CONFIG_GROUP, PlankSackConfig.CONFIG_SACK_KEY, plankCount);
+	}
+	
 	private void updateInfobox(ItemContainer container)
 	{
 		infoBoxManager.removeInfoBox(plankSackCounter);
