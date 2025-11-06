@@ -1,1 +1,2 @@
-Check the branches to see the source of my external plugins
+# Plank Sack
+*See the contents of your Plank Sack at a glance*
