@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Data;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.AnimationID;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -70,10 +71,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @PluginDescriptor(
-	name = "Plank Sack",
-	description = "See the contents of your Plank Sack at a glance",
-	tags = {"plank", "construction", "viewer", "mahogany", "teak", "oak", "homes"}
+	name = "plank-sack-dev",
+	description = "See the contents of your Plank Sack at a glance (with fishing crane fix)",
+	tags = {"plank", "construction", "viewer", "mahogany", "teak", "oak", "homes", "crane", "piscarilius"}
 )
 public class PlankSackPlugin extends Plugin
 {
@@ -164,6 +166,7 @@ public class PlankSackPlugin extends Plugin
 	}
 
 	private static final Set<Integer> HALLOWED_SEPULCHRE_FIXES = Sets.newHashSet(39527, 39528);
+	private static final int BROKEN_FISHING_CRANE = 27555;
 	private static final int CONSTRUCTION_WIDGET_GROUP = 458;
 	private static final int CONSTRUCTION_WIDGET_BUILD_IDX_START = 4;
 	private static final int CONSTRUCTION_SUBWIDGET_MATERIALS = 3;
@@ -320,6 +323,11 @@ public class PlankSackPlugin extends Plugin
 		{
 			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
 		}
+		// Port Piscarilius fishing cranes
+		else if (event.getMenuOption().equals("Repair") && event.getId() == BROKEN_FISHING_CRANE)
+		{
+			inventorySnapshot = createSnapshot(client.getItemContainer(InventoryID.INVENTORY));
+		}
 	}
 
 	@Subscribe
@@ -458,15 +466,16 @@ public class PlankSackPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		if (event.getType() == ChatMessageType.SPAM)
+		// Handle repair messages (SPAM for Hallowed Sepulchre, GAMEMESSAGE for fishing cranes)
+		if (event.getType() == ChatMessageType.SPAM || event.getType() == ChatMessageType.GAMEMESSAGE)
 		{
 			int maxUsedPlanks;
-			// Hallowed Sepulchre
+			// Hallowed Sepulchre (SPAM)
 			if (event.getMessage().equals("You repair the broken bridge."))
 			{
 				maxUsedPlanks = 2;
 			}
-			// Port Piscarilius Cranes
+			// Port Piscarilius Cranes (GAMEMESSAGE)
 			else if (event.getMessage().equals("You successfully repair the fishing crane."))
 			{
 				maxUsedPlanks = 3;
@@ -509,7 +518,7 @@ public class PlankSackPlugin extends Plugin
 			setPlankCount(28);
 			checkForUpdate = false;
 		}
-		else if (message.equals("Your sack is empty."))
+		else if (message.equals("Your sack is empty.") || message.equals("Your sack is currently empty."))
 		{
 			setPlankCount(0);
 			checkForUpdate = false;
@@ -555,14 +564,7 @@ public class PlankSackPlugin extends Plugin
 		{
 			return Color.RED;
 		}
-		else if (plankCount < 14)
-		{
-			return Color.YELLOW;
-		}
-		else
-		{
-			return Color.WHITE;
-		}
+		return Color.WHITE;
 	}
 
 	private static int TO_CHILD(int id)
