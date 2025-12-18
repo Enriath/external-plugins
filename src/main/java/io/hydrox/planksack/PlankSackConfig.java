@@ -32,7 +32,6 @@ import net.runelite.client.config.ConfigItem;
 public interface PlankSackConfig extends Config
 {
 	String CONFIG_GROUP = "planksack";
-	String CONFIG_SACK_KEY = "plankcount";
 
 	@ConfigItem(
 		keyName = "showInfobox",
