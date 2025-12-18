@@ -1,4 +1,4 @@
-# Plank Sack Plugin (Varbit Version)
+# Plank Sack Counter
 
 ## Description
 A RuneLite plugin that displays the contents of your Plank Sack at a glance using varbits. This is a complete rewrite using the varbit-based approach for tracking plank counts, which is far more reliable than the previous chat message parsing approach.

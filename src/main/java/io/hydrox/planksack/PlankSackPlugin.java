@@ -51,9 +51,9 @@ import java.awt.Color;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Plank Sack",
-	description = "See the contents of your Plank Sack at a glance",
-	tags = {"plank", "construction", "viewer", "mahogany", "teak", "oak", "homes", "sailing"}
+	name = "Plank Sack Counter",
+	description = "Displays the contents of your Plank Sack using varbits",
+	tags = {"plank", "construction", "counter", "mahogany", "teak", "oak", "homes", "sailing"}
 )
 public class PlankSackPlugin extends Plugin
 {
