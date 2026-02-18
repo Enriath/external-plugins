@@ -5,18 +5,21 @@ plugins {
 repositories {
 	mavenLocal()
 	maven {
-		url = 'https://repo.runelite.net'
-	}
+        url = 'https://repo.runelite.net'
+        content {
+            includeGroupByRegex("net\\.runelite.*")
+        }
+    }
 	mavenCentral()
 }
 
-def runeLiteVersion = '1.9.13.1'
+def runeLiteVersion = 'latest.release'
 
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 
-	compileOnly 'org.projectlombok:lombok:1.18.20'
-	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
@@ -29,4 +32,5 @@ sourceCompatibility = '1.8'
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
+	options.release.set(11)
 }
