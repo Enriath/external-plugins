@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, Enriath <ikada@protonmail.ch>
+ * Copyright (c) 2021-2026, Enriath <ikada@protonmail.ch>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ public class BetterSkillTooltipsPlugin extends Plugin
 	private static final FontMetrics FONT_METRICS = Toolkit.getDefaultToolkit().getFontMetrics(FontManager.getRunescapeFont());
 
 	private static final int SCRIPT_SKILL_TOOLTIP_CREATE = 2344;
-	private static final int SKILL_TOOLTIP_CHILDID = 28;
+	private static final int SKILL_TOOLTIP_CHILDID = 33;
 
 	private static final int BAR_PADDING_X = 6;
 	private static final int BAR_PADDING_Y = 5;
