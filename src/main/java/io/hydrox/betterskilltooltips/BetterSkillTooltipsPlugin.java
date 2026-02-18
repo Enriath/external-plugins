@@ -29,8 +29,8 @@ import net.runelite.api.Client;
 import net.runelite.api.Experience;
 import net.runelite.api.FontID;
 import net.runelite.api.events.ScriptPostFired;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetPositionMode;
 import net.runelite.api.widgets.WidgetSizeMode;
 import net.runelite.api.widgets.WidgetTextAlignment;
@@ -90,7 +90,7 @@ public class BetterSkillTooltipsPlugin extends Plugin
 		{
 			return;
 		}
-		Widget tooltip = client.getWidget(WidgetID.SKILLS_GROUP_ID, SKILL_TOOLTIP_CHILDID);
+		Widget tooltip = client.getWidget(InterfaceID.STATS, SKILL_TOOLTIP_CHILDID);
 		if (tooltip == null || tooltip.isHidden())
 		{
 			return;
@@ -264,7 +264,7 @@ public class BetterSkillTooltipsPlugin extends Plugin
 		}
 
 		// Fix position of the tooltip
-		Widget skillTile = client.getWidget(WidgetID.SKILLS_GROUP_ID, skillData.getChildID());
+		Widget skillTile = client.getWidget(InterfaceID.STATS, skillData.getChildID());
 		Widget skillsContainer = tooltip.getParent();
 		int x = skillTile.getOriginalX();
 		int y = skillTile.getOriginalY();
