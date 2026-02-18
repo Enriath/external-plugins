@@ -117,7 +117,16 @@ public class BetterSkillTooltipsPlugin extends Plugin
 			return null;
 		}
 		String text = leftText.getText();
-		text = text.substring(0, text.indexOf(" "));
+		int firstSpaceIdx = text.indexOf(" ");
+		// When on F2P, Members-only skills show up with red text, with the form
+		// <col=ff0000>{skill_name}:</col>
+		// in which case there are no spaces, and the substring call will error.
+		// Given that Members-only skills cannot be trained in that state, we can ignore them for tooltips.
+		if (firstSpaceIdx == -1)
+		{
+			return null;
+		}
+		text = text.substring(0, firstSpaceIdx);
 		return SkillData.fromName(text);
 	}
 
