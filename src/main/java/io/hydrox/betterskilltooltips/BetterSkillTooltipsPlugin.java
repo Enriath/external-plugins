@@ -123,17 +123,19 @@ public class BetterSkillTooltipsPlugin extends Plugin
 
 	private void enhanceTooltip(Widget tooltip, SkillData skillData)
 	{
-		final int skillExperience = client.getSkillExperience(skillData.getSkill());
+		final long skillExperience;
 		// There's no point in adding next level or goal text if the skill has maximum experience
 		if (skillData == SkillData.OVERALL)
 		{
-			if (skillExperience == Experience.MAX_SKILL_XP * SkillData.count())
+			skillExperience = client.getOverallExperience();
+			if (skillExperience == (long) Experience.MAX_SKILL_XP * SkillData.count())
 			{
 				return;
 			}
 		}
 		else
 		{
+			skillExperience = client.getSkillExperience(skillData.getSkill());
 			if (skillExperience == Experience.MAX_SKILL_XP)
 			{
 				return;
@@ -150,7 +152,7 @@ public class BetterSkillTooltipsPlugin extends Plugin
 		// Add missing text for virtual levels
 		if (lines == 1 && config.virtualLevels() && skillData != SkillData.OVERALL)
 		{
-			final int skillLevel = Experience.getLevelForXp(skillExperience);
+			final int skillLevel = Experience.getLevelForXp((int) skillExperience);
 			final int nextExperience;
 			if (skillLevel == Experience.MAX_VIRT_LEVEL)
 			{
