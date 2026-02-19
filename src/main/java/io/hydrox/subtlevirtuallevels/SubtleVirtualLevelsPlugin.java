@@ -33,9 +33,9 @@ import net.runelite.api.GameState;
 import net.runelite.api.Skill;
 import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.events.ScriptPreFired;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.JavaScriptCallback;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.api.widgets.WidgetTextAlignment;
 import net.runelite.api.widgets.WidgetType;
 import net.runelite.client.callback.ClientThread;
@@ -134,7 +134,7 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 
 	private void createWidgets()
 	{
-		Widget skillsContainer = client.getWidget(WidgetInfo.SKILLS_CONTAINER);
+		Widget skillsContainer = client.getWidget(InterfaceID.Stats.UNIVERSE);
 		if (skillsContainer == null)
 		{
 			return;
@@ -153,7 +153,7 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 
 	private void removeWidgets()
 	{
-		Widget skillsContainer = client.getWidget(WidgetInfo.SKILLS_CONTAINER);
+		Widget skillsContainer = client.getWidget(InterfaceID.Stats.UNIVERSE);
 		if (skillsContainer == null)
 		{
 			return;
@@ -185,7 +185,13 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 
 	private void buildWidget(Widget parent)
 	{
-		Skill skill = SKILLS[WidgetInfo.TO_CHILD(parent.getId()) - 1];
+		int idx = TO_CHILD(parent.getId()) - 1;
+		// For some reason, the script is ran on the parent container after all the skills. Ignore this
+		if (idx < 0)
+		{
+			return;
+		}
+		Skill skill = SKILLS[idx];
 
 		int bgY = ICON_POSITION + ICON_SIZE + TEXT_OFFSET_Y - BACKGROUND_PADDING - BACKGROUND_HEIGHT;
 
@@ -271,5 +277,10 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 		bgCapLeft.revalidate();
 		bgCapRight.revalidate();
 		bgTile.revalidate();
+	}
+
+	private static int TO_CHILD(int id)
+	{
+		return id & 0xFFFF;
 	}
 }
