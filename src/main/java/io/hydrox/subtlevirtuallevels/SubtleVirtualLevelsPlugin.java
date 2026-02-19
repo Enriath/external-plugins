@@ -75,7 +75,7 @@ public class SubtleVirtualLevelsPlugin extends Plugin
 	{
 		Skill.ATTACK, Skill.STRENGTH, Skill.DEFENCE, Skill.RANGED, Skill.PRAYER, Skill.MAGIC, Skill.RUNECRAFT, Skill.CONSTRUCTION,
 		Skill.HITPOINTS, Skill.AGILITY, Skill.HERBLORE, Skill.THIEVING,	Skill.CRAFTING, Skill.FLETCHING, Skill.SLAYER, Skill.HUNTER,
-		Skill.MINING, Skill.SMITHING, Skill.FISHING, Skill.COOKING, Skill.FIREMAKING, Skill.WOODCUTTING, Skill.FARMING
+		Skill.MINING, Skill.SMITHING, Skill.FISHING, Skill.COOKING, Skill.FIREMAKING, Skill.WOODCUTTING, Skill.FARMING, Skill.SAILING
 	};
 
 	@Inject
