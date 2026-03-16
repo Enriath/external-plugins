@@ -44,7 +44,7 @@ import java.util.Set;
 @PluginDescriptor(
 	name = "Crate Limiter",
 	description = "Slows down the opening of crates and jars",
-	tags = {"crate", "jar", "eclectic", "medium", "mediums", "rangers", "ranger", "clue", "clues", "open", "loot"}
+	tags = {"crate", "jar", "eclectic", "medium", "mediums", "rangers", "ranger", "clue", "clues", "open", "loot", "nest"}
 )
 public class CrateLimiterPlugin extends Plugin
 {
