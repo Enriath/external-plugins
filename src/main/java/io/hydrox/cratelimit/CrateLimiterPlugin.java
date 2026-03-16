@@ -102,14 +102,14 @@ public class CrateLimiterPlugin extends Plugin
 	@Subscribe
 	void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (event.getMenuAction() != MenuAction.CC_OP)
+		if (event.getMenuAction() != MenuAction.CC_OP && !event.isItemOp())
 		{
 			return;
 		}
 		// Seed Pack
 		if (event.getMenuOption().equals("Take"))
 		{
-			if (event.getId() != ItemID.SEEDBOX)
+			if (event.getItemId() != ItemID.SEEDBOX)
 			{
 				return;
 			}
@@ -117,18 +117,18 @@ public class CrateLimiterPlugin extends Plugin
 		// Nests
 		else if (event.getMenuOption().equals("Search"))
 		{
-			if (!BIRD_NESTS.contains(event.getId()))
+			if (!BIRD_NESTS.contains(event.getItemId()))
 			{
 				return;
 			}
 		}
 		else if (event.getMenuOption().equals("Open"))
 		{
-			if (OPEN_EXCEPTIONS.contains(event.getId()))
+			if (OPEN_EXCEPTIONS.contains(event.getItemId()))
 			{
 				return;
 			}
-			ItemComposition comp = client.getItemDefinition(event.getId());
+			ItemComposition comp = client.getItemDefinition(event.getItemId());
 			// Bundle packs
 			if (comp.getName().endsWith(" pack"))
 			{
