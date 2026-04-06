@@ -24,14 +24,19 @@
  */
 package io.hydrox.quickprayerpreview;
 
+import com.google.inject.Provides;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.gameval.VarbitID;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+
 import javax.inject.Inject;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -42,12 +47,10 @@ import java.util.Map;
 @PluginDescriptor(
 	name = "Quick Prayer Preview",
 	description = "Preview your quick prayers by hovering over the orb",
-	tags = {"prayer","quick prayer","preview"}
+	tags = {"prayer", "quick prayer", "preview"}
 )
 public class QuickPrayerPreviewPlugin extends Plugin
 {
-	private static final int QUICK_PRAYER_VARBIT = 4102;
-
 	@Inject
 	private Client client;
 
@@ -58,7 +61,13 @@ public class QuickPrayerPreviewPlugin extends Plugin
 	private SpriteManager spriteManager;
 
 	@Inject
-	private QuickPrayerPreviewOverlay overlay;
+	private QuickPrayerPreviewOverlay tooltipOverlay;
+
+	@Inject
+	private QuickPrayerPreviewPrayerTabOverlay tabOverlay;
+
+	@Inject
+	private QuickPrayerPreviewConfig config;
 
 	@Getter
 	private List<Prayer> quickPrayers;
@@ -66,30 +75,82 @@ public class QuickPrayerPreviewPlugin extends Plugin
 
 	private final Map<Prayer, BufferedImage> prayerSprites = new HashMap<>();
 
+	@Provides
+	QuickPrayerPreviewConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(QuickPrayerPreviewConfig.class);
+	}
+
 	@Override
 	public void startUp()
 	{
-		overlayManager.add(overlay);
+		if (config.isOrbPreview())
+		{
+			overlayManager.add(tooltipOverlay);
+		}
+		if (config.isPrayerTabPreview())
+		{
+			overlayManager.add(tabOverlay);
+		}
 	}
 
 	@Override
 	public void shutDown()
 	{
-		overlayManager.remove(overlay);
+		overlayManager.remove(tooltipOverlay);
+		overlayManager.remove(tabOverlay);
 	}
 
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged e)
 	{
-		int varb = client.getVarbitValue(QUICK_PRAYER_VARBIT);
+		int varb = client.getVarbitValue(VarbitID.QUICKPRAYER_SELECTED);
 		if (varb == quickPrayerVarb)
 		{
 			return;
 		}
 
 		quickPrayerVarb = varb;
-		quickPrayers = Prayer.fromVarb(varb);
+		quickPrayers = Prayer.fromVarb(varb, client);
 		loadSprites();
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged configChanged)
+	{
+		if (!"QuickPrayerPreview".equals(configChanged.getGroup()))
+		{
+			return;
+		}
+
+		if ("orbPreview".equals(configChanged.getKey()))
+		{
+			if (config.isOrbPreview() && !overlayManager.anyMatch(o -> o.equals(tooltipOverlay)))
+			{
+				overlayManager.add(tooltipOverlay);
+			}
+			if (!config.isOrbPreview())
+			{
+				overlayManager.remove(tooltipOverlay);
+			}
+		}
+
+		if ("prayerTabPreview".equals(configChanged.getKey()))
+		{
+			if (config.isPrayerTabPreview() && !overlayManager.anyMatch(o -> o.equals(tabOverlay)))
+			{
+				overlayManager.add(tabOverlay);
+			}
+			if (!config.isPrayerTabPreview())
+			{
+				overlayManager.remove(tabOverlay);
+			}
+		}
+	}
+
+	BufferedImage getSprite(int id)
+	{
+		return spriteManager.getSprite(id, 0);
 	}
 
 	private void loadSprites()

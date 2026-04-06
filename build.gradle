@@ -18,10 +18,14 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.4'
 	annotationProcessor 'org.projectlombok:lombok:1.18.4'
 
-	testImplementation 'junit:junit:4.12'
-	testImplementation 'org.slf4j:slf4j-simple:1.7.12'
-	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion, {
-		exclude group: 'ch.qos.logback', module: 'logback-classic'
+	def junitVersion = "5.5.2" // max version before junit-bom was added to pom files, due to runelite restrictions
+	testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: junitVersion
+	testImplementation group: "org.junit.jupiter", name: "junit-jupiter-params", version: junitVersion
+	testImplementation group: "org.junit.jupiter", name: "junit-jupiter-engine", version: junitVersion
+	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
+	testImplementation(group: 'com.google.inject.extensions', name:'guice-testlib', version: "4.1.0") {
+		exclude group: 'com.google.inject', module: 'guice' // already provided by runelite
 	}
 }
 
