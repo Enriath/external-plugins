@@ -26,7 +26,11 @@ package io.hydrox.quickprayerpreview;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runelite.api.SpriteID;
+import net.runelite.api.Client;
+import net.runelite.api.gameval.InterfaceID;
+import net.runelite.api.gameval.SpriteID;
+import net.runelite.api.gameval.VarbitID;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,41 +40,73 @@ import java.util.Map;
 @RequiredArgsConstructor
 enum Prayer
 {
-	THICK_SKIN(0, "Thick Skin", SpriteID.PRAYER_THICK_SKIN),
-	BURST_OF_STRENGTH(1, "Burst of Strength", SpriteID.PRAYER_BURST_OF_STRENGTH),
-	CLARITY_OF_THOUGHT(2, "Clarity of Thought", SpriteID.PRAYER_CLARITY_OF_THOUGHT),
-	SHARP_EYE(18, "Sharp Eye", SpriteID.PRAYER_SHARP_EYE),
-	MYSTIC_WILL(19, "Mystic Will", SpriteID.PRAYER_MYSTIC_WILL),
-	ROCK_SKIN(3, "Rock Skin", SpriteID.PRAYER_ROCK_SKIN),
-	SUPERHUMAN_STRENGTH(4, "Superhuman Strength", SpriteID.PRAYER_SUPERHUMAN_STRENGTH),
-	IMPROVED_REFLEXES(5, "Improved Reflexes", SpriteID.PRAYER_IMPROVED_REFLEXES),
-	RAPID_RESTORE(6, "Rapid Restore", SpriteID.PRAYER_RAPID_RESTORE),
-	RAPID_HEAL(7, "Rapid Heal", SpriteID.PRAYER_RAPID_HEAL),
-	PROTECT_ITEM(8, "Protect Item", SpriteID.PRAYER_PROTECT_ITEM),
-	HAWK_EYE(20, "Hawk Eye", SpriteID.PRAYER_HAWK_EYE),
-	MYSTIC_LORE(21, "Mystic Lore", SpriteID.PRAYER_MYSTIC_LORE),
-	STEEL_SKIN(9, "Steel Skin", SpriteID.PRAYER_STEEL_SKIN),
-	ULTIMATE_STRENGTH(10, "Ultimate Strength", SpriteID.PRAYER_ULTIMATE_STRENGTH),
-	INCREDIBLE_REFLEXES(11, "Incredible reflexes", SpriteID.PRAYER_INCREDIBLE_REFLEXES),
-	PROTECT_FROM_MAGIC(12, "protect from magic", SpriteID.PRAYER_PROTECT_FROM_MAGIC),
-	PROTECT_FROM_MISSILES(13, "Protect from missiles", SpriteID.PRAYER_PROTECT_FROM_MISSILES),
-	PROTECT_FROM_MELEE(14, "Protect from melee", SpriteID.PRAYER_PROTECT_FROM_MELEE),
-	EAGLE_EYE(22, "Eagle Eye", SpriteID.PRAYER_EAGLE_EYE),
-	MYSTIC_MIGHT(23, "Mystic Might", SpriteID.PRAYER_MYSTIC_MIGHT),
-	RETRIBUTION(15, "Retribution", SpriteID.PRAYER_RETRIBUTION),
-	REDEMPTION(16, "Redemption", SpriteID.PRAYER_REDEMPTION),
-	SMITE(17, "Smite", SpriteID.PRAYER_SMITE),
-	PRESERVE(28, "Preserve", SpriteID.PRAYER_PRESERVE),
-	CHIVALRY(25, "Chivalry", SpriteID.PRAYER_CHIVALRY),
-	PIETY(26, "Piety", SpriteID.PRAYER_PIETY),
-	RIGOUR(24, "Rigour", SpriteID.PRAYER_RIGOUR),
-	AUGURY(27, "Augury", SpriteID.PRAYER_AUGURY);
+	THICK_SKIN(0, "Thick Skin", SpriteID.Prayeron.THICK_SKIN, InterfaceID.Prayerbook.PRAYER1),
+	BURST_OF_STRENGTH(1, "Burst of Strength", SpriteID.Prayeron.BURST_OF_STRENGTH, InterfaceID.Prayerbook.PRAYER2),
+	CLARITY_OF_THOUGHT(2, "Clarity of Thought", SpriteID.Prayeron.CLARITY_OF_THOUGHT, InterfaceID.Prayerbook.PRAYER3),
+	SHARP_EYE(18, "Sharp Eye", SpriteID.Prayeron.SHARP_EYE, InterfaceID.Prayerbook.PRAYER19),
+	MYSTIC_WILL(19, "Mystic Will", SpriteID.Prayeron.MYSTIC_WILL, InterfaceID.Prayerbook.PRAYER20),
+	ROCK_SKIN(3, "Rock Skin", SpriteID.Prayeron.ROCK_SKIN, InterfaceID.Prayerbook.PRAYER4),
+	SUPERHUMAN_STRENGTH(4, "Superhuman Strength", SpriteID.Prayeron.SUPERHUMAN_STRENGTH, InterfaceID.Prayerbook.PRAYER5),
+	IMPROVED_REFLEXES(5, "Improved Reflexes", SpriteID.Prayeron.IMPROVED_REFLEXES, InterfaceID.Prayerbook.PRAYER6),
+	RAPID_RESTORE(6, "Rapid Restore", SpriteID.Prayeron.RAPID_RESTORE, InterfaceID.Prayerbook.PRAYER7),
+	RAPID_HEAL(7, "Rapid Heal", SpriteID.Prayeron.RAPID_HEAL, InterfaceID.Prayerbook.PRAYER8),
+	PROTECT_ITEM(8, "Protect Item", SpriteID.Prayeron.PROTECT_ITEM, InterfaceID.Prayerbook.PRAYER9),
+	HAWK_EYE(20, "Hawk Eye", SpriteID.Prayeron.HAWK_EYE, InterfaceID.Prayerbook.PRAYER21),
+	MYSTIC_LORE(21, "Mystic Lore", SpriteID.Prayeron.MYSTIC_LORE, InterfaceID.Prayerbook.PRAYER22),
+	STEEL_SKIN(9, "Steel Skin", SpriteID.Prayeron.STEEL_SKIN, InterfaceID.Prayerbook.PRAYER10),
+	ULTIMATE_STRENGTH(10, "Ultimate Strength", SpriteID.Prayeron.ULTIMATE_STRENGTH, InterfaceID.Prayerbook.PRAYER11),
+	INCREDIBLE_REFLEXES(11, "Incredible reflexes", SpriteID.Prayeron.INCREDIBLE_REFLEXES, InterfaceID.Prayerbook.PRAYER12),
+	PROTECT_FROM_MAGIC(12, "protect from magic", SpriteID.Prayeron.PROTECT_FROM_MAGIC, InterfaceID.Prayerbook.PRAYER13),
+	PROTECT_FROM_MISSILES(13, "Protect from missiles", SpriteID.Prayeron.PROTECT_FROM_MISSILES, InterfaceID.Prayerbook.PRAYER14),
+	PROTECT_FROM_MELEE(14, "Protect from melee", SpriteID.Prayeron.PROTECT_FROM_MELEE, InterfaceID.Prayerbook.PRAYER15),
+	EAGLE_EYE(22, "Eagle Eye", SpriteID.Prayeron.EAGLE_EYE, InterfaceID.Prayerbook.PRAYER23)
+		{
+			@Override
+			public int getUnlockVarbit()
+			{
+				return VarbitID.PRAYER_DEADEYE_UNLOCKED;
+			}
+
+			@Override
+			public Prayer getUnlockPrayer()
+			{
+				return DEADEYE;
+			}
+		},
+	DEADEYE(-22, "Deadeye", SpriteID.Prayeron.DEADEYE, InterfaceID.Prayerbook.PRAYER23),
+	MYSTIC_MIGHT(23, "Mystic Might", SpriteID.Prayeron.MYSTIC_MIGHT, InterfaceID.Prayerbook.PRAYER24)
+		{
+			@Override
+			public int getUnlockVarbit()
+			{
+				return VarbitID.PRAYER_MYSTIC_VIGOUR_UNLOCKED;
+			}
+
+			@Override
+			public Prayer getUnlockPrayer()
+			{
+				return MYSTIC_VIGOUR;
+			}
+		},
+	MYSTIC_VIGOUR(-23, "Mystic Vigour", SpriteID.Prayeron.MYSTIC_VIGOUR, InterfaceID.Prayerbook.PRAYER24),
+	RETRIBUTION(15, "Retribution", SpriteID.Prayeron.RETRIBUTION, InterfaceID.Prayerbook.PRAYER16),
+	REDEMPTION(16, "Redemption", SpriteID.Prayeron.REDEMPTION, InterfaceID.Prayerbook.PRAYER17),
+	SMITE(17, "Smite", SpriteID.Prayeron.SMITE, InterfaceID.Prayerbook.PRAYER18),
+	PRESERVE(28, "Preserve", SpriteID.Prayeron.PRESERVE, InterfaceID.Prayerbook.PRAYER29),
+	CHIVALRY(25, "Chivalry", SpriteID.Prayeron.CHIVALRY, InterfaceID.Prayerbook.PRAYER26),
+	PIETY(26, "Piety", SpriteID.Prayeron.PIETY, InterfaceID.Prayerbook.PRAYER27),
+	RIGOUR(24, "Rigour", SpriteID.Prayeron.RIGOUR, InterfaceID.Prayerbook.PRAYER25),
+	AUGURY(27, "Augury", SpriteID.Prayeron.AUGURY, InterfaceID.Prayerbook.PRAYER28);
 
 	private final int bit;
 	private final String name;
 	private final int spriteID;
+	private final int interfaceID;
+	private final int unlockVarbit = -1;
+	private final Prayer unlockPrayer = null;
 
 	private static final Map<Integer, Prayer> BITS = new HashMap<>();
+	private static final int NUMBER_OF_PRAYERS = 29;
 
 	static
 	{
@@ -80,17 +116,27 @@ enum Prayer
 		}
 	}
 
-	static List<Prayer> fromVarb(int varb)
+	static List<Prayer> fromVarb(int varb, Client client)
 	{
 		final List<Prayer> ret = new ArrayList<>();
-		for (int i = 0; i < values().length; i++)
+		for (int i = 0; i < NUMBER_OF_PRAYERS; i++)
 		{
 			if ((varb & 0x1) == 1)
 			{
-				ret.add(BITS.get(i));
+				Prayer p = BITS.get(i);
+				if (p.getUnlockVarbit() >= 0 && isUnlocked(client, p.getUnlockVarbit()) && p.getUnlockPrayer() != null)
+				{
+					p = p.getUnlockPrayer();
+				}
+				ret.add(p);
 			}
 			varb = varb >> 1;
 		}
 		return ret;
+	}
+
+	static boolean isUnlocked(Client client, int varb)
+	{
+		return client.getVarbitValue(varb) != 0;
 	}
 }
