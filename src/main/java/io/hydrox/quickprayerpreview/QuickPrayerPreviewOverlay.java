@@ -25,7 +25,7 @@
 package io.hydrox.quickprayerpreview;
 
 import net.runelite.api.Client;
-import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.RuneLiteConfig;
 import net.runelite.client.config.TooltipPositionType;
@@ -69,7 +69,7 @@ public class QuickPrayerPreviewOverlay extends Overlay
 	public Dimension render(Graphics2D graphics)
 	{
 		panelComponent.getChildren().clear();
-		Widget orb = client.getWidget(ComponentID.MINIMAP_PRAYER_ORB);
+		Widget orb = client.getWidget(InterfaceID.Orbs.ORB_PRAYER);
 		List<Prayer> prayers = plugin.getQuickPrayers();
 		if (prayers == null || orb == null || orb.isHidden() || orb.isSelfHidden())
 		{

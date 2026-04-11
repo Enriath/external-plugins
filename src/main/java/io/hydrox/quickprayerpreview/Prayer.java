@@ -26,7 +26,7 @@ package io.hydrox.quickprayerpreview;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runelite.api.SpriteID;
+import net.runelite.api.gameval.SpriteID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,35 +36,35 @@ import java.util.Map;
 @RequiredArgsConstructor
 enum Prayer
 {
-	THICK_SKIN(0, "Thick Skin", SpriteID.PRAYER_THICK_SKIN),
-	BURST_OF_STRENGTH(1, "Burst of Strength", SpriteID.PRAYER_BURST_OF_STRENGTH),
-	CLARITY_OF_THOUGHT(2, "Clarity of Thought", SpriteID.PRAYER_CLARITY_OF_THOUGHT),
-	SHARP_EYE(18, "Sharp Eye", SpriteID.PRAYER_SHARP_EYE),
-	MYSTIC_WILL(19, "Mystic Will", SpriteID.PRAYER_MYSTIC_WILL),
-	ROCK_SKIN(3, "Rock Skin", SpriteID.PRAYER_ROCK_SKIN),
-	SUPERHUMAN_STRENGTH(4, "Superhuman Strength", SpriteID.PRAYER_SUPERHUMAN_STRENGTH),
-	IMPROVED_REFLEXES(5, "Improved Reflexes", SpriteID.PRAYER_IMPROVED_REFLEXES),
-	RAPID_RESTORE(6, "Rapid Restore", SpriteID.PRAYER_RAPID_RESTORE),
-	RAPID_HEAL(7, "Rapid Heal", SpriteID.PRAYER_RAPID_HEAL),
-	PROTECT_ITEM(8, "Protect Item", SpriteID.PRAYER_PROTECT_ITEM),
-	HAWK_EYE(20, "Hawk Eye", SpriteID.PRAYER_HAWK_EYE),
-	MYSTIC_LORE(21, "Mystic Lore", SpriteID.PRAYER_MYSTIC_LORE),
-	STEEL_SKIN(9, "Steel Skin", SpriteID.PRAYER_STEEL_SKIN),
-	ULTIMATE_STRENGTH(10, "Ultimate Strength", SpriteID.PRAYER_ULTIMATE_STRENGTH),
-	INCREDIBLE_REFLEXES(11, "Incredible reflexes", SpriteID.PRAYER_INCREDIBLE_REFLEXES),
-	PROTECT_FROM_MAGIC(12, "protect from magic", SpriteID.PRAYER_PROTECT_FROM_MAGIC),
-	PROTECT_FROM_MISSILES(13, "Protect from missiles", SpriteID.PRAYER_PROTECT_FROM_MISSILES),
-	PROTECT_FROM_MELEE(14, "Protect from melee", SpriteID.PRAYER_PROTECT_FROM_MELEE),
-	EAGLE_EYE(22, "Eagle Eye", SpriteID.PRAYER_EAGLE_EYE),
-	MYSTIC_MIGHT(23, "Mystic Might", SpriteID.PRAYER_MYSTIC_MIGHT),
-	RETRIBUTION(15, "Retribution", SpriteID.PRAYER_RETRIBUTION),
-	REDEMPTION(16, "Redemption", SpriteID.PRAYER_REDEMPTION),
-	SMITE(17, "Smite", SpriteID.PRAYER_SMITE),
-	PRESERVE(28, "Preserve", SpriteID.PRAYER_PRESERVE),
-	CHIVALRY(25, "Chivalry", SpriteID.PRAYER_CHIVALRY),
-	PIETY(26, "Piety", SpriteID.PRAYER_PIETY),
-	RIGOUR(24, "Rigour", SpriteID.PRAYER_RIGOUR),
-	AUGURY(27, "Augury", SpriteID.PRAYER_AUGURY);
+	THICK_SKIN(0, "Thick Skin", SpriteID.Prayeron.THICK_SKIN),
+	BURST_OF_STRENGTH(1, "Burst of Strength", SpriteID.Prayeron.BURST_OF_STRENGTH),
+	CLARITY_OF_THOUGHT(2, "Clarity of Thought", SpriteID.Prayeron.CLARITY_OF_THOUGHT),
+	SHARP_EYE(18, "Sharp Eye", SpriteID.Prayeron.SHARP_EYE),
+	MYSTIC_WILL(19, "Mystic Will", SpriteID.Prayeron.MYSTIC_WILL),
+	ROCK_SKIN(3, "Rock Skin", SpriteID.Prayeron.ROCK_SKIN),
+	SUPERHUMAN_STRENGTH(4, "Superhuman Strength", SpriteID.Prayeron.SUPERHUMAN_STRENGTH),
+	IMPROVED_REFLEXES(5, "Improved Reflexes", SpriteID.Prayeron.IMPROVED_REFLEXES),
+	RAPID_RESTORE(6, "Rapid Restore", SpriteID.Prayeron.RAPID_RESTORE),
+	RAPID_HEAL(7, "Rapid Heal", SpriteID.Prayeron.RAPID_HEAL),
+	PROTECT_ITEM(8, "Protect Item", SpriteID.Prayeron.PROTECT_ITEM),
+	HAWK_EYE(20, "Hawk Eye", SpriteID.Prayeron.HAWK_EYE),
+	MYSTIC_LORE(21, "Mystic Lore", SpriteID.Prayeron.MYSTIC_LORE),
+	STEEL_SKIN(9, "Steel Skin", SpriteID.Prayeron.STEEL_SKIN),
+	ULTIMATE_STRENGTH(10, "Ultimate Strength", SpriteID.Prayeron.ULTIMATE_STRENGTH),
+	INCREDIBLE_REFLEXES(11, "Incredible reflexes", SpriteID.Prayeron.INCREDIBLE_REFLEXES),
+	PROTECT_FROM_MAGIC(12, "protect from magic", SpriteID.Prayeron.PROTECT_FROM_MAGIC),
+	PROTECT_FROM_MISSILES(13, "Protect from missiles", SpriteID.Prayeron.PROTECT_FROM_MISSILES),
+	PROTECT_FROM_MELEE(14, "Protect from melee", SpriteID.Prayeron.PROTECT_FROM_MELEE),
+	EAGLE_EYE(22, "Eagle Eye", SpriteID.Prayeron.EAGLE_EYE),
+	MYSTIC_MIGHT(23, "Mystic Might", SpriteID.Prayeron.MYSTIC_MIGHT),
+	RETRIBUTION(15, "Retribution", SpriteID.Prayeron.RETRIBUTION),
+	REDEMPTION(16, "Redemption", SpriteID.Prayeron.REDEMPTION),
+	SMITE(17, "Smite", SpriteID.Prayeron.SMITE),
+	PRESERVE(28, "Preserve", SpriteID.Prayeron.PRESERVE),
+	CHIVALRY(25, "Chivalry", SpriteID.Prayeron.CHIVALRY),
+	PIETY(26, "Piety", SpriteID.Prayeron.PIETY),
+	RIGOUR(24, "Rigour", SpriteID.Prayeron.RIGOUR),
+	AUGURY(27, "Augury", SpriteID.Prayeron.AUGURY);
 
 	private final int bit;
 	private final String name;
