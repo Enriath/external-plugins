@@ -28,6 +28,7 @@ import com.google.inject.Provides;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.SpriteManager;
@@ -51,10 +52,6 @@ import java.util.Map;
 public class QuickPrayerPreviewPlugin extends Plugin
 {
 	static final String CONFIG_GROUP = "quickprayerpreview";
-
-	private static final int QUICK_PRAYER_VARBIT = 4102;
-	private static final int PRAYER_DEADEYE_UNLOCKED = 16097;
-	private static final int PRAYER_MYSTIC_VIGOUR_UNLOCKED = 16098;
 
 	@Inject
 	private Client client;
@@ -94,13 +91,13 @@ public class QuickPrayerPreviewPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged e)
 	{
-		if (e.getVarbitId() != QUICK_PRAYER_VARBIT
-			&& e.getVarbitId() != PRAYER_DEADEYE_UNLOCKED && e.getVarbitId() != PRAYER_MYSTIC_VIGOUR_UNLOCKED)
+		if (e.getVarbitId() != VarbitID.QUICKPRAYER_SELECTED
+			&& e.getVarbitId() != VarbitID.PRAYER_DEADEYE_UNLOCKED && e.getVarbitId() != VarbitID.PRAYER_MYSTIC_VIGOUR_UNLOCKED)
 		{
 			return;
 		}
 
-		int varb = client.getVarbitValue(QUICK_PRAYER_VARBIT);
+		int varb = client.getVarbitValue(VarbitID.QUICKPRAYER_SELECTED);
 		quickPrayers = prayersFromVarb(varb);
 		loadSprites();
 	}
@@ -113,11 +110,11 @@ public class QuickPrayerPreviewPlugin extends Plugin
 		for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
 		{
 			Prayer prayer = Prayer.get(i);
-			if (prayer == Prayer.EAGLE_EYE && client.getVarbitValue(PRAYER_DEADEYE_UNLOCKED) == 1)
+			if (prayer == Prayer.EAGLE_EYE && client.getVarbitValue(VarbitID.PRAYER_DEADEYE_UNLOCKED) == 1)
 			{
 				prayers.add(Prayer.DEADEYE);
 			}
-			else if (prayer == Prayer.MYSTIC_MIGHT && client.getVarbitValue(PRAYER_MYSTIC_VIGOUR_UNLOCKED) == 1)
+			else if (prayer == Prayer.MYSTIC_MIGHT && client.getVarbitValue(VarbitID.PRAYER_MYSTIC_VIGOUR_UNLOCKED) == 1)
 			{
 				prayers.add(Prayer.MYSTIC_VIGOUR);
 			}
