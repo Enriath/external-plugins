@@ -24,9 +24,11 @@
  */
 package io.hydrox.quickprayerpreview;
 
+import com.google.inject.Provides;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
@@ -48,6 +50,8 @@ import java.util.Map;
 )
 public class QuickPrayerPreviewPlugin extends Plugin
 {
+	static final String CONFIG_GROUP = "quickprayerpreview";
+
 	private static final int QUICK_PRAYER_VARBIT = 4102;
 	private static final int PRAYER_DEADEYE_UNLOCKED = 16097;
 	private static final int PRAYER_MYSTIC_VIGOUR_UNLOCKED = 16098;
@@ -68,6 +72,12 @@ public class QuickPrayerPreviewPlugin extends Plugin
 	private List<Prayer> quickPrayers;
 
 	private final Map<Prayer, BufferedImage> prayerSprites = new HashMap<>();
+
+	@Provides
+	private QuickPrayerPreviewConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(QuickPrayerPreviewConfig.class);
+	}
 
 	@Override
 	public void startUp()
