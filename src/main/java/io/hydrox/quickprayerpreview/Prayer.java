@@ -27,9 +27,7 @@ package io.hydrox.quickprayerpreview;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runelite.api.gameval.SpriteID;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -64,7 +62,11 @@ enum Prayer
 	CHIVALRY(25, "Chivalry", SpriteID.Prayeron.CHIVALRY),
 	PIETY(26, "Piety", SpriteID.Prayeron.PIETY),
 	RIGOUR(24, "Rigour", SpriteID.Prayeron.RIGOUR),
-	AUGURY(27, "Augury", SpriteID.Prayeron.AUGURY);
+	AUGURY(27, "Augury", SpriteID.Prayeron.AUGURY),
+	// Special unlockable prayers, these override other prayers and share their bit.
+	DEADEYE(-1, "Deadeye", SpriteID.Prayeron.DEADEYE),  // 22 Eagle Eye
+	MYSTIC_VIGOUR(-1, "Mystic Vigour", SpriteID.Prayeron.MYSTIC_VIGOUR),  // 23 Mystic Might
+	;
 
 	private final int bit;
 	private final String name;
@@ -76,21 +78,13 @@ enum Prayer
 	{
 		for (Prayer p : values())
 		{
+			if (p.bit == -1) continue;
 			BITS.put(p.bit, p);
 		}
 	}
 
-	static List<Prayer> fromVarb(int varb)
+	static Prayer get(int idx)
 	{
-		final List<Prayer> ret = new ArrayList<>();
-		for (int i = 0; i < values().length; i++)
-		{
-			if ((varb & 0x1) == 1)
-			{
-				ret.add(BITS.get(i));
-			}
-			varb = varb >> 1;
-		}
-		return ret;
+		return BITS.get(idx);
 	}
 }

@@ -35,6 +35,8 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,8 @@ import java.util.Map;
 public class QuickPrayerPreviewPlugin extends Plugin
 {
 	private static final int QUICK_PRAYER_VARBIT = 4102;
+	private static final int PRAYER_DEADEYE_UNLOCKED = 16097;
+	private static final int PRAYER_MYSTIC_VIGOUR_UNLOCKED = 16098;
 
 	@Inject
 	private Client client;
@@ -62,7 +66,6 @@ public class QuickPrayerPreviewPlugin extends Plugin
 
 	@Getter
 	private List<Prayer> quickPrayers;
-	private int quickPrayerVarb = -1;
 
 	private final Map<Prayer, BufferedImage> prayerSprites = new HashMap<>();
 
@@ -81,15 +84,39 @@ public class QuickPrayerPreviewPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged e)
 	{
-		int varb = client.getVarbitValue(QUICK_PRAYER_VARBIT);
-		if (varb == quickPrayerVarb)
+		if (e.getVarbitId() != QUICK_PRAYER_VARBIT
+			&& e.getVarbitId() != PRAYER_DEADEYE_UNLOCKED && e.getVarbitId() != PRAYER_MYSTIC_VIGOUR_UNLOCKED)
 		{
 			return;
 		}
 
-		quickPrayerVarb = varb;
-		quickPrayers = Prayer.fromVarb(varb);
+		int varb = client.getVarbitValue(QUICK_PRAYER_VARBIT);
+		quickPrayers = prayersFromVarb(varb);
 		loadSprites();
+	}
+
+	private List<Prayer> prayersFromVarb(int varb)
+	{
+		final BitSet bits = BitSet.valueOf(new long[] {varb});
+		final List<Prayer> prayers = new ArrayList<>();
+
+		for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+		{
+			Prayer prayer = Prayer.get(i);
+			if (prayer == Prayer.EAGLE_EYE && client.getVarbitValue(PRAYER_DEADEYE_UNLOCKED) == 1)
+			{
+				prayers.add(Prayer.DEADEYE);
+			}
+			else if (prayer == Prayer.MYSTIC_MIGHT && client.getVarbitValue(PRAYER_MYSTIC_VIGOUR_UNLOCKED) == 1)
+			{
+				prayers.add(Prayer.MYSTIC_VIGOUR);
+			}
+			else
+			{
+				prayers.add(prayer);
+			}
+		}
+		return prayers;
 	}
 
 	private void loadSprites()
