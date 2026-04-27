@@ -28,7 +28,7 @@ dependencies {
 }
 
 group = 'io.enriath'
-version = '0.1-dev'
+version = '1.0'
 
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
