@@ -24,9 +24,18 @@
  */
 package io.enriath.minioninfo;
 
+import lombok.Getter;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.gameval.VarPlayerID;
+import net.runelite.api.gameval.VarbitID;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.QuantityFormatter;
 import javax.inject.Inject;
 
 @PluginDescriptor(
@@ -38,4 +47,74 @@ public class MinionInfoPlugin extends Plugin
 {
 	@Inject
 	private Client client;
+
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
+	private MinionInfoTooltip overlay;
+
+	@Getter
+	private boolean aoe_enabled = false;
+
+	@Getter
+	private boolean follow_enabled = false;
+
+	@Getter
+	private boolean looting_enabled = false;
+
+	@Getter
+	private boolean noting_enabled = false;
+
+	@Getter
+	private String value_threshold = "0";
+
+
+	@Override
+	public void startUp()
+	{
+		overlayManager.add(overlay);
+	}
+
+	@Override
+	public void shutDown()
+	{
+		overlayManager.remove(overlay);
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() != GameState.LOGGED_IN)
+		{
+			return;
+		}
+
+		updateInfo();
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if (event.getVarbitId() != VarbitID.LEAGUE_GUARDIAN_AOE_DISABLED
+			&& event.getVarbitId() != VarbitID.LEAGUE_GUARDIAN_FOLLOW_DISABLED
+			&& event.getVarbitId() != VarbitID.LEAGUE_GUARDIAN_PICKUP_ITEMS_DISABLED
+			&& event.getVarbitId() != VarbitID.LEAGUE_GUARDIAN_PICKUP_NOTED_DISABLED
+			&& event.getVarpId() != VarPlayerID.LEAGUE_GUARDIAN_PICKUP_VALUE)
+		{
+			return;
+		}
+
+		updateInfo();
+	}
+
+	private void updateInfo()
+	{
+		this.aoe_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_AOE_DISABLED) != 1;
+		this.follow_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_FOLLOW_DISABLED) != 1;
+		this.looting_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_PICKUP_ITEMS_DISABLED) != 1;
+		this.noting_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_PICKUP_NOTED_DISABLED) != 1;
+		this.value_threshold = QuantityFormatter.formatNumber(
+			client.getVarpValue(VarPlayerID.LEAGUE_GUARDIAN_PICKUP_VALUE));
+	}
 }
