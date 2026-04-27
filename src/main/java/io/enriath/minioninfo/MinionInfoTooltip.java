@@ -31,25 +31,22 @@ import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.ui.overlay.WidgetItemOverlay;
 import net.runelite.client.ui.overlay.tooltip.Tooltip;
 import net.runelite.client.ui.overlay.tooltip.TooltipManager;
-import net.runelite.client.util.ColorUtil;
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class MinionInfoTooltip extends WidgetItemOverlay
 {
-	private static final String ENABLED_STRING = ColorUtil.wrapWithColorTag("Enabled", Color.GREEN);
-	private static final String DISABLED_STRING = ColorUtil.wrapWithColorTag("Disabled", Color.RED);
-
 	private final Client client;
 	private final MinionInfoPlugin plugin;
+	private final MinionInfoConfig config;
 	private final TooltipManager tooltipManager;
 
 
 	@Inject
-	MinionInfoTooltip(Client client, MinionInfoPlugin plugin, TooltipManager tooltipManager)
+	MinionInfoTooltip(Client client, MinionInfoPlugin plugin, MinionInfoConfig config, TooltipManager tooltipManager)
 	{
 		this.client = client;
 		this.plugin = plugin;
+		this.config = config;
 		this.tooltipManager = tooltipManager;
 
 		showOnInventory();
@@ -66,16 +63,27 @@ public class MinionInfoTooltip extends WidgetItemOverlay
 			return;
 		}
 
-		String tooltip = "Area of Effect: ";
-		tooltip += plugin.isAoe_enabled() ? ENABLED_STRING : DISABLED_STRING;
-		tooltip += "</br>Following: ";
-		tooltip += plugin.isFollow_enabled() ? ENABLED_STRING : DISABLED_STRING;
-		tooltip += "</br>Looting Items: ";
-		tooltip += plugin.isLooting_enabled() ? ENABLED_STRING : DISABLED_STRING;
-		tooltip += "</br>Noting Items: ";
-		tooltip += plugin.isNoting_enabled() ? ENABLED_STRING : DISABLED_STRING;
-		tooltip += "</br>Value Threshold: ";
-		tooltip += plugin.getValue_threshold();
+		final String enabledString = plugin.getEnabledString();
+		final String disabledString = plugin.getDisabledString();
+
+		String tooltip = config.shortNames() ? "AoE: " : "Area of Effect: ";
+		tooltip += plugin.isAoe_enabled() ? enabledString : disabledString;
+		tooltip += "</br>";
+		tooltip += config.shortNames() ? "Follow: " : "Following: ";
+		tooltip += plugin.isFollow_enabled() ? enabledString : disabledString;
+		tooltip += "</br>";
+		tooltip += config.shortNames() ? "Loot: " : "Looting Items: ";
+		tooltip += plugin.isLooting_enabled() ? enabledString : disabledString;
+
+		if (plugin.isLooting_enabled() || !config.hideLootWhenDisabled())
+		{
+			tooltip += "</br>";
+			tooltip += config.shortNames() ? "Note: " : "Noting Items: ";
+			tooltip += plugin.isNoting_enabled() ? enabledString : disabledString;
+			tooltip += "</br>";
+			tooltip += config.shortNames() ? "Value: " : "Value Threshold: ";
+			tooltip += plugin.getValue_threshold();
+		}
 
 		tooltipManager.add(new Tooltip(tooltip));
 	}

@@ -24,6 +24,7 @@
  */
 package io.enriath.minioninfo;
 
+import com.google.inject.Provides;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -31,10 +32,13 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.api.gameval.VarbitID;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.QuantityFormatter;
 import javax.inject.Inject;
 
@@ -45,6 +49,8 @@ import javax.inject.Inject;
 )
 public class MinionInfoPlugin extends Plugin
 {
+	static final String CONFIG_GROUP = "minioninfo";
+
 	@Inject
 	private Client client;
 
@@ -53,6 +59,15 @@ public class MinionInfoPlugin extends Plugin
 
 	@Inject
 	private MinionInfoTooltip overlay;
+
+	@Inject
+	private MinionInfoConfig config;
+
+	@Getter
+	private String enabledString = "";
+
+	@Getter
+	private String disabledString = "";
 
 	@Getter
 	private boolean aoe_enabled = false;
@@ -67,8 +82,14 @@ public class MinionInfoPlugin extends Plugin
 	private boolean noting_enabled = false;
 
 	@Getter
-	private String value_threshold = "0";
+	private String value_threshold = "";
+	private int raw_value_threshold = 0;
 
+	@Provides
+	private MinionInfoConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(MinionInfoConfig.class);
+	}
 
 	@Override
 	public void startUp()
@@ -83,6 +104,27 @@ public class MinionInfoPlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals(CONFIG_GROUP))
+		{
+			return;
+		}
+
+		switch (event.getKey())
+		{
+			case "shortThreshold":
+				this.value_threshold = formatThreshold();
+				break;
+			case "shortValues":
+			case "enabledColour":
+			case "disabledColour":
+				rebuildEnabledDisabled();
+				break;
+		}
+	}
+
+	@Subscribe
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		if (event.getGameState() != GameState.LOGGED_IN)
@@ -90,6 +132,7 @@ public class MinionInfoPlugin extends Plugin
 			return;
 		}
 
+		rebuildEnabledDisabled();
 		updateInfo();
 	}
 
@@ -114,7 +157,27 @@ public class MinionInfoPlugin extends Plugin
 		this.follow_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_FOLLOW_DISABLED) != 1;
 		this.looting_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_PICKUP_ITEMS_DISABLED) != 1;
 		this.noting_enabled = client.getVarbitValue(VarbitID.LEAGUE_GUARDIAN_PICKUP_NOTED_DISABLED) != 1;
-		this.value_threshold = QuantityFormatter.formatNumber(
-			client.getVarpValue(VarPlayerID.LEAGUE_GUARDIAN_PICKUP_VALUE));
+
+		this.raw_value_threshold = client.getVarpValue(VarPlayerID.LEAGUE_GUARDIAN_PICKUP_VALUE);
+		this.value_threshold = formatThreshold();
+	}
+
+	private void rebuildEnabledDisabled()
+	{
+		this.enabledString = ColorUtil.wrapWithColorTag(
+			config.shortValues() ? "On" : "Enabled",
+			config.enabledColour()
+		);
+		this.disabledString = ColorUtil.wrapWithColorTag(
+			config.shortValues() ? "Off" : "Disabled",
+			config.disabledColour()
+		);
+	}
+
+	private String formatThreshold()
+	{
+		return config.shortThreshold()
+			? QuantityFormatter.quantityToRSDecimalStack(this.raw_value_threshold, true)
+			: QuantityFormatter.formatNumber(this.raw_value_threshold);
 	}
 }
