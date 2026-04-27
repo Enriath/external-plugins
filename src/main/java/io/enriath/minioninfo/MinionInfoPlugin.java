@@ -24,6 +24,7 @@
  */
 package io.enriath.minioninfo;
 
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.Getter;
 import net.runelite.api.Client;
@@ -40,7 +41,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.QuantityFormatter;
-import javax.inject.Inject;
 
 @PluginDescriptor(
 	name = "Minion Info",
