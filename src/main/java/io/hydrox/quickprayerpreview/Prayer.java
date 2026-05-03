@@ -44,22 +44,22 @@ enum Prayer
 	BURST_OF_STRENGTH(1, "Burst of Strength", SpriteID.Prayeron.BURST_OF_STRENGTH, InterfaceID.Prayerbook.PRAYER2),
 	CLARITY_OF_THOUGHT(2, "Clarity of Thought", SpriteID.Prayeron.CLARITY_OF_THOUGHT, InterfaceID.Prayerbook.PRAYER3),
 	SHARP_EYE(18, "Sharp Eye", SpriteID.Prayeron.SHARP_EYE, InterfaceID.Prayerbook.PRAYER19),
-	MYSTIC_WILL(19, "Mystic Will", SpriteID.Prayeron.MYSTIC_WILL, InterfaceID.Prayerbook.PRAYER20),
+	MYSTIC_WILL(19, "Mystic Will", SpriteID.Prayeron.MYSTIC_WILL, InterfaceID.Prayerbook.PRAYER22),
 	ROCK_SKIN(3, "Rock Skin", SpriteID.Prayeron.ROCK_SKIN, InterfaceID.Prayerbook.PRAYER4),
 	SUPERHUMAN_STRENGTH(4, "Superhuman Strength", SpriteID.Prayeron.SUPERHUMAN_STRENGTH, InterfaceID.Prayerbook.PRAYER5),
 	IMPROVED_REFLEXES(5, "Improved Reflexes", SpriteID.Prayeron.IMPROVED_REFLEXES, InterfaceID.Prayerbook.PRAYER6),
 	RAPID_RESTORE(6, "Rapid Restore", SpriteID.Prayeron.RAPID_RESTORE, InterfaceID.Prayerbook.PRAYER7),
 	RAPID_HEAL(7, "Rapid Heal", SpriteID.Prayeron.RAPID_HEAL, InterfaceID.Prayerbook.PRAYER8),
 	PROTECT_ITEM(8, "Protect Item", SpriteID.Prayeron.PROTECT_ITEM, InterfaceID.Prayerbook.PRAYER9),
-	HAWK_EYE(20, "Hawk Eye", SpriteID.Prayeron.HAWK_EYE, InterfaceID.Prayerbook.PRAYER21),
-	MYSTIC_LORE(21, "Mystic Lore", SpriteID.Prayeron.MYSTIC_LORE, InterfaceID.Prayerbook.PRAYER22),
+	HAWK_EYE(20, "Hawk Eye", SpriteID.Prayeron.HAWK_EYE, InterfaceID.Prayerbook.PRAYER20),
+	MYSTIC_LORE(21, "Mystic Lore", SpriteID.Prayeron.MYSTIC_LORE, InterfaceID.Prayerbook.PRAYER23),
 	STEEL_SKIN(9, "Steel Skin", SpriteID.Prayeron.STEEL_SKIN, InterfaceID.Prayerbook.PRAYER10),
 	ULTIMATE_STRENGTH(10, "Ultimate Strength", SpriteID.Prayeron.ULTIMATE_STRENGTH, InterfaceID.Prayerbook.PRAYER11),
 	INCREDIBLE_REFLEXES(11, "Incredible reflexes", SpriteID.Prayeron.INCREDIBLE_REFLEXES, InterfaceID.Prayerbook.PRAYER12),
 	PROTECT_FROM_MAGIC(12, "protect from magic", SpriteID.Prayeron.PROTECT_FROM_MAGIC, InterfaceID.Prayerbook.PRAYER13),
 	PROTECT_FROM_MISSILES(13, "Protect from missiles", SpriteID.Prayeron.PROTECT_FROM_MISSILES, InterfaceID.Prayerbook.PRAYER14),
 	PROTECT_FROM_MELEE(14, "Protect from melee", SpriteID.Prayeron.PROTECT_FROM_MELEE, InterfaceID.Prayerbook.PRAYER15),
-	EAGLE_EYE(22, "Eagle Eye", SpriteID.Prayeron.EAGLE_EYE, InterfaceID.Prayerbook.PRAYER23)
+	EAGLE_EYE(22, "Eagle Eye", SpriteID.Prayeron.EAGLE_EYE, InterfaceID.Prayerbook.PRAYER21)
 		{
 			@Override
 			public int getUnlockVarbit()
@@ -73,7 +73,7 @@ enum Prayer
 				return DEADEYE;
 			}
 		},
-	DEADEYE(-22, "Deadeye", SpriteID.Prayeron.DEADEYE, InterfaceID.Prayerbook.PRAYER23),
+	DEADEYE(-22, "Deadeye", SpriteID.Prayeron.DEADEYE, InterfaceID.Prayerbook.PRAYER21),
 	MYSTIC_MIGHT(23, "Mystic Might", SpriteID.Prayeron.MYSTIC_MIGHT, InterfaceID.Prayerbook.PRAYER24)
 		{
 			@Override
