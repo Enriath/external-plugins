@@ -91,8 +91,10 @@ public class QuickPrayerPreviewPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged e)
 	{
-		if (e.getVarbitId() != VarbitID.QUICKPRAYER_SELECTED
-			&& e.getVarbitId() != VarbitID.PRAYER_DEADEYE_UNLOCKED && e.getVarbitId() != VarbitID.PRAYER_MYSTIC_VIGOUR_UNLOCKED)
+		int varbitId = e.getVarbitId();
+		if (varbitId!= VarbitID.QUICKPRAYER_SELECTED
+			&& varbitId != VarbitID.PRAYER_DEADEYE_UNLOCKED && varbitId != VarbitID.PRAYER_MYSTIC_VIGOUR_UNLOCKED
+			&& varbitId != VarbitID.PRAYER_ZEAL_UNLOCKED)
 		{
 			return;
 		}
@@ -117,6 +119,10 @@ public class QuickPrayerPreviewPlugin extends Plugin
 			else if (prayer == Prayer.MYSTIC_MIGHT && client.getVarbitValue(VarbitID.PRAYER_MYSTIC_VIGOUR_UNLOCKED) == 1)
 			{
 				prayers.add(Prayer.MYSTIC_VIGOUR);
+			}
+			else if (prayer == Prayer.PIETY && client.getVarbitValue(VarbitID.PRAYER_ZEAL_UNLOCKED) == 1)
+			{
+				prayers.add(Prayer.ZEAL);
 			}
 			else
 			{

@@ -66,6 +66,7 @@ enum Prayer
 	// Special unlockable prayers, these override other prayers and share their bit.
 	DEADEYE(-1, "Deadeye", SpriteID.Prayeron.DEADEYE),  // 22 Eagle Eye
 	MYSTIC_VIGOUR(-1, "Mystic Vigour", SpriteID.Prayeron.MYSTIC_VIGOUR),  // 23 Mystic Might
+	ZEAL(-1, "Zeal", SpriteID.Prayeron.ZEAL),  // 26 Piety
 	;
 
 	private final int bit;
