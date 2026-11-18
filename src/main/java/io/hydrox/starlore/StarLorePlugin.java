@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -44,8 +45,6 @@ import java.util.Random;
 )
 public class StarLorePlugin extends Plugin
 {
-	private static final int CHATBOX_TEXT_WIDGET_GROUP = 229;
-	private static final int CHATBOX_TEXT_WIDGET_CHILD = 1;
 	private static final String NOTHING_INTERESTING_TEXT = "You look through the telescope, but you don't see anything<br>interesting.";
 
 	private static final List<String> MORE_INTERESTING_TEXTS = Arrays.asList(
@@ -65,7 +64,7 @@ public class StarLorePlugin extends Plugin
 	@Subscribe
 	public void onWidgetLoaded(WidgetLoaded event)
 	{
-		if (event.getGroupId() != CHATBOX_TEXT_WIDGET_GROUP)
+		if (event.getGroupId() != InterfaceID.MESSAGEBOX)
 		{
 			return;
 		}
@@ -79,12 +78,13 @@ public class StarLorePlugin extends Plugin
 		{
 			return;
 		}
-		Widget w = client.getWidget(CHATBOX_TEXT_WIDGET_GROUP, CHATBOX_TEXT_WIDGET_CHILD);
+		Widget w = client.getWidget(InterfaceID.Messagebox.TEXT);
 		if (w == null)
 		{
 			checkText = false;
 			return;
 		}
+
 		if (Strings.isNullOrEmpty(w.getText()))
 		{
 			return;
