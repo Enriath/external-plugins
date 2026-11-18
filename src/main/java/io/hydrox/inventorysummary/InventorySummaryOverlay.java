@@ -58,6 +58,7 @@ class InventorySummaryOverlay extends OverlayPanel
 	private final InventorySummaryConfig config;
 
 	private final PanelComponent inventoryComponent = new PanelComponent();
+	private final InventorySummaryRenderer renderer = new InventorySummaryRenderer();
 
 	private final List<ImageComponent> images = new ArrayList<>();
 
@@ -129,16 +130,37 @@ class InventorySummaryOverlay extends OverlayPanel
 				g.drawString(freeText, (bf.getWidth() - fm.stringWidth(freeText)) / 2, fm.getAscent());
 				freeSlotsDisplay = new ImageComponent(bf);
 				lastWidth = invWidth;
+				renderer.invalidate();
 			}
 			panelComponent.getChildren().add(freeSlotsDisplay);
 		}
-		return super.render(graphics);
+
+		Color background = panelComponent.getBackgroundColor();
+		if (getPreferredColor() != null && ComponentConstants.STANDARD_BACKGROUND_COLOR.equals(background))
+		{
+			panelComponent.setBackgroundColor(getPreferredColor());
+		}
+		try
+		{
+			// RuneLite supplies this rectangle when the overlay is Option/Alt-resized.
+			// Keep the native layout stable and resize the complete visual into it.
+			return renderer.render(panelComponent, graphics, getPreferredSize());
+		}
+		finally
+		{
+			if (isClearChildren())
+			{
+				panelComponent.getChildren().clear();
+			}
+			panelComponent.setBackgroundColor(background);
+		}
 	}
 
 	void rebuild(Map<Integer, Integer> groupedItems, int spacesUsed)
 	{
 		inventoryComponent.getChildren().clear();
 		images.clear();
+		renderer.invalidate();
 
 		for (Map.Entry<Integer, Integer> cursor : groupedItems.entrySet())
 		{
